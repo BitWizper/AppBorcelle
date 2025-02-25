@@ -1,6 +1,5 @@
 import 'package:borcelle/SelectRegisterScreen.dart';
-import 'package:flutter/material.dart';
-import 'select_register_screen.dart'; // Asegúrate de que la ruta es correcta
+import 'package:flutter/material.dart'; // Asegúrate de que la ruta es correcta
 
 
 void main() {

@@ -145,7 +145,7 @@ class CatalogScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 Text('Reseñas:'),
                 // Aquí está la corrección:
-                ...repostero['reseñas'].map<Widget>((reseña) => Text('- $reseña')).toList(),
+                ...repostero['reseñas'].map<Widget>((resena) => Text('- $resena')).toList(),
               ],
             ),
           ),
