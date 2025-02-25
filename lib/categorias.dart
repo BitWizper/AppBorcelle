@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,6 +30,9 @@ class CatalogScreen extends StatelessWidget {
     {'title': 'Cumpleaños', 'image': 'assets/cumpleanos.jpg'},
     {'title': 'Bautizo', 'image': 'assets/bautizo.jpg'},
   ];
+
+  // Se eliminó `const` para evitar el error
+  CatalogScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,8 @@ void main() {
 }
 
 class RegisterReposteroApp extends StatelessWidget {
+  const RegisterReposteroApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,6 +22,8 @@ class RegisterReposteroApp extends StatelessWidget {
 }
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -57,6 +61,8 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class RegisterReposteroPage extends StatelessWidget {
+  const RegisterReposteroPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

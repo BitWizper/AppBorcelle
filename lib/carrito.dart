@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,6 +40,9 @@ class CartScreen extends StatelessWidget {
       'price': '\$20.00',
     },
   ];
+
+  // Se eliminó `const` para evitar el error
+  CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +103,7 @@ class CartScreen extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.pink[300],
+                      backgroundColor: Colors.pink[300],
                       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -123,7 +128,7 @@ class CartScreen extends StatelessWidget {
 class CartItemWidget extends StatelessWidget {
   final Map<String, String> item;
 
-  CartItemWidget(this.item);
+  const CartItemWidget(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -177,6 +182,8 @@ class CartItemWidget extends StatelessWidget {
 }
 
 class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,6 +199,8 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class BottomNavBar extends StatelessWidget {
+  const BottomNavBar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(

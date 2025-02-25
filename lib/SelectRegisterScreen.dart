@@ -6,6 +6,8 @@ void main() {
 }
 
 class SelectRegisterApp extends StatelessWidget {
+  const SelectRegisterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,6 +22,8 @@ class SelectRegisterApp extends StatelessWidget {
 }
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -57,6 +61,8 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class SelectRegisterScreen extends StatelessWidget {
+  const SelectRegisterScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,6 +172,8 @@ class SelectRegisterScreen extends StatelessWidget {
 
 // Define las pantallas de registro que serán usadas en las rutas
 class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,6 +184,8 @@ class RegisterScreen extends StatelessWidget {
 }
 
 class RegisterReposteroScreen extends StatelessWidget {
+  const RegisterReposteroScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
