@@ -1,0 +1,40 @@
+name: borcelle
+description: "A new Flutter project."
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.4 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  http: 1.3.0
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+  carousel_slider: ^5.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fotodeiconos/iconodeboda.jpg
+    - assets/fotodeiconos/iconodequinceaños.jpg
+    - assets/fotodeiconos/iconodecumpleaños.jpg
+    - assets/fotodeiconos/iconodebautizo.png
+    - assets/fotodeiconos/iconodebabyshower.png
+    - assets/fotodepasteles/fotopastel1.jpg
+    - assets/fotodepasteles/fotopastel2.jpeg
+    - assets/fotodepasteles/fotopastel3.jpg
+    - assets/fotodepasteles/fotopastel4.jpg
+    - assets/fotodepasteles/fotopastel5.jpg
+    - assets/fotodepasteles/fotopastel6.jpg
