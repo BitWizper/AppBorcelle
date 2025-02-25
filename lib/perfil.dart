@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,6 +22,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -102,8 +106,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(height: 16),
           ElevatedButton(
             onPressed: _updateProfile,
-            child: Text('Actualizar Información'),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+            child: Text('Actualizar Información'),
           ),
         ],
       ),
@@ -182,8 +186,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildProfileOption(String title, String section) {
     return ElevatedButton(
       onPressed: () => _showSection(section),
-      child: Text(title),
       style: ElevatedButton.styleFrom(foregroundColor: Colors.white, backgroundColor: Colors.pink),
+      child: Text(title),
     );
   }
 }

@@ -5,6 +5,8 @@ void main() {
 }
 
 class BorcelleApp extends StatelessWidget {
+  const BorcelleApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,6 +17,8 @@ class BorcelleApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

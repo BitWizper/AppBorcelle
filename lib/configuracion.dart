@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,6 +22,8 @@ class MyApp extends StatelessWidget {
 }
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -170,7 +174,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Implementar la acción del botón (por ejemplo, enviar los datos a un servidor)
           print('Acción: $label');
         },
-        child: Text(label),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.pink[300],
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
@@ -178,6 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             borderRadius: BorderRadius.circular(8),
           ),
         ),
+        child: Text(label),
       ),
     );
   }

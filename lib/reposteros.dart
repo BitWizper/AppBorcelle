@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,6 +40,9 @@ class CatalogScreen extends StatelessWidget {
       'puntaje': 4.5,
     },
   ];
+
+  // Se eliminó `const` para evitar el error
+  CatalogScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -101,10 +106,10 @@ class CatalogScreen extends StatelessWidget {
                         SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: () => _showProfilePopup(context, index),
-                          child: Text('Ver Perfil'),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white, backgroundColor: Colors.pink,
                           ),
+                          child: Text('Ver Perfil'),
                         ),
                       ],
                     ),
@@ -144,7 +149,6 @@ class CatalogScreen extends StatelessWidget {
                 Text('Puntaje: ${repostero['puntaje']}'),
                 SizedBox(height: 10),
                 Text('Reseñas:'),
-                // Aquí está la corrección:
                 ...repostero['reseñas'].map<Widget>((resena) => Text('- $resena')).toList(),
               ],
             ),

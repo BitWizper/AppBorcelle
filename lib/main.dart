@@ -7,6 +7,8 @@ void main() {
 }
 
 class SelectRegisterApp extends StatelessWidget {
+  const SelectRegisterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

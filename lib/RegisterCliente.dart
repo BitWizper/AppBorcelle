@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class RegisterClienteScreen extends StatelessWidget {
+  const RegisterClienteScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
