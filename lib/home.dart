@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'perfil.dart';
+import 'pedidos.dart';
+import 'ayuda.dart';
+import 'configuracion.dart';
 
 void main() {
   runApp(BorcelleApp());
@@ -25,9 +29,13 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.pink[200],
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: Colors.white),
-          onPressed: () {},
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu, color: Colors.white),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
         ),
         actions: [
           IconButton(
@@ -40,102 +48,74 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Buscar...",
-                  prefixIcon: Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.pink[200],
               ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 150,
-              color: Colors.amber[100],
-              child: Center(
-                child: Text(
-                  "Ofertas Especiales",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(10),
               child: Text(
-                "Destacados",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                'Menú',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
               ),
             ),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 0.7,
-              ),
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                          child: Image.network(
-                            "https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg",
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Pastel de Cumpleaños",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text("145.00 MXN"),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Mi Perfil'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
                 );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.receipt_long),
+              title: Text('Mis Pedidos'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OrdersScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.help_center),
+              title: Text('Centro de Ayuda'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HelpScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Configuración'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Cerrar Sesión'),
+              onTap: () {
+                Navigator.pop(context);
               },
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.blueGrey[50],
-        selectedItemColor: Colors.pink[200],
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.cake), label: "Pasteles"),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Reposteros"),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: "Crear Pastel"),
-        ],
+      body: Center(
+        child: Text("Pantalla de Inicio"),
       ),
     );
   }
