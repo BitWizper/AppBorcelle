@@ -116,22 +116,22 @@ class HomeScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   List<Map<String, String>> cakes = [
                     {
-                      "image": "https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg",
+                      "image": "assets/fotodepasteles/fotopastel1.jpg",
                       "name": "Pastel de Fresas",
                       "price": "250 MXN"
                     },
                     {
-                      "image": "https://i.pinimg.com/736x/4a/5b/2a/4a5b2a3f6c2e6eae4f0e53ad43ebf3bb.jpg",
+                      "image": "assets/fotodepasteles/fotopastel2.jpeg",
                       "name": "Pastel de Chocolate",
                       "price": "220 MXN"
                     },
                     {
-                      "image": "https://i.pinimg.com/736x/3d/4e/29/3d4e29f09b4a4b95b3e8c586fa0a2f74.jpg",
+                      "image": "assets/fotodepasteles/fotopastel3.jpg",
                       "name": "Pastel Arcoíris",
                       "price": "270 MXN"
                     },
                     {
-                      "image": "https://i.pinimg.com/736x/2c/3e/17/2c3e17980b30a4e8a7eaf0d44f7dfc5e.jpg",
+                      "image": "assets/fotodepasteles/fotopastel4.jpg",
                       "name": "Pastel Red Velvet",
                       "price": "300 MXN"
                     },
