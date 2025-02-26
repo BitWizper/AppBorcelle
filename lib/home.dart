@@ -1,21 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(BorcelleApp());
-}
-
-class BorcelleApp extends StatelessWidget {
-  const BorcelleApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-    );
-  }
-}
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -24,119 +8,224 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[200],
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: Colors.white),
-          onPressed: () {},
-        ),
+        title: Text("Borcelle"),
         actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart, color: Colors.white),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.notifications, color: Colors.white),
-            onPressed: () {},
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              // Aquí navegamos a las pantallas correspondientes
+              switch (value) {
+                case 'Mi Perfil':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  );
+                  break;
+                case 'Mis Pedidos':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => OrdersScreen()),
+                  );
+                  break;
+                case 'Centro de Ayuda':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HelpScreen()),
+                  );
+                  break;
+                case 'Configuración':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()),
+                  );
+                  break;
+                case 'Cerrar Sesión':
+                  // Aquí agregarías la lógica para cerrar sesión
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Cerrar Sesión'),
+                      content: Text('¿Estás seguro que deseas cerrar sesión?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Cancelar'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // Agrega la lógica para cerrar sesión
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Aceptar'),
+                        ),
+                      ],
+                    ),
+                  );
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem<String>(
+                  value: 'Mi Perfil',
+                  child: Text('Mi Perfil'),
+                ),
+                PopupMenuItem<String>(
+                  value: 'Mis Pedidos',
+                  child: Text('Mis Pedidos'),
+                ),
+                PopupMenuItem<String>(
+                  value: 'Centro de Ayuda',
+                  child: Text('Centro de Ayuda'),
+                ),
+                PopupMenuItem<String>(
+                  value: 'Configuración',
+                  child: Text('Configuración'),
+                ),
+                PopupMenuItem<String>(
+                  value: 'Cerrar Sesión',
+                  child: Text('Cerrar Sesión'),
+                ),
+              ];
+            },
           ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Buscar...",
-                  prefixIcon: Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 150,
-              color: Colors.amber[100],
-              child: Center(
-                child: Text(
-                  "Ofertas Especiales",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
+            SizedBox(height: 20),
+            Text(
+              "Pasteles Destacados",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "Destacados",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 0.7,
-              ),
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                          child: Image.network(
-                            "https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg",
-                            fit: BoxFit.cover,
-                            width: double.infinity,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.8,
+                ),
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  List<Map<String, String>> cakes = [
+                    {
+                      "image": "https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg",
+                      "name": "Pastel de Fresas",
+                      "price": "250 MXN"
+                    },
+                    {
+                      "image": "https://i.pinimg.com/736x/4a/5b/2a/4a5b2a3f6c2e6eae4f0e53ad43ebf3bb.jpg",
+                      "name": "Pastel de Chocolate",
+                      "price": "220 MXN"
+                    },
+                    {
+                      "image": "https://i.pinimg.com/736x/3d/4e/29/3d4e29f09b4a4b95b3e8c586fa0a2f74.jpg",
+                      "name": "Pastel Arcoíris",
+                      "price": "270 MXN"
+                    },
+                    {
+                      "image": "https://i.pinimg.com/736x/2c/3e/17/2c3e17980b30a4e8a7eaf0d44f7dfc5e.jpg",
+                      "name": "Pastel Red Velvet",
+                      "price": "300 MXN"
+                    },
+                  ];
+
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                            child: Image.network(
+                              cakes[index]["image"]!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Pastel de Cumpleaños",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text("145.00 MXN"),
-                          ],
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                cakes[index]["name"]!,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(cakes[index]["price"]!),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.blueGrey[50],
-        selectedItemColor: Colors.pink[200],
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.cake), label: "Pasteles"),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Reposteros"),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: "Crear Pastel"),
-        ],
-      ),
+    );
+  }
+}
+
+// Pantallas de navegación (simples para demostración)
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Mi Perfil")),
+      body: Center(child: Text("Pantalla de perfil")),
+    );
+  }
+}
+
+class OrdersScreen extends StatelessWidget {
+  const OrdersScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Mis Pedidos")),
+      body: Center(child: Text("Pantalla de pedidos")),
+    );
+  }
+}
+
+class HelpScreen extends StatelessWidget {
+  const HelpScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Centro de Ayuda")),
+      body: Center(child: Text("Pantalla de ayuda")),
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Configuración")),
+      body: Center(child: Text("Pantalla de configuración")),
     );
   }
 }
