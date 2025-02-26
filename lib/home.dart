@@ -12,50 +12,34 @@ class HomeScreen extends StatelessWidget {
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
-              // Aquí puedes definir qué hacer cuando se selecciona una opción
+              // Aquí navegamos a las pantallas correspondientes
               switch (value) {
                 case 'Mi Perfil':
-                  // Aquí puedes redirigir a la pantalla de perfil
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Mi Perfil'),
-                      content: Text('Redirigiendo a la pantalla de perfil...'),
-                    ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfileScreen()),
                   );
                   break;
                 case 'Mis Pedidos':
-                  // Redirigir a la pantalla de pedidos
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Mis Pedidos'),
-                      content: Text('Redirigiendo a la pantalla de pedidos...'),
-                    ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => OrdersScreen()),
                   );
                   break;
                 case 'Centro de Ayuda':
-                  // Redirigir al centro de ayuda
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Centro de Ayuda'),
-                      content: Text('Redirigiendo al centro de ayuda...'),
-                    ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HelpScreen()),
                   );
                   break;
                 case 'Configuración':
-                  // Redirigir a la pantalla de configuración
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Configuración'),
-                      content: Text('Redirigiendo a la pantalla de configuración...'),
-                    ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()),
                   );
                   break;
                 case 'Cerrar Sesión':
-                  // Aquí puedes manejar el cierre de sesión
+                  // Aquí agregarías la lógica para cerrar sesión
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -70,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         TextButton(
                           onPressed: () {
-                            // Aquí agregarías la lógica de cierre de sesión
+                            // Agrega la lógica para cerrar sesión
                             Navigator.of(context).pop();
                           },
                           child: Text('Aceptar'),
@@ -111,7 +95,7 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20), // Espacio arriba
+            SizedBox(height: 20),
             Text(
               "Pasteles Destacados",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -120,15 +104,15 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: GridView.builder(
-                shrinkWrap: true, // Ajusta el tamaño del GridView
-                physics: NeverScrollableScrollPhysics(), // Evita conflicto de scroll
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Dos columnas
+                  crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   childAspectRatio: 0.8,
                 ),
-                itemCount: 4, // Número de pasteles destacados
+                itemCount: 4,
                 itemBuilder: (context, index) {
                   List<Map<String, String>> cakes = [
                     {
@@ -192,6 +176,56 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// Pantallas de navegación (simples para demostración)
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Mi Perfil")),
+      body: Center(child: Text("Pantalla de perfil")),
+    );
+  }
+}
+
+class OrdersScreen extends StatelessWidget {
+  const OrdersScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Mis Pedidos")),
+      body: Center(child: Text("Pantalla de pedidos")),
+    );
+  }
+}
+
+class HelpScreen extends StatelessWidget {
+  const HelpScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Centro de Ayuda")),
+      body: Center(child: Text("Pantalla de ayuda")),
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Configuración")),
+      body: Center(child: Text("Pantalla de configuración")),
     );
   }
 }
