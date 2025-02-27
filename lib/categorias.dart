@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
-
 void main() {
   runApp(MyApp());
 }
@@ -19,31 +16,52 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.pink,
         fontFamily: 'Poppins',
       ),
-      home: CatalogScreen(),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => const HomeScreen(), // Asegurarse de que HomeScreen esté registrado
+        '/catalogo_pasteles': (context) => CatalogScreen(type: 'pasteles'),
+        '/catalogo_reposteros': (context) => CatalogScreen(type: 'reposteros'),
+        '/crear_pastel': (context) => const CreateCakeScreen(),
+      },
     );
   }
 }
 
 class CatalogScreen extends StatelessWidget {
   final List<Map<String, String>> categories = [
-    {'title': 'XV Años', 'image': 'assets/xv_anos.jpg'},
-    {'title': 'Boda', 'image': 'assets/boda.jpg'},
-    {'title': 'Babyshower', 'image': 'assets/babyshower.jpg'},
-    {'title': 'Cumpleaños', 'image': 'assets/cumpleanos.jpg'},
-    {'title': 'Bautizo', 'image': 'assets/bautizo.jpg'},
+    {'title': 'XV Años', 'image': 'assets/fotodeiconos/iconodequinceaños.jpg'},
+    {'title': 'Boda', 'image': 'assets/fotodeiconos/iconodeboda.jpg'},
+    {'title': 'Babyshower', 'image': 'assets/fotodeiconos/iconodebabyshower.png'},
+    {'title': 'Cumpleaños', 'image': 'assets/fotodeiconos/iconodecumpleaños.jpg'},
+    {'title': 'Bautizo', 'image': 'assets/fotodeiconos/iconodebautizo.png'},
   ];
 
-  // Se eliminó `const` para evitar el error
-  CatalogScreen({super.key});
+  CatalogScreen({super.key, required String type});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Catálogo'),
+        title: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Buscar pasteles...',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                ),
+              ),
+            ),
+          ],
+        ),
         actions: [
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
-          IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
         ],
       ),
       drawer: Drawer(
@@ -51,28 +69,34 @@ class CatalogScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.pink),
+              decoration: const BoxDecoration(color: Colors.pink),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.cake, color: Colors.white, size: 50),
-                  SizedBox(height: 10),
-                  Text('Menú', style: TextStyle(color: Colors.white, fontSize: 20)),
+                  const Icon(Icons.cake, color: Colors.white, size: 50),
+                  const SizedBox(height: 10),
+                  const Text('Menú', style: TextStyle(color: Colors.white, fontSize: 20)),
                 ],
               ),
             ),
-            ListTile(leading: Icon(Icons.home), title: Text('Home'), onTap: () {}),
-            ListTile(leading: Icon(Icons.person), title: Text('Mi Perfil'), onTap: () {}),
-            ListTile(leading: Icon(Icons.help), title: Text('Centro de Ayuda'), onTap: () {}),
-            ListTile(leading: Icon(Icons.settings), title: Text('Configuración'), onTap: () {}),
-            ListTile(leading: Icon(Icons.logout), title: Text('Cerrar Sesión'), onTap: () {}),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
+              onTap: () {
+                Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+              },
+            ),
+            ListTile(leading: const Icon(Icons.person), title: const Text('Mi Perfil'), onTap: () {}),
+            ListTile(leading: const Icon(Icons.help), title: const Text('Centro de Ayuda'), onTap: () {}),
+            ListTile(leading: const Icon(Icons.settings), title: const Text('Configuración'), onTap: () {}),
+            ListTile(leading: const Icon(Icons.logout), title: const Text('Cerrar Sesión'), onTap: () {}),
           ],
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
@@ -86,7 +110,7 @@ class CatalogScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
                       child: Image.asset(
                         categories[index]['image']!,
                         width: double.infinity,
@@ -98,7 +122,7 @@ class CatalogScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       categories[index]['title']!,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -109,12 +133,54 @@ class CatalogScreen extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.pink,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Categorías'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
+          BottomNavigationBarItem(icon: Icon(Icons.create), label: 'Crear Pastel'),
         ],
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+              break;
+            case 1:
+              Navigator.pushNamed(context, '/catalogo_pasteles');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/catalogo_reposteros');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/crear_pastel');
+              break;
+          }
+        },
       ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key}); // Se hace const para evitar errores
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Inicio')),
+      body: const Center(child: Text('Bienvenido al HomeScreen')),
+    );
+  }
+}
+
+class CreateCakeScreen extends StatelessWidget {
+  const CreateCakeScreen({super.key}); // También se hace const
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Crear Pastel')),
+      body: const Center(child: Text('Aquí puedes crear un pastel personalizado')),
     );
   }
 }

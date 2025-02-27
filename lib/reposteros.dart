@@ -41,7 +41,6 @@ class CatalogScreen extends StatelessWidget {
     },
   ];
 
-  // Se eliminó `const` para evitar el error
   CatalogScreen({super.key});
 
   @override
@@ -119,6 +118,14 @@ class CatalogScreen extends StatelessWidget {
             );
           },
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.pink,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Categorías'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        ],
       ),
     );
   }
