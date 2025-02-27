@@ -1,4 +1,46 @@
 import 'package:flutter/material.dart';
+import 'perfil.dart';
+import 'pedidos.dart';
+import 'ayuda.dart';
+import 'configuracion.dart';
+import 'package:borcelle/categorias.dart';
+import 'package:borcelle/reposteros.dart';
+//import 'crear_pastel.dart'; // Se agregó la importación de la pantalla de creación de pasteles.
+
+void main() {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    initialRoute: '/home',
+    routes: {
+      '/home': (context) => HomeScreen(),
+      '/perfil': (context) => ProfileScreen(),
+      '/pedidos': (context) => OrdersScreen(),
+      '/ayuda': (context) => HelpScreen(),
+      '/configuracion': (context) => SettingsScreen(),
+      '/catalogo_pasteles': (context) => CategoriasScreen(),
+      '/catalogo_reposteros': (context) => ReposterosScreen(),
+      //'/crear_pastel': (context) => CrearPastelScreen(),
+    },
+  ));
+}
+
+class OrdersScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.pink[200],
+        title: Text("Mis Pedidos"),
+      ),
+      body: Center(
+        child: Text(
+          "Aquí aparecerán tus pedidos.",
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,31 +50,32 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0; // Índice de la pestaña activa
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-  if (_selectedIndex == index) return; // Evitar recargas innecesarias
-  setState(() {
-    _selectedIndex = index;
-  });
+    String route;
+    switch (index) {
+      case 0:
+        route = '/home';
+        break;
+      case 1:
+        route = '/catalogo_pasteles';
+        break;
+      case 2:
+        route = '/catalogo_reposteros';
+        break;
+      case 3:
+        route = '/crear_pastel';
+        break;
+      default:
+        return;
+    }
+    Navigator.pushNamed(context, route);
 
-  switch (index) {
-    case 0:
-      Navigator.pushNamed(context, '/home'); // Mantiene el historial de navegación
-      break;
-    case 1:
-      Navigator.pushNamed(context, '/catalogo_pasteles');
-      break;
-    case 2:
-      Navigator.pushNamed(context, '/catalogo_reposteros');
-      break;
-    case 3:
-      Navigator.pushNamed(context, '/crear_pastel');
-      break;
+    setState(() {
+      _selectedIndex = index;
+    });
   }
-}
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -60,48 +103,18 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
-              switch (value) {
-                case 'Mi Perfil':
-                  Navigator.pushNamed(context, '/perfil');
-                  break;
-                case 'Mis Pedidos':
-                  Navigator.pushNamed(context, '/pedidos');
-                  break;
-                case 'Centro de Ayuda':
-                  Navigator.pushNamed(context, '/ayuda');
-                  break;
-                case 'Configuración':
-                  Navigator.pushNamed(context, '/configuracion');
-                  break;
-                case 'Cerrar Sesión':
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Cerrar Sesión'),
-                      content: Text('¿Estás seguro que deseas cerrar sesión?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text('Cancelar'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Aceptar'),
-                        ),
-                      ],
-                    ),
-                  );
-                  break;
+              if (value == 'Cerrar Sesión') {
+                _mostrarDialogoCerrarSesion(context);
+              } else {
+                Navigator.pushNamed(context, value);
               }
             },
             itemBuilder: (BuildContext context) {
               return [
-                PopupMenuItem(value: 'Mi Perfil', child: Text('Mi Perfil')),
-                PopupMenuItem(value: 'Mis Pedidos', child: Text('Mis Pedidos')),
-                PopupMenuItem(value: 'Centro de Ayuda', child: Text('Centro de Ayuda')),
-                PopupMenuItem(value: 'Configuración', child: Text('Configuración')),
+                PopupMenuItem(value: '/perfil', child: Text('Mi Perfil')),
+                PopupMenuItem(value: '/pedidos', child: Text('Mis Pedidos')),
+                PopupMenuItem(value: '/ayuda', child: Text('Centro de Ayuda')),
+                PopupMenuItem(value: '/configuracion', child: Text('Configuración')),
                 PopupMenuItem(value: 'Cerrar Sesión', child: Text('Cerrar Sesión')),
               ];
             },
@@ -175,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Índice para mantener el estado
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
@@ -185,6 +198,29 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         selectedItemColor: Colors.pink[300],
         unselectedItemColor: Colors.grey,
+      ),
+    );
+  }
+
+  void _mostrarDialogoCerrarSesion(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Cerrar Sesión'),
+        content: Text('¿Estás seguro que deseas cerrar sesión?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+            },
+            child: Text('Aceptar'),
+          ),
+        ],
       ),
     );
   }

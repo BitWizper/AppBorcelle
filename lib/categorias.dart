@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -11,131 +11,127 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Catálogo',
+      title: 'Categorías de Pasteles',
       theme: ThemeData(
         primarySwatch: Colors.pink,
         fontFamily: 'Poppins',
       ),
-      initialRoute: '/home',
-      routes: {
-        '/home': (context) => const HomeScreen(),
-        '/catalogo_pasteles': (context) => CatalogScreen(type: 'pasteles'),
-        '/catalogo_reposteros': (context) => CatalogScreen(type: 'reposteros'),
-        '/crear_pastel': (context) => const CreateCakeScreen(),
-      },
+      home: const CategoriasScreen(),
     );
   }
 }
 
-class CatalogScreen extends StatelessWidget {
-  final String type;
-  
-  // Constructor
-  CatalogScreen({super.key, required this.type});
+class CategoriasScreen extends StatefulWidget {
+  const CategoriasScreen({super.key});
 
-  // Listas para los catálogos
-  final List<Map<String, String>> pastelCategories = [
-    {'title': 'XV Años', 'image': 'assets/fotodeiconos/iconodequinceaños.jpg'},
-    {'title': 'Boda', 'image': 'assets/fotodeiconos/iconodeboda.jpg'},
-    {'title': 'Babyshower', 'image': 'assets/fotodeiconos/iconodebabyshower.png'},
-    {'title': 'Cumpleaños', 'image': 'assets/fotodeiconos/iconodecumpleaños.jpg'},
-    {'title': 'Bautizo', 'image': 'assets/fotodeiconos/iconodebautizo.png'},
+  @override
+  _CategoriasScreenState createState() => _CategoriasScreenState();
+}
+
+class _CategoriasScreenState extends State<CategoriasScreen> {
+  final List<Map<String, dynamic>> categorias = [
+    {
+      'nombre': 'Bodas',
+      'imagen': 'assets/bodas.jpg',
+      'descripcion': 'Pasteles elegantes para bodas.',
+    },
+    {
+      'nombre': 'XV Años',
+      'imagen': 'assets/xv.jpg',
+      'descripcion': 'Pasteles coloridos para XV años.',
+    },
+    {
+      'nombre': 'Cumpleaños',
+      'imagen': 'assets/cumple.jpg',
+      'descripcion': 'Diversión y sabor en cada bocado.',
+    },
   ];
 
-  final List<Map<String, String>> reposteroCategories = [
-    {'title': 'Repostero A', 'image': 'assets/fotodeiconos/iconodepasteleroA.jpg'},
-    {'title': 'Repostero B', 'image': 'assets/fotodeiconos/iconodepasteleroB.jpg'},
-    {'title': 'Repostero C', 'image': 'assets/fotodeiconos/iconodepasteleroC.jpg'},
-  ];
+  List<Map<String, dynamic>> _filteredCategorias = [];
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredCategorias = categorias;
+  }
+
+  void _filterCategorias(String query) {
+    final filtered = categorias.where((categoria) {
+      final nombreLower = categoria['nombre'].toLowerCase();
+      final descripcionLower = categoria['descripcion'].toLowerCase();
+      final queryLower = query.toLowerCase();
+      return nombreLower.contains(queryLower) || descripcionLower.contains(queryLower);
+    }).toList();
+
+    setState(() {
+      _searchQuery = query;
+      _filteredCategorias = filtered;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Selecciona la lista correcta según el tipo
-    List<Map<String, String>> categories = (type == 'pasteles') ? pastelCategories : reposteroCategories;
-
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: type == 'pasteles' ? 'Buscar pasteles...' : 'Buscar reposteros...',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
+        title: const Text('Categorías de Pasteles'),
         actions: [
-          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () async {
+              final searchQuery = await showSearch(
+                context: context,
+                delegate: CustomSearchDelegate(onQueryChanged: _filterCategorias),
+              );
+              if (searchQuery != null) {
+                _filterCategorias(searchQuery);
+              }
+            },
+          ),
         ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.pink),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.cake, color: Colors.white, size: 50),
-                  const SizedBox(height: 10),
-                  const Text('Menú', style: TextStyle(color: Colors.white, fontSize: 20)),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-              },
-            ),
-            ListTile(leading: const Icon(Icons.person), title: const Text('Mi Perfil'), onTap: () {}),
-            ListTile(leading: const Icon(Icons.help), title: const Text('Centro de Ayuda'), onTap: () {}),
-            ListTile(leading: const Icon(Icons.settings), title: const Text('Configuración'), onTap: () {}),
-            ListTile(leading: const Icon(Icons.logout), title: const Text('Cerrar Sesión'), onTap: () {}),
-          ],
-        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          itemCount: categories.length,
+        child: ListView.builder(
+          itemCount: _filteredCategorias.length,
           itemBuilder: (context, index) {
+            final categoria = _filteredCategorias[index];
             return Card(
               elevation: 4,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               child: Column(
                 children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                      child: Image.asset(
-                        categories[index]['image']!,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                    child: Image.asset(
+                      categoria['imagen'],
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      categories[index]['title']!,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    child: Column(
+                      children: [
+                        Text(
+                          categoria['nombre'],
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          categoria['descripcion'],
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: () => _showCategoriaDetalles(context, categoria['nombre']),
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white, backgroundColor: Colors.pink,
+                          ),
+                          child: const Text('Ver Pasteles'),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -144,56 +140,80 @@ class CatalogScreen extends StatelessWidget {
           },
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.pink,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
-          BottomNavigationBarItem(icon: Icon(Icons.create), label: 'Crear Pastel'),
-        ],
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/catalogo_pasteles');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/catalogo_reposteros');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/crear_pastel');
-              break;
-          }
-        },
+    );
+  }
+
+  void _showCategoriaDetalles(BuildContext context, String categoria) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CategoriaDetalleScreen(categoria: categoria),
       ),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class CategoriaDetalleScreen extends StatelessWidget {
+  final String categoria;
+  final List<Map<String, dynamic>> pasteles = [
+    {'nombre': 'Pastel de Boda Clásico', 'categoria': 'Bodas', 'imagen': 'assets/boda1.jpg'},
+    {'nombre': 'Pastel XV Rosa', 'categoria': 'XV Años', 'imagen': 'assets/xv1.jpg'},
+    {'nombre': 'Pastel Cumpleaños Arcoiris', 'categoria': 'Cumpleaños', 'imagen': 'assets/cumple1.jpg'},
+  ];
+
+  CategoriaDetalleScreen({super.key, required this.categoria});
 
   @override
   Widget build(BuildContext context) {
+    final pastelesFiltrados = pasteles.where((p) => p['categoria'] == categoria).toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('Inicio')),
-      body: const Center(child: Text('Bienvenido al HomeScreen')),
+      appBar: AppBar(title: Text('Pasteles de $categoria')),
+      body: pastelesFiltrados.isEmpty
+          ? const Center(child: Text('No hay pasteles disponibles.'))
+          : ListView.builder(
+              itemCount: pastelesFiltrados.length,
+              itemBuilder: (context, index) {
+                final pastel = pastelesFiltrados[index];
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      Image.asset(pastel['imagen'], height: 200, fit: BoxFit.cover),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          pastel['nombre'],
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 }
 
-class CreateCakeScreen extends StatelessWidget {
-  const CreateCakeScreen({super.key});
+class CustomSearchDelegate extends SearchDelegate<String?> {
+  final Function(String) onQueryChanged;
+  CustomSearchDelegate({required this.onQueryChanged});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Crear Pastel')),
-      body: const Center(child: Text('Aquí puedes crear un pastel personalizado')),
-    );
+  List<Widget> buildActions(BuildContext context) => [
+        IconButton(icon: const Icon(Icons.clear), onPressed: () => query = ''),
+      ];
+
+  @override
+  Widget buildLeading(BuildContext context) =>
+      IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => close(context, null));
+
+  @override
+  Widget buildResults(BuildContext context) => Container();
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    onQueryChanged(query);
+    return Container();
   }
 }

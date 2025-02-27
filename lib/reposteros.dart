@@ -16,19 +16,19 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.pink,
         fontFamily: 'Poppins',
       ),
-      home: const CatalogScreen(),
+      home: const ReposterosScreen(),
     );
   }
 }
 
-class CatalogScreen extends StatefulWidget {
-  const CatalogScreen({super.key});
+class ReposterosScreen extends StatefulWidget {
+  const ReposterosScreen({super.key});
 
   @override
-  _CatalogScreenState createState() => _CatalogScreenState();
+  _ReposterosScreenState createState() => _ReposterosScreenState();
 }
 
-class _CatalogScreenState extends State<CatalogScreen> {
+class _ReposterosScreenState extends State<ReposterosScreen> {
   final List<Map<String, dynamic>> reposteros = [
     {
       'nombre': 'Ana Martínez',
@@ -159,14 +159,6 @@ class _CatalogScreenState extends State<CatalogScreen> {
           },
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.pink,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Categorías'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
-        ],
-      ),
     );
   }
 
@@ -177,34 +169,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(repostero['nombre']),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                Text(repostero['descripcion']),
-                const SizedBox(height: 10),
-                Row(
-                  children: List.generate(5, (starIndex) {
-                    return Icon(
-                      starIndex < repostero['estrellas']
-                          ? Icons.star
-                          : Icons.star_border,
-                      color: Colors.orange,
-                    );
-                  }),
-                ),
-                const SizedBox(height: 10),
-                Text('Puntaje: ${repostero['puntaje']}'),
-                const SizedBox(height: 10),
-                const Text('Reseñas:'),
-                ...repostero['reseñas'].map<Widget>((resena) => Text('- $resena')).toList(),
-              ],
-            ),
-          ),
+          content: Text(repostero['descripcion']),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cerrar'),
             ),
           ],
@@ -239,9 +207,7 @@ class CustomSearchDelegate extends SearchDelegate<String?> {
   Widget? buildLeading(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, null);
-      },
+      onPressed: () => close(context, null),
     );
   }
 
