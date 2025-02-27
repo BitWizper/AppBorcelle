@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -16,19 +16,26 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.pink,
         fontFamily: 'Poppins',
       ),
-      home: CatalogScreen(),
+      home: const CatalogScreen(),
     );
   }
 }
 
-class CatalogScreen extends StatelessWidget {
+class CatalogScreen extends StatefulWidget {
+  const CatalogScreen({super.key});
+
+  @override
+  _CatalogScreenState createState() => _CatalogScreenState();
+}
+
+class _CatalogScreenState extends State<CatalogScreen> {
   final List<Map<String, dynamic>> reposteros = [
     {
       'nombre': 'Ana Martínez',
       'imagen': 'assets/repostera1.jpg',
       'descripcion': 'Especialista en pasteles fondant.',
       'estrellas': 5,
-      'reseñas': ['Excelentes pasteles!', 'Muy recomendable.'],
+      'reseñas': ['¡Excelentes pasteles!', '¡Muy recomendable!'],
       'puntaje': 4.9,
     },
     {
@@ -36,35 +43,68 @@ class CatalogScreen extends StatelessWidget {
       'imagen': 'assets/repostero3.jpg',
       'descripcion': 'Experto en repostería francesa.',
       'estrellas': 4,
-      'reseñas': ['Deliciosos croissants!'],
+      'reseñas': ['¡Deliciosos croissants!'],
       'puntaje': 4.5,
     },
   ];
 
-  CatalogScreen({super.key});
+  List<Map<String, dynamic>> _filteredReposteros = [];
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredReposteros = reposteros;
+  }
+
+  void _filterReposteros(String query) {
+    final filtered = reposteros.where((repostero) {
+      final nombreLower = repostero['nombre'].toLowerCase();
+      final descripcionLower = repostero['descripcion'].toLowerCase();
+      final queryLower = query.toLowerCase();
+
+      return nombreLower.contains(queryLower) || descripcionLower.contains(queryLower);
+    }).toList();
+
+    setState(() {
+      _searchQuery = query;
+      _filteredReposteros = filtered;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reposteros'),
+        title: const Text('Reposteros'),
         actions: [
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () async {
+              final searchQuery = await showSearch(
+                context: context,
+                delegate: CustomSearchDelegate(onQueryChanged: _filterReposteros),
+              );
+              if (searchQuery != null) {
+                _filterReposteros(searchQuery);
+              }
+            },
+          ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: ListView.builder(
-          itemCount: reposteros.length,
+          itemCount: _filteredReposteros.length,
           itemBuilder: (context, index) {
-            final repostero = reposteros[index];
+            final repostero = _filteredReposteros[index];
             return Card(
               elevation: 4,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               child: Column(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
                     child: Image.asset(
                       repostero['imagen'],
                       width: double.infinity,
@@ -78,14 +118,14 @@ class CatalogScreen extends StatelessWidget {
                       children: [
                         Text(
                           repostero['nombre'],
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           repostero['descripcion'],
-                          style: TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Row(
                           children: List.generate(5, (starIndex) {
                             return Icon(
@@ -97,18 +137,18 @@ class CatalogScreen extends StatelessWidget {
                             );
                           }),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           'Puntaje: ${repostero['puntaje']}',
-                          style: TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: () => _showProfilePopup(context, index),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white, backgroundColor: Colors.pink,
                           ),
-                          child: Text('Ver Perfil'),
+                          child: const Text('Ver Perfil'),
                         ),
                       ],
                     ),
@@ -121,8 +161,8 @@ class CatalogScreen extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.pink,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Categorías'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
@@ -131,7 +171,7 @@ class CatalogScreen extends StatelessWidget {
   }
 
   void _showProfilePopup(BuildContext context, int index) {
-    final repostero = reposteros[index];
+    final repostero = _filteredReposteros[index];
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -141,7 +181,7 @@ class CatalogScreen extends StatelessWidget {
             child: ListBody(
               children: [
                 Text(repostero['descripcion']),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: List.generate(5, (starIndex) {
                     return Icon(
@@ -152,10 +192,10 @@ class CatalogScreen extends StatelessWidget {
                     );
                   }),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text('Puntaje: ${repostero['puntaje']}'),
-                SizedBox(height: 10),
-                Text('Reseñas:'),
+                const SizedBox(height: 10),
+                const Text('Reseñas:'),
                 ...repostero['reseñas'].map<Widget>((resena) => Text('- $resena')).toList(),
               ],
             ),
@@ -165,11 +205,54 @@ class CatalogScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cerrar'),
+              child: const Text('Cerrar'),
             ),
           ],
         );
       },
     );
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate<String?> {
+  final Function(String) onQueryChanged;
+
+  CustomSearchDelegate({required this.onQueryChanged});
+
+  @override
+  String? get searchFieldLabel => 'Buscar reposteros...';
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+          onQueryChanged('');
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return const Center(child: Text('Resultados de la búsqueda'));
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    onQueryChanged(query);
+    return Container();
   }
 }

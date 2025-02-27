@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/home',
       routes: {
-        '/home': (context) => const HomeScreen(), // Asegurarse de que HomeScreen esté registrado
+        '/home': (context) => const HomeScreen(),
         '/catalogo_pasteles': (context) => CatalogScreen(type: 'pasteles'),
         '/catalogo_reposteros': (context) => CatalogScreen(type: 'reposteros'),
         '/crear_pastel': (context) => const CreateCakeScreen(),
@@ -28,7 +28,13 @@ class MyApp extends StatelessWidget {
 }
 
 class CatalogScreen extends StatelessWidget {
-  final List<Map<String, String>> categories = [
+  final String type;
+  
+  // Constructor
+  CatalogScreen({super.key, required this.type});
+
+  // Listas para los catálogos
+  final List<Map<String, String>> pastelCategories = [
     {'title': 'XV Años', 'image': 'assets/fotodeiconos/iconodequinceaños.jpg'},
     {'title': 'Boda', 'image': 'assets/fotodeiconos/iconodeboda.jpg'},
     {'title': 'Babyshower', 'image': 'assets/fotodeiconos/iconodebabyshower.png'},
@@ -36,10 +42,17 @@ class CatalogScreen extends StatelessWidget {
     {'title': 'Bautizo', 'image': 'assets/fotodeiconos/iconodebautizo.png'},
   ];
 
-  CatalogScreen({super.key, required String type});
+  final List<Map<String, String>> reposteroCategories = [
+    {'title': 'Repostero A', 'image': 'assets/fotodeiconos/iconodepasteleroA.jpg'},
+    {'title': 'Repostero B', 'image': 'assets/fotodeiconos/iconodepasteleroB.jpg'},
+    {'title': 'Repostero C', 'image': 'assets/fotodeiconos/iconodepasteleroC.jpg'},
+  ];
 
   @override
   Widget build(BuildContext context) {
+    // Selecciona la lista correcta según el tipo
+    List<Map<String, String>> categories = (type == 'pasteles') ? pastelCategories : reposteroCategories;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -47,7 +60,7 @@ class CatalogScreen extends StatelessWidget {
             Expanded(
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Buscar pasteles...',
+                  hintText: type == 'pasteles' ? 'Buscar pasteles...' : 'Buscar reposteros...',
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -162,7 +175,7 @@ class CatalogScreen extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key}); // Se hace const para evitar errores
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +187,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class CreateCakeScreen extends StatelessWidget {
-  const CreateCakeScreen({super.key}); // También se hace const
+  const CreateCakeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
