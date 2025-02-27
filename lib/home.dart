@@ -3,9 +3,8 @@ import 'perfil.dart';
 import 'pedidos.dart';
 import 'ayuda.dart';
 import 'configuracion.dart';
-import 'package:borcelle/categorias.dart';
-import 'package:borcelle/reposteros.dart';
-//import 'crear_pastel.dart'; // Se agregó la importación de la pantalla de creación de pasteles.
+import 'categorias.dart';
+import 'reposteros.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -17,29 +16,10 @@ void main() {
       '/pedidos': (context) => OrdersScreen(),
       '/ayuda': (context) => HelpScreen(),
       '/configuracion': (context) => SettingsScreen(),
-      '/catalogo_pasteles': (context) => CategoriasScreen(),
-      '/catalogo_reposteros': (context) => ReposterosScreen(),
-      //'/crear_pastel': (context) => CrearPastelScreen(),
+      '/categorias': (context) => CategoriasScreen(),
+      '/reposteros': (context) => ReposterosScreen(),
     },
   ));
-}
-
-class OrdersScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.pink[200],
-        title: Text("Mis Pedidos"),
-      ),
-      body: Center(
-        child: Text(
-          "Aquí aparecerán tus pedidos.",
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
-  }
 }
 
 class HomeScreen extends StatefulWidget {
@@ -59,22 +39,20 @@ class _HomeScreenState extends State<HomeScreen> {
         route = '/home';
         break;
       case 1:
-        route = '/catalogo_pasteles';
+        route = '/categorias';
         break;
       case 2:
-        route = '/catalogo_reposteros';
-        break;
-      case 3:
-        route = '/crear_pastel';
+        route = '/reposteros';
         break;
       default:
         return;
     }
-    Navigator.pushNamed(context, route);
 
     setState(() {
       _selectedIndex = index;
     });
+
+    Navigator.of(context, rootNavigator: true).pushNamed(route);
   }
 
   @override
@@ -106,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
               if (value == 'Cerrar Sesión') {
                 _mostrarDialogoCerrarSesion(context);
               } else {
-                Navigator.pushNamed(context, value);
+                Navigator.of(context, rootNavigator: true).pushNamed(value);
               }
             },
             itemBuilder: (BuildContext context) {
@@ -125,65 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             SizedBox(height: 20),
-            Text(
-              "Pasteles Destacados",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.8,
-                ),
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  List<Map<String, String>> cakes = [
-                    {"image": "assets/fotodepasteles/fotopastel1.jpg", "name": "Pastel de Fresas", "price": "250 MXN"},
-                    {"image": "assets/fotodepasteles/fotopastel2.jpeg", "name": "Pastel de Chocolate", "price": "220 MXN"},
-                    {"image": "assets/fotodepasteles/fotopastel3.jpg", "name": "Pastel Arcoíris", "price": "270 MXN"},
-                    {"image": "assets/fotodepasteles/fotopastel4.jpg", "name": "Pastel Red Velvet", "price": "300 MXN"},
-                  ];
-
-                  return Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                            child: Image.asset(
-                              cakes[index]["image"]!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                cakes[index]["name"]!,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(cakes[index]["price"]!),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
+            _buildOfertasEspeciales(),
+            SizedBox(height: 20),
+            _buildDestacados(),
           ],
         ),
       ),
@@ -198,6 +120,90 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         selectedItemColor: Colors.pink[300],
         unselectedItemColor: Colors.grey,
+      ),
+    );
+  }
+
+  Widget _buildOfertasEspeciales() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Ofertas Especiales",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Image.asset("assets/banners/banner1.jpg", fit: BoxFit.cover),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDestacados() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Destacados",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 0.8,
+            ),
+            itemCount: 4,
+            itemBuilder: (context, index) {
+              List<Map<String, String>> cakes = [
+                {"image": "assets/fotodepasteles/fotopastel1.jpg", "name": "Pastel de Fresas", "price": "250 MXN"},
+                {"image": "assets/fotodepasteles/fotopastel5.jpg", "name": "Pastel de Chocolate", "price": "220 MXN"},
+                {"image": "assets/fotodepasteles/fotopastel3.jpg", "name": "Pastel Arcoíris", "price": "270 MXN"},
+                {"image": "assets/fotodepasteles/fotopastel4.jpg", "name": "Pastel Red Velvet", "price": "300 MXN"},
+              ];
+
+              return Card(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                        child: Image.asset(
+                          cakes[index]["image"]!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            cakes[index]["name"]!,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(cakes[index]["price"]!),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
