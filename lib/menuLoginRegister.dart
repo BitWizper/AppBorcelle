@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'home.dart';
 import 'repostero_home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -135,19 +136,23 @@ class _FormScreenState extends State<FormScreen> {
         ? json.encode({"userData": userData, "reposteroData": reposteroData})
         : json.encode({"userData": userData});
 
-    final response = await http.post(
-      Uri.parse(widget.role == "Repostero"
-          ? "http://localhost:3000/api/repostero/creareposteros"
-          : "http://localhost:3000/api/usuario/crearusuarios"),
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(widget.role == "Repostero"
+            ? "http://localhost:3000/api/repostero/creareposteros"
+            : "http://localhost:3000/api/usuario/crearusuarios"),
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
 
-    final data = json.decode(response.body);
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Registro exitoso")));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data["error"] ?? "Error en el registro")));
+      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Registro exitoso")));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data["error"] ?? "Error en el registro")));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -160,32 +165,38 @@ class _FormScreenState extends State<FormScreen> {
       "tipo_usuario": widget.role,
     };
 
-    final response = await http.post(
-      Uri.parse("http://localhost:3000/api/usuario/loginuser"),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(loginData),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse("http://localhost:3000/api/usuario/loginuser"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(loginData),
+      );
 
-    final data = json.decode(response.body);
+      final data = json.decode(response.body);
 
-    if (response.statusCode == 200 && data["token"] != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Inicio de sesión exitoso")));
+      if (response.statusCode == 200 && data["token"] != null) {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('token', data["token"]);
 
-      // Redirigir a la pantalla correspondiente
-      if (widget.role == "Cliente") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()), // Cliente
-        );
-      } else if (widget.role == "Repostero") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ReposteroHomeScreen()), // Repostero
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Inicio de sesión exitoso")));
+
+        // Redirigir a la pantalla correspondiente
+        if (widget.role == "Cliente") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()), // Cliente
+          );
+        } else if (widget.role == "Repostero") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ReposteroHomeScreen()), // Repostero
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data["error"] ?? "Error en el inicio de sesión")));
       }
-      // Guardar token si es necesario
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data["error"] ?? "Error en el inicio de sesión")));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -195,40 +206,78 @@ class _FormScreenState extends State<FormScreen> {
       appBar: AppBar(title: Text("${widget.isLogin ? "Iniciar Sesión" : "Registro"} - ${widget.role}")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildTextField("Correo", _correoController),
-              _buildTextField("Contraseña", _contrasenaController, obscureText: true),
-              if (!widget.isLogin) ...[
-                _buildTextField("Nombre", _nombreController),
-                _buildTextField("Teléfono", _telefonoController),
-                _buildTextField("Dirección", _direccionController),
-                if (widget.role == "Repostero") ...[
-                  _buildTextField("Nombre del Negocio", _negocioController),
-                  _buildTextField("Ubicación", _ubicacionController),
-                  _buildTextField("Especialidades", _especialidadesController),
-                ],
+        child: ListView(
+          children: [
+            _buildTextField("Correo", _correoController, validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese un correo';
+              }
+              return null;
+            }),
+            _buildTextField("Contraseña", _contrasenaController, obscureText: true, validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una contraseña';
+              }
+              return null;
+            }),
+            if (!widget.isLogin) ...[
+              _buildTextField("Nombre", _nombreController, validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese su nombre';
+                }
+                return null;
+              }),
+              _buildTextField("Teléfono", _telefonoController, validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese su teléfono';
+                }
+                return null;
+              }),
+              _buildTextField("Dirección", _direccionController, validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese su dirección';
+                }
+                return null;
+              }),
+              if (widget.role == "Repostero") ...[
+                _buildTextField("Nombre del Negocio", _negocioController, validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese el nombre del negocio';
+                  }
+                  return null;
+                }),
+                _buildTextField("Ubicación", _ubicacionController, validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese la ubicación';
+                  }
+                  return null;
+                }),
+                _buildTextField("Especialidades", _especialidadesController, validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese las especialidades';
+                  }
+                  return null;
+                }),
               ],
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: widget.isLogin ? _loginUser : _registerUser,
-                child: Text(widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta"),
-              ),
             ],
-          ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: widget.isLogin ? _loginUser : _registerUser,
+              child: Text(widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta"),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
+  Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false, String? Function(String?)? validator}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        validator: validator,
         decoration: InputDecoration(labelText: label),
       ),
     );

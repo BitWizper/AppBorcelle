@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart'; // Asegúrate de que la ruta es correcta
-// Asegúrate de que la ruta es correcta
-import 'package:borcelle/home.dart';
+import 'package:flutter/material.dart';
+import 'package:borcelle/home.dart'; // Asegúrate de importar el archivo de Home
+import 'package:borcelle/menuLoginRegister.dart'; // Asegúrate de importar este archivo para la pantalla de login/register
+// Importa otros archivos de pantalla como perfil, pedidos, etc.
 
 void main() {
   runApp(SelectRegisterApp());
@@ -13,8 +14,12 @@ class SelectRegisterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(), // Aquí está la pantalla principal
+      initialRoute: '/home', // Ruta inicial
+      routes: {
+        '/home': (context) => HomeScreen(), // Ruta para la pantalla de inicio
+        '/menuLoginRegister': (context) => AuthScreen(), // Ruta para la pantalla de login/register
+        // Agrega aquí las demás rutas para otras pantallas
+      },
     );
-    
   }
 }

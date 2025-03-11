@@ -17,9 +17,9 @@ void main() {
       '/pedidos': (context) => OrdersScreen(),
       '/ayuda': (context) => HelpScreen(),
       '/configuracion': (context) => SettingsScreen(),
-      '/categorias': (context) => CategoriasScreen(),   // las categorias de los pasteles 
-      '/reposteros': (context) => ReposterosScreen(),   // donde esta el catalogo de reposteros 
-      '/menuLoginRegister': (context) => AuthScreen(), // para ir a la utentificacion
+      '/categorias': (context) => CategoriasScreen(),
+      '/reposteros': (context) => ReposterosScreen(),
+      '/menuLoginRegister': (context) => AuthScreen(),
     },
   ));
 }
@@ -55,13 +55,10 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
     });
 
-    Navigator.of(context, rootNavigator: true).pushNamed(route);
+    Navigator.pushNamed(context, route);
   }
 
   Future<void> cerrarSesion() async {
-    // Lógica para cerrar sesión, por ejemplo con Firebase:
-    // await FirebaseAuth.instance.signOut();
-
     setState(() {
       _isAuthenticated = false; // Cambiar estado al cerrar sesión
     });
@@ -93,11 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          if (!_isAuthenticated) // Solo mostrar el botón si no está autenticado
+          if (!_isAuthenticated) 
             IconButton(
               icon: Icon(Icons.login),
               onPressed: () {
-                Navigator.pushNamed(context, '/menuLoginRegister'); // Redirigir a la pantalla de login
+                Navigator.pushReplacementNamed(context, '/menuLoginRegister');
               },
             ),
           PopupMenuButton<String>(
@@ -105,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
               if (value == 'Cerrar Sesión') {
                 _mostrarDialogoCerrarSesion(context);
               } else {
-                Navigator.of(context, rootNavigator: true).pushNamed(value);
+                Navigator.pushNamed(context, value);
               }
             },
             itemBuilder: (BuildContext context) {
@@ -113,46 +110,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 PopupMenuItem(
                   value: '/perfil',
                   child: Text('Mi Perfil'),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/perfil');
-                  },
                 ),
                 PopupMenuItem(
                   value: '/pedidos',
                   child: Text('Mis Pedidos'),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/pedidos');
-                  },
                 ),
                 PopupMenuItem(
                   value: '/ayuda',
                   child: Text('Centro de Ayuda'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HelpScreen()),
-                    );
-                  },
                 ),
                 PopupMenuItem(
                   value: '/configuracion',
                   child: Text('Configuración'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SettingsScreen()),
-                    );
-                  },
                 ),
                 PopupMenuItem(
                   value: 'Cerrar Sesión',
                   child: Text('Cerrar Sesión'),
                   onTap: () async {
                     await cerrarSesion();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                    );
+                    Navigator.pushReplacementNamed(context, '/home');
                   },
                 ),
               ];
@@ -177,10 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
-          BottomNavigationBarItem(icon: Icon(Icons.create), label: 'Crear Pastel'),
         ],
         selectedItemColor: Colors.pink[300],
-        unselectedItemColor: Colors.grey,
       ),
     );
   }
@@ -191,10 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Ofertas Especiales",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
+          Text("Ofertas Especiales", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           Image.asset("assets/banners/banner1.jpg", fit: BoxFit.cover),
         ],
@@ -208,10 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Destacados",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
+          Text("Destacados", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           GridView.builder(
             shrinkWrap: true,
@@ -239,11 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                        child: Image.asset(
-                          cakes[index]["image"]!,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
+                        child: Image.asset(cakes[index]["image"]!, fit: BoxFit.cover, width: double.infinity),
                       ),
                     ),
                     Padding(
@@ -251,10 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            cakes[index]["name"]!,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                          Text(cakes[index]["name"]!, style: TextStyle(fontWeight: FontWeight.bold)),
                           Text(cakes[index]["price"]!),
                         ],
                       ),
@@ -276,14 +237,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text('Cerrar Sesión'),
         content: Text('¿Estás seguro que deseas cerrar sesión?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancelar'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar')),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+              Navigator.pushReplacementNamed(context, '/home');
             },
             child: Text('Aceptar'),
           ),
