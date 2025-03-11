@@ -55,6 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.of(context, rootNavigator: true).pushNamed(route);
   }
 
+  Future<void> cerrarSesion() async {
+    // Aquí podrías agregar lógica para cerrar sesión, por ejemplo, si usas Firebase:
+    // await FirebaseAuth.instance.signOut();
+
+    print("Sesión cerrada correctamente");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,11 +96,54 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             itemBuilder: (BuildContext context) {
               return [
-                PopupMenuItem(value: '/perfil', child: Text('Mi Perfil')),
-                PopupMenuItem(value: '/pedidos', child: Text('Mis Pedidos')),
-                PopupMenuItem(value: '/ayuda', child: Text('Centro de Ayuda')),
-                PopupMenuItem(value: '/configuracion', child: Text('Configuración')),
-                PopupMenuItem(value: 'Cerrar Sesión', child: Text('Cerrar Sesión')),
+                PopupMenuItem(
+                  value: '/perfil',
+                  child: Text('Mi Perfil'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/perfil');
+                  },
+                ),
+                PopupMenuItem(
+                  value: '/pedidos',
+                  child: Text('Mis Pedidos'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/pedidos');
+                  },
+                ),
+                PopupMenuItem(
+                  value: '/ayuda',
+                  child: Text('Centro de Ayuda'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HelpScreen()),
+                    );
+                  },
+                ),
+                PopupMenuItem(
+                  value: '/configuracion',
+                  child: Text('Configuración'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SettingsScreen()),
+                    );
+                  },
+                ),
+                PopupMenuItem(
+                  value: 'Cerrar Sesión',
+                  child: Text('Cerrar Sesión'),
+                  onTap: () async {
+                    // Llama a la función para cerrar sesión
+                    await cerrarSesion();
+
+                    // Redirige a la pantalla de inicio
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  },
+                ),
               ];
             },
           ),

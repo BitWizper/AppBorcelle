@@ -9,6 +9,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,6 +24,8 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthScreen extends StatelessWidget {
+  const AuthScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +59,7 @@ class AuthScreen extends StatelessWidget {
 
 class RoleSelectionScreen extends StatelessWidget {
   final bool isLogin;
-  RoleSelectionScreen({required this.isLogin});
+  const RoleSelectionScreen({super.key, required this.isLogin});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +94,7 @@ class RoleSelectionScreen extends StatelessWidget {
 class FormScreen extends StatefulWidget {
   final String role;
   final bool isLogin;
-  FormScreen({required this.role, required this.isLogin});
+  const FormScreen({super.key, required this.role, required this.isLogin});
 
   @override
   _FormScreenState createState() => _FormScreenState();
