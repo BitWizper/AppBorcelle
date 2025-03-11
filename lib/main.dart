@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart'; // Asegúrate de que la ruta es correcta
-import 'package:borcelle/menuLoginRegister.dart'; // Asegúrate de que la ruta es correcta
+// Asegúrate de que la ruta es correcta
+import 'package:borcelle/home.dart';
 
 void main() {
   runApp(SelectRegisterApp());
@@ -12,7 +13,8 @@ class SelectRegisterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthScreen(), // Aquí está la pantalla principal
+      home: HomeScreen(), // Aquí está la pantalla principal
     );
+    
   }
 }
