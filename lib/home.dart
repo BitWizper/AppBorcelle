@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          if (!_isAuthenticated) 
+          if (!_isAuthenticated) // Muestra el botón solo si no está autenticado
             IconButton(
               icon: Icon(Icons.login),
               onPressed: () {

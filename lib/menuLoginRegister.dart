@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPreferences
+
 import 'home.dart';
 import 'repostero_home.dart';
 
@@ -23,8 +25,29 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
+
+  @override
+  _AuthScreenState createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  // Verifica el estado del login almacenado en SharedPreferences
+  _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +55,7 @@ class AuthScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/fotodepasteles/fotopastel1.jpg"), // Reemplazar con la imagen correcta
+            image: AssetImage("assets/fotodepasteles/pastelprimero.jpg"),
             fit: BoxFit.cover,
           ),
         ),
@@ -40,21 +63,25 @@ class AuthScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Borcelle", 
-                  style: TextStyle(
-                    fontSize: 40, 
-                    fontWeight: FontWeight.bold, 
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 10.0,
-                        color: Colors.black54,
-                        offset: Offset(3, 3),
-                      )
-                    ],
-                  )),
+              Text(
+                "Borcelle",
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 10.0,
+                      color: Colors.black54,
+                      offset: Offset(3, 3),
+                    )
+                  ],
+                ),
+              ),
               SizedBox(height: 30),
-              _buildButton(context, "Iniciar Sesión", true),
+              // Solo muestra el botón de "Iniciar Sesión" si el usuario no está logueado
+              if (!_isLoggedIn)
+                _buildButton(context, "Iniciar Sesión", true),
               SizedBox(height: 15),
               _buildButton(context, "Registrarse", false),
             ],
@@ -67,11 +94,20 @@ class AuthScreen extends StatelessWidget {
   Widget _buildButton(BuildContext context, String text, bool isLogin) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.orangeAccent,
+        backgroundColor: Color(0xFFA65168), // Rosa oscuro elegante
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(25),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+        padding: EdgeInsets.symmetric(horizontal: 45, vertical: 18),
+        shadowColor: Colors.black.withOpacity(0.4),
+        elevation: 8,
+      ).copyWith(
+        overlayColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return Color(0xFF731D3C); // Cambia al presionar
+          }
+          return null;
+        }),
       ),
       onPressed: () {
         Navigator.push(
@@ -79,16 +115,18 @@ class AuthScreen extends StatelessWidget {
           MaterialPageRoute(builder: (context) => RoleSelectionScreen(isLogin: isLogin)),
         );
       },
-      child: Text(text, 
-          style: TextStyle(
-            fontSize: 18, 
-            color: Colors.white, 
-            fontWeight: FontWeight.bold
-          )),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 19,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          letterSpacing: 1.2,
+        ),
+      ),
     );
   }
 }
-
 
 class RoleSelectionScreen extends StatelessWidget {
   final bool isLogin;
@@ -113,13 +151,32 @@ class RoleSelectionScreen extends StatelessWidget {
 
   Widget _buildRoleButton(BuildContext context, String text, String role) {
     return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color(0xFFA65168),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 45, vertical: 18),
+        shadowColor: Colors.black.withOpacity(0.4),
+        elevation: 8,
+      ).copyWith(
+        overlayColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return Color(0xFF731D3C);
+          }
+          return null;
+        }),
+      ),
       onPressed: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => FormScreen(role: role, isLogin: isLogin)),
         );
       },
-      child: Text(text, style: TextStyle(fontSize: 18)),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }
@@ -135,54 +192,8 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _contrasenaController = TextEditingController();
-  final TextEditingController _telefonoController = TextEditingController();
-  final TextEditingController _direccionController = TextEditingController();
-  final TextEditingController _negocioController = TextEditingController();
-  final TextEditingController _ubicacionController = TextEditingController();
-  final TextEditingController _especialidadesController = TextEditingController();
-
-  Future<void> _registerUser() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    final userData = {
-      "nombre": _nombreController.text,
-      "correo": _correoController.text,
-      "contrasena": _contrasenaController.text,
-      "direccion": _direccionController.text,
-      "telefono": _telefonoController.text,
-      "tipo_usuario": widget.role,
-    };
-
-    final reposteroData = widget.role == "Repostero"
-        ? {
-            "NombreNegocio": _negocioController.text,
-            "Ubicacion": _ubicacionController.text,
-            "Especialidades": _especialidadesController.text,
-          }
-        : null;
-
-    final body = widget.role == "Repostero"
-        ? json.encode({"userData": userData, "reposteroData": reposteroData})
-        : json.encode({"userData": userData});
-
-    final response = await http.post(
-      Uri.parse(widget.role == "Repostero"
-          ? "http://localhost:3000/api/repostero/creareposteros"
-          : "http://localhost:3000/api/usuario/crearusuarios"),
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
-
-    final data = json.decode(response.body);
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Registro exitoso")));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data["error"] ?? "Error en el registro")));
-    }
-  }
 
   Future<void> _loginUser() async {
     if (!_formKey.currentState!.validate()) return;
@@ -204,19 +215,14 @@ class _FormScreenState extends State<FormScreen> {
     if (response.statusCode == 200 && data["token"] != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Inicio de sesión exitoso")));
 
-      // Redirigir a la pantalla correspondiente
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);  // Guarda el estado de sesión
+
       if (widget.role == "Cliente") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()), // Cliente
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
       } else if (widget.role == "Repostero") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ReposteroHomeScreen()), // Repostero
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ReposteroHomeScreen()));
       }
-      // Guardar token si es necesario
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data["error"] ?? "Error en el inicio de sesión")));
     }
@@ -234,20 +240,29 @@ class _FormScreenState extends State<FormScreen> {
             children: [
               _buildTextField("Correo", _correoController),
               _buildTextField("Contraseña", _contrasenaController, obscureText: true),
-              if (!widget.isLogin) ...[
-                _buildTextField("Nombre", _nombreController),
-                _buildTextField("Teléfono", _telefonoController),
-                _buildTextField("Dirección", _direccionController),
-                if (widget.role == "Repostero") ...[
-                  _buildTextField("Nombre del Negocio", _negocioController),
-                  _buildTextField("Ubicación", _ubicacionController),
-                  _buildTextField("Especialidades", _especialidadesController),
-                ],
-              ],
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: widget.isLogin ? _loginUser : _registerUser,
-                child: Text(widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFA65168),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 45, vertical: 18),
+                  shadowColor: Colors.black.withOpacity(0.4),
+                  elevation: 8,
+                ).copyWith(
+                  overlayColor: MaterialStateProperty.resolveWith((states) {
+                    if (states.contains(MaterialState.pressed)) {
+                      return Color(0xFF731D3C);
+                    }
+                    return null;
+                  }),
+                ),
+                onPressed: widget.isLogin ? _loginUser : null, // Aquí puedes agregar _registerUser si es necesario
+                child: Text(
+                  widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta",
+                  style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
