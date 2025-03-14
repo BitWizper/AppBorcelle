@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Configuración',
       theme: ThemeData(
         primarySwatch: Colors.pink,
-        fontFamily: 'Nunito',
+        fontFamily: 'Lora', // Cambié la tipografía a Lora
       ),
       home: SettingsScreen(),
     );
@@ -46,6 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -58,7 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () => Navigator.of(context).pop(),
                 child: Icon(
                   Icons.arrow_back,
-                  color: Colors.pink[300],
+                  color: Color(0xFF8C1B2F), // Vino oscuro
                   size: 30,
                 ),
               ),
@@ -70,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.pink[300],
+                    color: Color(0xFF8C1B2F), // Vino oscuro
                   ),
                 ),
               ),
@@ -157,7 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Checkbox(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.pink[300],
+            activeColor: Color(0xFF8C1B2F), // Vino oscuro
           ),
           Text(label),
         ],
@@ -175,7 +176,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           print('Acción: $label');
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.pink[300],
+          backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -195,7 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Colors.pink[300],
+          color: Color(0xFF8C1B2F), // Vino oscuro
         ),
       ),
     );

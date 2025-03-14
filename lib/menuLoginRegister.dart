@@ -63,6 +63,13 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Logo circular de Borcelle
+              CircleAvatar(
+                radius: 75,  // Ajusta el tamaño del círculo
+                backgroundImage: AssetImage("assets/fotodepasteles/iconoborcelle.jpg"),  // Ruta del logo
+              ),
+              SizedBox(height: 30),
+              // Texto del título
               Text(
                 "Borcelle",
                 style: TextStyle(
@@ -90,6 +97,7 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
+}
 
   Widget _buildButton(BuildContext context, String text, bool isLogin) {
     return ElevatedButton(
@@ -126,7 +134,7 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-}
+
 
 class RoleSelectionScreen extends StatelessWidget {
   final bool isLogin;

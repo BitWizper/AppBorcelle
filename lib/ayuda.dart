@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Preguntas Frecuentes - BORCELLE',
       theme: ThemeData(
         primarySwatch: Colors.pink,
-        fontFamily: 'Nunito',
+        fontFamily: 'Lora', // Cambié la tipografía a Lora
       ),
       home: HelpScreen(),
     );
@@ -28,8 +28,20 @@ class HelpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Preguntas Frecuentes - BORCELLE'),
-        backgroundColor: Colors.pink[300],
+        title: Row(
+          children: [
+            // Logo de BORCELLE
+            Image.asset(
+              'assets/fotodepasteles/iconoborcelle.jpg', // Ruta del logo en tu proyecto
+              height: 40, // Ajusta el tamaño del logo según sea necesario
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Preguntas Frecuentes - BORCELLE',
+            ),
+          ],
+        ),
+        backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -63,7 +75,7 @@ class HelpScreen extends StatelessWidget {
         style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: Colors.pink[300],
+          color: Color(0xFF8C1B2F), // Vino oscuro
         ),
       ),
     );
@@ -80,7 +92,7 @@ class HelpScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.pink[300],
+              color: Color(0xFF8C1B2F), // Vino oscuro
             ),
           ),
           SizedBox(height: 8),
@@ -107,7 +119,7 @@ class HelpScreen extends StatelessWidget {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.pink[300],
+          backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -130,7 +142,7 @@ class RegisterScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Registro'),
-        backgroundColor: Colors.pink[300],
+        backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
       ),
       body: Center(
         child: Text('Pantalla de Registro'),
