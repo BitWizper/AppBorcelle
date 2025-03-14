@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; // Importa la librería de Google Fonts
 import 'perfil.dart';
 import 'pedidos.dart';
 import 'ayuda.dart';
@@ -6,6 +7,7 @@ import 'configuracion.dart';
 import 'categorias.dart';
 import 'reposteros.dart';
 import 'menuLoginRegister.dart'; // Asegúrate de importar este archivo
+import 'package:carousel_slider/carousel_slider.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -70,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.pink[200],
+        backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
         title: Row(
           children: [
             Expanded(
@@ -78,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: InputDecoration(
                   hintText: 'Buscar pasteles...',
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Color(0xFFF2F0E4), // Beige claro
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -96,43 +98,42 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/menuLoginRegister');
               },
+              color: Color(0xFFF2F0E4), // Color claro (Beige claro) para los íconos
             ),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'Cerrar Sesión') {
-                _mostrarDialogoCerrarSesion(context);
-              } else {
-                Navigator.pushNamed(context, value);
-              }
-            },
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                  value: '/perfil',
-                  child: Text('Mi Perfil'),
-                ),
-                PopupMenuItem(
-                  value: '/pedidos',
-                  child: Text('Mis Pedidos'),
-                ),
-                PopupMenuItem(
-                  value: '/ayuda',
-                  child: Text('Centro de Ayuda'),
-                ),
-                PopupMenuItem(
-                  value: '/configuracion',
-                  child: Text('Configuración'),
-                ),
-                PopupMenuItem(
-                  value: 'Cerrar Sesión',
-                  child: Text('Cerrar Sesión'),
-                  onTap: () async {
-                    await cerrarSesion();
-                    Navigator.pushReplacementNamed(context, '/home');
-                  },
-                ),
-              ];
-            },
+         PopupMenuButton<String>(
+  onSelected: (value) {
+    if (value == 'Cerrar Sesión') {
+      _mostrarDialogoCerrarSesion(context);
+    } else {
+      print('Navegando a: $value');
+      Navigator.pushReplacementNamed(context, value);
+    }
+  },
+  itemBuilder: (BuildContext context) {
+    return [
+      PopupMenuItem(
+        value: '/perfil',  // Ruta a la pantalla de perfil
+        child: Text('Mi Perfil'),
+      ),
+      PopupMenuItem(
+        value: '/pedidos', // Ruta a la pantalla de pedidos
+        child: Text('Mis Pedidos'),
+      ),
+      PopupMenuItem(
+        value: '/ayuda',  // Ruta a la pantalla de ayuda
+        child: Text('Centro de Ayuda'),
+      ),
+      PopupMenuItem(
+        value: '/configuracion', // Ruta a la pantalla de configuración
+        child: Text('Configuración'),
+      ),
+      PopupMenuItem(
+        value: 'Cerrar Sesión',  // Opción para cerrar sesión
+        child: Text('Cerrar Sesión'),
+      ),
+    ];
+  },
+  icon: Icon(Icons.more_vert, color: Color(0xFFF2F0E4)), // Ícono claro para el menú
           ),
         ],
       ),
@@ -154,20 +155,49 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
         ],
-        selectedItemColor: Colors.pink[300],
+        selectedItemColor: Color(0xFFF2F0E4), // Íconos seleccionados en color claro (Beige claro)
+        unselectedItemColor: Color(0xFF731D3C), // Borgoña para íconos no seleccionados
       ),
     );
   }
 
   Widget _buildOfertasEspeciales() {
+    List<String> bannerImages = [
+      "assets/fotodepasteles/banner1borcellitas.jpg",
+      "assets/fotodepasteles/banner2borcellitas.jpg",
+    ];
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Ofertas Especiales", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text(
+            "Ofertas Especiales",
+            style: GoogleFonts.lora(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF8C1B2F),
+            ), // Fuente Lora
+          ),
           SizedBox(height: 10),
-          Image.asset("assets/banners/banner1.jpg", fit: BoxFit.cover),
+          CarouselSlider(
+            options: CarouselOptions(
+              height: 200, // Ajusta la altura según necesites
+              autoPlay: true,
+              autoPlayInterval: Duration(seconds: 3),
+              autoPlayAnimationDuration: Duration(milliseconds: 800),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enlargeCenterPage: true,
+              viewportFraction: 1, // Ocupa todo el ancho
+            ),
+            items: bannerImages.map((imagePath) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity),
+              );
+            }).toList(),
+          ),
         ],
       ),
     );
@@ -179,7 +209,14 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Destacados", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text(
+            "Destacados",
+            style: GoogleFonts.lora(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF8C1B2F),
+            ), // Fuente Lora
+          ),
           SizedBox(height: 10),
           GridView.builder(
             shrinkWrap: true,
@@ -200,7 +237,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ];
 
               return Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  side: BorderSide(color: Color(0xFF731D3C), width: 2), // Borgoña
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -215,8 +255,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(cakes[index]["name"]!, style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text(cakes[index]["price"]!),
+                          Text(
+                            cakes[index]["name"]!,
+                            style: GoogleFonts.lora(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF8C1B2F),
+                            ), // Fuente Lora
+                          ),
+                          Text(
+                            cakes[index]["price"]!,
+                            style: TextStyle(color: Color(0xFF731D3C)), // Borgoña
+                          ),
                         ],
                       ),
                     ),
@@ -234,19 +283,19 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Cerrar Sesión'),
-        content: Text('¿Estás seguro que deseas cerrar sesión?'),
+        title: Text('Cerrar Sesión', style: TextStyle(color: Color(0xFF8C1B2F))), // Vino oscuro
+        content: Text('¿Estás seguro que deseas cerrar sesión?', style: TextStyle(color: Color(0xFF731D3C))), // Borgoña
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar')),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar', style: TextStyle(color: Color(0xFF731D3C)))), // Borgoña
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.pushReplacementNamed(context, '/home');
             },
-            child: Text('Aceptar'),
+            child: Text('Aceptar', style: TextStyle(color: Color(0xFF8C1B2F))), // Vino oscuro
           ),
         ],
       ),
     );
   }
-}
+ }

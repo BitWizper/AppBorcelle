@@ -102,8 +102,8 @@ class _AuthScreenState extends State<AuthScreen> {
         shadowColor: Colors.black.withOpacity(0.4),
         elevation: 8,
       ).copyWith(
-        overlayColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.pressed)) {
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.pressed)) {
             return Color(0xFF731D3C); // Cambia al presionar
           }
           return null;
@@ -160,8 +160,8 @@ class RoleSelectionScreen extends StatelessWidget {
         shadowColor: Colors.black.withOpacity(0.4),
         elevation: 8,
       ).copyWith(
-        overlayColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.pressed)) {
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.pressed)) {
             return Color(0xFF731D3C);
           }
           return null;
@@ -251,8 +251,8 @@ class _FormScreenState extends State<FormScreen> {
                   shadowColor: Colors.black.withOpacity(0.4),
                   elevation: 8,
                 ).copyWith(
-                  overlayColor: MaterialStateProperty.resolveWith((states) {
-                    if (states.contains(MaterialState.pressed)) {
+                  overlayColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.pressed)) {
                       return Color(0xFF731D3C);
                     }
                     return null;
