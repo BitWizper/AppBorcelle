@@ -36,6 +36,41 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _isAuthenticated = false; // Variable de autenticación
+  final TextEditingController _searchController = TextEditingController(); // Controlador para el campo de búsqueda
+  final List<String> _pasteles = [
+    "Pastel de Fresas",
+    "Pastel de Chocolate",
+    "Pastel Arcoíris",
+    "Pastel Red Velvet",
+  ]; // Lista de ejemplo de pasteles
+  List<String> _searchResults = []; // Lista para almacenar los resultados de la búsqueda
+
+  @override
+  void initState() {
+    super.initState();
+    _searchResults = _pasteles; // Inicialmente muestra todos los pasteles
+    _searchController.addListener(_onSearchChanged); // Escucha los cambios en el campo de búsqueda
+  }
+
+  void _onSearchChanged() {
+  String query = _searchController.text.toLowerCase();
+  setState(() {
+    _searchResults = _pasteles
+        .where((pastel) => pastel.toLowerCase().contains(query))
+        .toList();
+
+    if (_searchResults.isEmpty && query.isNotEmpty) {
+      _searchResults = ["No encontrado"];
+    }
+  });
+}
+
+
+  @override
+  void dispose() {
+    _searchController.dispose(); // Libera el controlador al salir de la pantalla
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     String route;
@@ -77,8 +112,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Expanded(
               child: TextField(
+                controller: _searchController, // Asocia el controlador con el campo de texto
                 decoration: InputDecoration(
-                  hintText: 'Buscar pasteles...',
+                  hintText: 'Buscar pasteles...', // Texto que aparece cuando no se ha ingresado nada
                   filled: true,
                   fillColor: Color(0xFFF2F0E4), // Beige claro
                   border: OutlineInputBorder(
@@ -144,6 +180,26 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildOfertasEspeciales(),
             SizedBox(height: 20),
             _buildDestacados(),
+            SizedBox(height: 20),
+            // Aquí se muestra el resultado de búsqueda
+            ListView.builder(
+  itemCount: _searchResults.length,
+  shrinkWrap: true,
+  physics: NeverScrollableScrollPhysics(),
+  itemBuilder: (context, index) {
+    return ListTile(
+      title: Text(
+        _searchResults[index],
+        style: TextStyle(
+          color: _searchResults[index] == "No encontrado" ? Colors.red : Colors.black,
+          fontWeight: _searchResults[index] == "No encontrado" ? FontWeight.bold : FontWeight.normal,
+        ),
+        textAlign: _searchResults[index] == "No encontrado" ? TextAlign.center : TextAlign.start,
+      ),
+    );
+  },
+),
+
           ],
         ),
       ),
@@ -237,37 +293,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ];
 
               return Card(
+                elevation: 5,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  side: BorderSide(color: Color(0xFF731D3C), width: 2), // Borgoña
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                        child: Image.asset(cakes[index]["image"]!, fit: BoxFit.cover, width: double.infinity),
-                      ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(cakes[index]["image"]!, fit: BoxFit.cover, height: 120, width: double.infinity),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            cakes[index]["name"]!,
-                            style: GoogleFonts.lora(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF8C1B2F),
-                            ), // Fuente Lora
-                          ),
-                          Text(
-                            cakes[index]["price"]!,
-                            style: TextStyle(color: Color(0xFF731D3C)), // Borgoña
-                          ),
-                        ],
-                      ),
+                      padding: EdgeInsets.all(8),
+                      child: Text(cakes[index]["name"]!, style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(cakes[index]["price"]!),
                     ),
                   ],
                 ),
@@ -282,20 +325,27 @@ class _HomeScreenState extends State<HomeScreen> {
   void _mostrarDialogoCerrarSesion(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Cerrar Sesión', style: TextStyle(color: Color(0xFF8C1B2F))), // Vino oscuro
-        content: Text('¿Estás seguro que deseas cerrar sesión?', style: TextStyle(color: Color(0xFF731D3C))), // Borgoña
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar', style: TextStyle(color: Color(0xFF731D3C)))), // Borgoña
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pushReplacementNamed(context, '/home');
-            },
-            child: Text('Aceptar', style: TextStyle(color: Color(0xFF8C1B2F))), // Vino oscuro
-          ),
-        ],
-      ),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Cerrar sesión"),
+          content: Text("¿Estás seguro de que deseas cerrar sesión?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Cancelar"),
+            ),
+            TextButton(
+              onPressed: () {
+                cerrarSesion();
+                Navigator.pop(context);
+              },
+              child: Text("Cerrar sesión"),
+            ),
+          ],
+        );
+      },
     );
   }
- }
+}
