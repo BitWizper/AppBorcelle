@@ -1,25 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Categorías de Pasteles',
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-        fontFamily: 'Poppins',
-      ),
-      home: const CategoriasScreen(),
-    );
-  }
-}
 
 class CategoriasScreen extends StatefulWidget {
   const CategoriasScreen({super.key});
@@ -74,21 +55,26 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categorías de Pasteles'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () async {
-              final searchQuery = await showSearch(
-                context: context,
-                delegate: CustomSearchDelegate(onQueryChanged: _filterCategorias),
-              );
-              if (searchQuery != null) {
-                _filterCategorias(searchQuery);
-              }
-            },
-          ),
-        ],
+        backgroundColor: const Color(0xFF8C1B2F),
+        title: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                onChanged: _filterCategorias,
+                decoration: InputDecoration(
+                  hintText: 'Buscar categorías...',
+                  filled: true,
+                  fillColor: const Color(0xFFF2F0E4),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -140,6 +126,26 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
           },
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Inicio',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.cake),
+            label: 'Pasteles',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category),
+            label: 'Categorías',
+          ),
+        ],
+        currentIndex: 2,
+        selectedItemColor: const Color(0xFFF2F0E4),
+        unselectedItemColor: const Color(0xFF731D3C),
+        onTap: _onItemTapped,
+      ),
     );
   }
 
@@ -150,6 +156,22 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
         builder: (context) => CategoriaDetalleScreen(categoria: categoria),
       ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/home'); // Navegar a HomeScreen
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/pasteles'); // Navegar a PastelesScreen (Si tienes esa pantalla)
+        break;
+      case 2:
+        // Aquí ya estás en Categorías, no necesitas hacer nada.
+        break;
+      default:
+        break;
+    }
   }
 }
 
@@ -193,27 +215,5 @@ class CategoriaDetalleScreen extends StatelessWidget {
               },
             ),
     );
-  }
-}
-
-class CustomSearchDelegate extends SearchDelegate<String?> {
-  final Function(String) onQueryChanged;
-  CustomSearchDelegate({required this.onQueryChanged});
-
-  @override
-  List<Widget> buildActions(BuildContext context) => [
-        IconButton(icon: const Icon(Icons.clear), onPressed: () => query = ''),
-      ];
-
-  @override
-  Widget buildLeading(BuildContext context) =>
-      IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => close(context, null));
-
-  @override
-  Widget buildResults(BuildContext context) => Container();
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    onQueryChanged(query);
-    return Container();
   }
 }

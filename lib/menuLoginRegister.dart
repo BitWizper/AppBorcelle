@@ -33,22 +33,6 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool _isLoggedIn = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkLoginStatus();
-  }
-
-  // Verifica el estado del login almacenado en SharedPreferences
-  _checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,9 +70,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
               SizedBox(height: 30),
-              // Solo muestra el botón de "Iniciar Sesión" si el usuario no está logueado
-              if (!_isLoggedIn)
-                _buildButton(context, "Iniciar Sesión", true),
+              // Muestra siempre los botones "Iniciar Sesión" y "Registrarse"
+              _buildButton(context, "Iniciar Sesión", true),
               SizedBox(height: 15),
               _buildButton(context, "Registrarse", false),
             ],
@@ -97,7 +80,6 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-}
 
   Widget _buildButton(BuildContext context, String text, bool isLogin) {
     return ElevatedButton(
@@ -134,7 +116,7 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-
+}
 
 class RoleSelectionScreen extends StatelessWidget {
   final bool isLogin;

@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/perfil');
+                 Navigator.pushNamed(context, '/perfil');  // Redirige a la pantalla de perfil
               },
             ),
             ListTile(
@@ -189,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/pedidos');
+                Navigator.pushNamed(context, '/pedidos');  // Redirige a la pantalla de pedid
               },
             ),
             ListTile(
@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/ayuda');
+               Navigator.pushNamed(context, '/ayuda');  // Redirige a la pantalla de ayuda
               },
             ),
             ListTile(
@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/configuracion');
+                 Navigator.pushNamed(context, '/configuracion');  // Redirige a la pantalla de configuración
               },
             ),
             ListTile(

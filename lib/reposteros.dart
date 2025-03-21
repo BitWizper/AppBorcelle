@@ -29,6 +29,7 @@ class ReposterosScreen extends StatefulWidget {
 }
 
 class _ReposterosScreenState extends State<ReposterosScreen> {
+  int _selectedIndex = 2; // Indica que 'Reposteros' es la opción seleccionada por defecto.
   final List<Map<String, dynamic>> reposteros = [
     {
       'nombre': 'Ana Martínez',
@@ -72,25 +73,42 @@ class _ReposterosScreenState extends State<ReposterosScreen> {
     });
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ReposterosHomeScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reposteros'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () async {
-              final searchQuery = await showSearch(
-                context: context,
-                delegate: CustomSearchDelegate(onQueryChanged: _filterReposteros),
-              );
-              if (searchQuery != null) {
-                _filterReposteros(searchQuery);
-              }
-            },
-          ),
-        ],
+        backgroundColor: Color(0xFF8C1B2F),
+        title: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                onChanged: _filterReposteros,
+                decoration: InputDecoration(
+                  hintText: 'Buscar reposteros...',
+                  filled: true,
+                  fillColor: Color(0xFFF2F0E4),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -182,43 +200,17 @@ class _ReposterosScreenState extends State<ReposterosScreen> {
   }
 }
 
-class CustomSearchDelegate extends SearchDelegate<String?> {
-  final Function(String) onQueryChanged;
-
-  CustomSearchDelegate({required this.onQueryChanged});
+class ReposterosHomeScreen extends StatelessWidget {
+  const ReposterosHomeScreen({super.key});
 
   @override
-  String? get searchFieldLabel => 'Buscar reposteros...';
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-          onQueryChanged('');
-        },
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF8C1B2F),
+        title: const Text('Inicio Reposteros'),
       ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () => close(context, null),
+      body: const Center(child: Text('Pantalla de inicio para reposteros')),
     );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    return const Center(child: Text('Resultados de la búsqueda'));
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    onQueryChanged(query);
-    return Container();
   }
 }
