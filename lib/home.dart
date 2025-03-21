@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Importa la librería de Google Fonts
+import 'package:google_fonts/google_fonts.dart';
 import 'perfil.dart';
 import 'pedidos.dart';
 import 'ayuda.dart';
 import 'configuracion.dart';
 import 'categorias.dart';
 import 'reposteros.dart';
-import 'menuLoginRegister.dart'; // Asegúrate de importar este archivo
+import 'menuLoginRegister.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MaterialApp(
@@ -35,88 +37,98 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  bool _isAuthenticated = false; // Variable de autenticación
-  final TextEditingController _searchController = TextEditingController(); // Controlador para el campo de búsqueda
+  final bool _isAuthenticated = false;
+  final TextEditingController _searchController = TextEditingController();
   final List<String> _pasteles = [
     "Pastel de Fresas",
     "Pastel de Chocolate",
     "Pastel Arcoíris",
     "Pastel Red Velvet",
-  ]; // Lista de ejemplo de pasteles
-  List<String> _searchResults = []; // Lista para almacenar los resultados de la búsqueda
+  ];
+  List<String> _searchResults = [];
 
   @override
   void initState() {
     super.initState();
-    _searchResults = _pasteles; // Inicialmente muestra todos los pasteles
-    _searchController.addListener(_onSearchChanged); // Escucha los cambios en el campo de búsqueda
+    _searchResults = _pasteles;
+    _searchController.addListener(_onSearchChanged);
   }
 
   void _onSearchChanged() {
-  String query = _searchController.text.toLowerCase();
-  setState(() {
-    _searchResults = _pasteles
-        .where((pastel) => pastel.toLowerCase().contains(query))
-        .toList();
+    String query = _searchController.text.toLowerCase();
+    setState(() {
+      _searchResults = _pasteles
+          .where((pastel) => pastel.toLowerCase().contains(query))
+          .toList();
 
-    if (_searchResults.isEmpty && query.isNotEmpty) {
-      _searchResults = ["No encontrado"];
+      if (_searchResults.isEmpty && query.isNotEmpty) {
+        _searchResults = ["No encontrado"];
+      }
+    });
+  }
+
+  void cerrarSesion() async {
+    final url = Uri.parse('TU_ENDPOINT/logout');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "token": "AQUI_EL_TOKEN_DEL_USUARIO"
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("Sesión cerrada correctamente");
+      } else {
+        print("Error al cerrar sesión: ${response.body}");
+      }
+    } catch (e) {
+      print("Error en la solicitud: $e");
     }
-  });
-}
-
+  }
 
   @override
   void dispose() {
-    _searchController.dispose(); // Libera el controlador al salir de la pantalla
+    _searchController.dispose();
     super.dispose();
   }
 
   void _onItemTapped(int index) {
-    String route;
-    switch (index) {
-      case 0:
-        route = '/home';
-        break;
-      case 1:
-        route = '/categorias';
-        break;
-      case 2:
-        route = '/reposteros';
-        break;
-      default:
-        return;
-    }
-
     setState(() {
       _selectedIndex = index;
     });
 
-    Navigator.pushNamed(context, route);
-  }
-
-  Future<void> cerrarSesion() async {
-    setState(() {
-      _isAuthenticated = false; // Cambiar estado al cerrar sesión
-    });
-
-    print("Sesión cerrada correctamente");
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/categorias');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/reposteros');
+        break;
+      default:
+        return;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
+        backgroundColor: Color(0xFF8C1B2F),
         title: Row(
           children: [
             Expanded(
               child: TextField(
-                controller: _searchController, // Asocia el controlador con el campo de texto
+                controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Buscar pasteles...', // Texto que aparece cuando no se ha ingresado nada
+                  hintText: 'Buscar pasteles...',
                   filled: true,
-                  fillColor: Color(0xFFF2F0E4), // Beige claro
+                  fillColor: Color(0xFFF2F0E4),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -128,50 +140,96 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          if (!_isAuthenticated) // Muestra el botón solo si no está autenticado
+          if (!_isAuthenticated)
             IconButton(
               icon: Icon(Icons.login),
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/menuLoginRegister');
               },
-              color: Color(0xFFF2F0E4), // Color claro (Beige claro) para los íconos
+              color: Color(0xFFF2F0E4),
             ),
-         PopupMenuButton<String>(
-  onSelected: (value) {
-    if (value == 'Cerrar Sesión') {
-      _mostrarDialogoCerrarSesion(context);
-    } else {
-      print('Navegando a: $value');
-      Navigator.pushReplacementNamed(context, value);
-    }
-  },
-  itemBuilder: (BuildContext context) {
-    return [
-      PopupMenuItem(
-        value: '/perfil',  // Ruta a la pantalla de perfil
-        child: Text('Mi Perfil'),
-      ),
-      PopupMenuItem(
-        value: '/pedidos', // Ruta a la pantalla de pedidos
-        child: Text('Mis Pedidos'),
-      ),
-      PopupMenuItem(
-        value: '/ayuda',  // Ruta a la pantalla de ayuda
-        child: Text('Centro de Ayuda'),
-      ),
-      PopupMenuItem(
-        value: '/configuracion', // Ruta a la pantalla de configuración
-        child: Text('Configuración'),
-      ),
-      PopupMenuItem(
-        value: 'Cerrar Sesión',  // Opción para cerrar sesión
-        child: Text('Cerrar Sesión'),
-      ),
-    ];
-  },
-  icon: Icon(Icons.more_vert, color: Color(0xFFF2F0E4)), // Ícono claro para el menú
-          ),
         ],
+      ),
+      drawer: Drawer(
+        backgroundColor: Color(0xFF8C1B2F),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFF731D3C),
+              ),
+              child: Text(
+                'Menú',
+                style: GoogleFonts.lora(
+                  color: Color(0xFFF2F0E4),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person, color: Color(0xFFF2F0E4)),
+              title: Text(
+                'Perfil',
+                style: GoogleFonts.lora(
+                  color: Color(0xFFF2F0E4),
+                ),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/perfil');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_basket, color: Color(0xFFF2F0E4)),
+              title: Text(
+                'Pedidos',
+                style: GoogleFonts.lora(
+                  color: Color(0xFFF2F0E4),
+                ),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/pedidos');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.help, color: Color(0xFFF2F0E4)),
+              title: Text(
+                'Ayuda',
+                style: GoogleFonts.lora(
+                  color: Color(0xFFF2F0E4),
+                ),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/ayuda');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings, color: Color(0xFFF2F0E4)),
+              title: Text(
+                'Configuración',
+                style: GoogleFonts.lora(
+                  color: Color(0xFFF2F0E4),
+                ),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/configuracion');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app, color: Color(0xFFF2F0E4)),
+              title: Text(
+                'Cerrar sesión',
+                style: GoogleFonts.lora(
+                  color: Color(0xFFF2F0E4),
+                ),
+              ),
+              onTap: () {
+                _mostrarDialogoCerrarSesion(context);
+              },
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -181,25 +239,23 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 20),
             _buildDestacados(),
             SizedBox(height: 20),
-            // Aquí se muestra el resultado de búsqueda
             ListView.builder(
-  itemCount: _searchResults.length,
-  shrinkWrap: true,
-  physics: NeverScrollableScrollPhysics(),
-  itemBuilder: (context, index) {
-    return ListTile(
-      title: Text(
-        _searchResults[index],
-        style: TextStyle(
-          color: _searchResults[index] == "No encontrado" ? Colors.red : Colors.black,
-          fontWeight: _searchResults[index] == "No encontrado" ? FontWeight.bold : FontWeight.normal,
-        ),
-        textAlign: _searchResults[index] == "No encontrado" ? TextAlign.center : TextAlign.start,
-      ),
-    );
-  },
-),
-
+              itemCount: _searchResults.length,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    _searchResults[index],
+                    style: TextStyle(
+                      color: _searchResults[index] == "No encontrado" ? Colors.red : Colors.black,
+                      fontWeight: _searchResults[index] == "No encontrado" ? FontWeight.bold : FontWeight.normal,
+                    ),
+                    textAlign: _searchResults[index] == "No encontrado" ? TextAlign.center : TextAlign.start,
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -211,8 +267,8 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
         ],
-        selectedItemColor: Color(0xFFF2F0E4), // Íconos seleccionados en color claro (Beige claro)
-        unselectedItemColor: Color(0xFF731D3C), // Borgoña para íconos no seleccionados
+        selectedItemColor: Color(0xFFF2F0E4),
+        unselectedItemColor: Color(0xFF731D3C),
       ),
     );
   }
@@ -234,18 +290,18 @@ class _HomeScreenState extends State<HomeScreen> {
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Color(0xFF8C1B2F),
-            ), // Fuente Lora
+            ),
           ),
           SizedBox(height: 10),
           CarouselSlider(
             options: CarouselOptions(
-              height: 200, // Ajusta la altura según necesites
+              height: 200,
               autoPlay: true,
               autoPlayInterval: Duration(seconds: 3),
               autoPlayAnimationDuration: Duration(milliseconds: 800),
               autoPlayCurve: Curves.fastOutSlowIn,
               enlargeCenterPage: true,
-              viewportFraction: 1, // Ocupa todo el ancho
+              viewportFraction: 1,
             ),
             items: bannerImages.map((imagePath) {
               return ClipRRect(
@@ -271,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Color(0xFF8C1B2F),
-            ), // Fuente Lora
+            ),
           ),
           SizedBox(height: 10),
           GridView.builder(
@@ -337,11 +393,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text("Cancelar"),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 cerrarSesion();
-                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/menuLoginRegister');
               },
-              child: Text("Cerrar sesión"),
+              child: Text("Sí"),
             ),
           ],
         );
