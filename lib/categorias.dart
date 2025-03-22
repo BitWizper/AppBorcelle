@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:google_fonts/google_fonts.dart';
 
 class CategoriasScreen extends StatefulWidget {
   const CategoriasScreen({super.key});
@@ -29,7 +28,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
   ];
 
   List<Map<String, dynamic>> _filteredCategorias = [];
-  String _searchQuery = '';
+  int _selectedIndex = 1; // "Categorías"
 
   @override
   void initState() {
@@ -38,17 +37,23 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
   }
 
   void _filterCategorias(String query) {
-    final filtered = categorias.where((categoria) {
-      final nombreLower = categoria['nombre'].toLowerCase();
-      final descripcionLower = categoria['descripcion'].toLowerCase();
-      final queryLower = query.toLowerCase();
-      return nombreLower.contains(queryLower) || descripcionLower.contains(queryLower);
-    }).toList();
-
     setState(() {
-      _searchQuery = query;
-      _filteredCategorias = filtered;
+      _filteredCategorias = categorias.where((categoria) {
+        final nombreLower = categoria['nombre'].toLowerCase();
+        final descripcionLower = categoria['descripcion'].toLowerCase();
+        return nombreLower.contains(query.toLowerCase()) || descripcionLower.contains(query.toLowerCase());
+      }).toList();
     });
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.pushReplacementNamed(context, '/categorias');
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/reposteros');
+    }
   }
 
   @override
@@ -56,22 +61,86 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF8C1B2F),
-        title: Row(
+        title: Text(
+          'Categorías',
+          style: GoogleFonts.lora(
+            color: const Color(0xFFF2F0E4),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle, color: Color(0xFFF2F0E4)),
+            onPressed: () {
+              Navigator.pushNamed(context, '/perfil');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_bag, color: Color(0xFFF2F0E4)),
+            onPressed: () {
+              Navigator.pushNamed(context, '/pedidos');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings, color: Color(0xFFF2F0E4)),
+            onPressed: () {
+              Navigator.pushNamed(context, '/configuracion');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.help_outline, color: Color(0xFFF2F0E4)),
+            onPressed: () {
+              Navigator.pushNamed(context, '/ayuda');
+            },
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        backgroundColor: const Color(0xFF8C1B2F),
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            Expanded(
-              child: TextField(
-                onChanged: _filterCategorias,
-                decoration: InputDecoration(
-                  hintText: 'Buscar categorías...',
-                  filled: true,
-                  fillColor: const Color(0xFFF2F0E4),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Color(0xFF731D3C)),
+              child: Text(
+                'Menú',
+                style: GoogleFonts.lora(
+                  color: const Color(0xFFF2F0E4),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home, color: Color(0xFFF2F0E4)),
+              title: Text('Inicio', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
+              onTap: () => Navigator.pushReplacementNamed(context, '/home'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.category, color: Color(0xFFF2F0E4)),
+              title: Text('Categorías', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
+              onTap: () => Navigator.pushReplacementNamed(context, '/categorias'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.people, color: Color(0xFFF2F0E4)),
+              title: Text('Reposteros', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
+              onTap: () => Navigator.pushReplacementNamed(context, '/reposteros'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_bag, color: Color(0xFFF2F0E4)),
+              title: Text('Mis Pedidos', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
+              onTap: () => Navigator.pushNamed(context, '/pedidos'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings, color: Color(0xFFF2F0E4)),
+              title: Text('Configuración', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
+              onTap: () => Navigator.pushNamed(context, '/configuracion'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.help_outline, color: Color(0xFFF2F0E4)),
+              title: Text('Ayuda', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
+              onTap: () => Navigator.pushNamed(context, '/ayuda'),
             ),
           ],
         ),
@@ -102,18 +171,18 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
                       children: [
                         Text(
                           categoria['nombre'],
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: GoogleFonts.lora(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         const SizedBox(height: 5),
                         Text(
                           categoria['descripcion'],
-                          style: const TextStyle(fontSize: 14),
+                          style: GoogleFonts.lora(fontSize: 14),
                         ),
                         const SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: () => _showCategoriaDetalles(context, categoria['nombre']),
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white, backgroundColor: Colors.pink,
+                            foregroundColor: Colors.white, backgroundColor: const Color(0xFF8C1B2F),
                           ),
                           child: const Text('Ver Pasteles'),
                         ),
@@ -127,93 +196,27 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.cake),
-            label: 'Pasteles',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Categorías',
-          ),
-        ],
-        currentIndex: 2,
-        selectedItemColor: const Color(0xFFF2F0E4),
-        unselectedItemColor: const Color(0xFF731D3C),
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
+        ],
+        selectedItemColor: Color(0xFFF2F0E4),
+        unselectedItemColor: Color(0xFF731D3C),
+        backgroundColor: Color(0xFF8C1B2F),
       ),
     );
   }
 
   void _showCategoriaDetalles(BuildContext context, String categoria) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CategoriaDetalleScreen(categoria: categoria),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Detalles de la categoría: $categoria'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
-
-  void _onItemTapped(int index) {
-    switch (index) {
-      case 0:
-        Navigator.pushNamed(context, '/home'); // Navegar a HomeScreen
-        break;
-      case 1:
-        Navigator.pushNamed(context, '/pasteles'); // Navegar a PastelesScreen (Si tienes esa pantalla)
-        break;
-      case 2:
-        // Aquí ya estás en Categorías, no necesitas hacer nada.
-        break;
-      default:
-        break;
-    }
-  }
 }
 
-class CategoriaDetalleScreen extends StatelessWidget {
-  final String categoria;
-  final List<Map<String, dynamic>> pasteles = [
-    {'nombre': 'Pastel de Boda Clásico', 'categoria': 'Bodas', 'imagen': 'assets/boda1.jpg'},
-    {'nombre': 'Pastel XV Rosa', 'categoria': 'XV Años', 'imagen': 'assets/xv1.jpg'},
-    {'nombre': 'Pastel Cumpleaños Arcoiris', 'categoria': 'Cumpleaños', 'imagen': 'assets/cumple1.jpg'},
-  ];
-
-  CategoriaDetalleScreen({super.key, required this.categoria});
-
-  @override
-  Widget build(BuildContext context) {
-    final pastelesFiltrados = pasteles.where((p) => p['categoria'] == categoria).toList();
-    return Scaffold(
-      appBar: AppBar(title: Text('Pasteles de $categoria')),
-      body: pastelesFiltrados.isEmpty
-          ? const Center(child: Text('No hay pasteles disponibles.'))
-          : ListView.builder(
-              itemCount: pastelesFiltrados.length,
-              itemBuilder: (context, index) {
-                final pastel = pastelesFiltrados[index];
-                return Card(
-                  elevation: 4,
-                  margin: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Image.asset(pastel['imagen'], height: 200, fit: BoxFit.cover),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          pastel['nombre'],
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-    );
-  }
-}

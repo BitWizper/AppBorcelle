@@ -20,18 +20,17 @@ class SelectRegisterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/home', // Ruta inicial
+      initialRoute: '/inicio', // Asegúrate de que coincide con las rutas definidas
       routes: {
-        '/inicio': (context) => HomeScreen(), // Ruta para la pantalla de inicio
-        '/categorias': (context) => CategoriasScreen (), // Ruta para la pantalla de categorias 
-        '/reposteros': (context) => ReposterosScreen(), // ruta de pantalla de reposteros 
-        '/menuLoginRegister': (context) => AuthScreen(), // Ruta para la pantalla de login/register
-        '/ayuda': (context) => HelpScreen(), // Ruta para la pantalla de ayuda
-       '/configuracion': (context) => SettingsScreen (), // Ruta para la pantalla de ayuda
-        '/perfil': (context) => ProfileScreen(), // Ruta para la pantalla de perfil
-        '/registro': (context) => RegisterScreen(), // Ruta para la pantalla de registro
-        '/pedidos': (context) => OrdersScreen(), // Ruta para la pantalla de registro
-        // Aquí puedes agregar otras rutas para las pantallas que falten
+        '/inicio': (context) => HomeScreen(),
+        '/categorias': (context) => CategoriasScreen(),
+        '/reposteros': (context) => ReposterosScreen(),
+        '/menuLoginRegister': (context) => AuthScreen(),
+        '/ayuda': (context) => HelpScreen(),
+        '/configuracion': (context) => SettingsScreen(),
+        '/perfil': (context) => ProfileScreen(),
+        '/registro': (context) => RegisterScreen(),
+        '/pedidos': (context) => OrdersScreen(),
       },
     );
   }
