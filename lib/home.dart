@@ -10,6 +10,7 @@ import 'menuLoginRegister.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'Model3D/MainMenuUI.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -109,6 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 2:
         Navigator.pushNamed(context, '/reposteros');
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Model3DViewer()),
+        );
         break;
       default:
         return;
@@ -266,6 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
+          BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'EditarPastel'),
         ],
         selectedItemColor: Color(0xFFF2F0E4),
         unselectedItemColor: Color(0xFF731D3C),

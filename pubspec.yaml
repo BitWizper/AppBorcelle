@@ -17,6 +17,8 @@ dependencies:
   carousel_slider: ^5.0.0
   cached_network_image: ^3.4.1
   shared_preferences: ^2.0.17
+  model_viewer_plus: ^1.7.0
+  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:

@@ -7,6 +7,7 @@ import 'package:borcelle/ayuda.dart'; // Pantalla de ayuda
 import 'package:borcelle/perfil.dart'; // Pantalla de perfil
 import 'package:borcelle/configuracion.dart'; // pantalla de configuracion
 import 'package:borcelle/pedidos.dart'; // Pantalla de pedidos
+import 'package:borcelle/Model3D/MainMenuUI.dart'; // Pantalla de modelo 3D
 // Asegúrate de importar otras pantallas si las tienes
 
 void main() {
@@ -31,6 +32,7 @@ class SelectRegisterApp extends StatelessWidget {
         '/perfil': (context) => ProfileScreen(),
         '/registro': (context) => RegisterScreen(),
         '/pedidos': (context) => OrdersScreen(),
+        '/model3d': (context) => Model3DViewer(),
       },
     );
   }
