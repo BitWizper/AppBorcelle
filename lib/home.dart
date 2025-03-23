@@ -4,14 +4,11 @@ import 'perfil.dart';
 import 'pedidos.dart';
 import 'ayuda.dart';
 import 'configuracion.dart';
-import 'package:borcelle/categorias.dart' as categorias;
+import 'package:borcelle/categorias.dart';
 import 'reposteros.dart';
 import 'menuLoginRegister.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'Model3D/MainMenuUI.dart';
-
+import 'dart:async';
 
 void main() {
   runApp(MaterialApp(
@@ -30,7 +27,6 @@ void main() {
   ));
 }
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -39,89 +35,32 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  final bool _isAuthenticated = false;
   final TextEditingController _searchController = TextEditingController();
-  final List<String> _pasteles = [
-    "Pastel de Fresas",
-    "Pastel de Chocolate",
-    "Pastel Arcoíris",
-    "Pastel Red Velvet",
+  List<String> consejos = [
+    "Usa ingredientes frescos para un mejor sabor.",
+    "Precalienta tu horno antes de hornear.",
+    "Deja que los pasteles se enfríen antes de decorarlos.",
+    "Usa una espátula caliente para un glaseado perfecto."
   ];
-  List<String> _searchResults = [];
+  String consejoActual = "";
+  late Timer _consejoTimer;
 
   @override
   void initState() {
     super.initState();
-    _searchResults = _pasteles;
-    _searchController.addListener(_onSearchChanged);
-  }
-
-  void _onSearchChanged() {
-    String query = _searchController.text.toLowerCase();
-    setState(() {
-      _searchResults = _pasteles
-          .where((pastel) => pastel.toLowerCase().contains(query))
-          .toList();
-
-      if (_searchResults.isEmpty && query.isNotEmpty) {
-        _searchResults = ["No encontrado"];
-      }
+    consejoActual = consejos[0];
+    _consejoTimer = Timer.periodic(Duration(minutes: 2), (timer) {
+      setState(() {
+        consejoActual = (consejos..shuffle()).first;
+      });
     });
-  }
-
-  void cerrarSesion() async {
-    final url = Uri.parse('TU_ENDPOINT/logout');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "token": "AQUI_EL_TOKEN_DEL_USUARIO"
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        print("Sesión cerrada correctamente");
-      } else {
-        print("Error al cerrar sesión: ${response.body}");
-      }
-    } catch (e) {
-      print("Error en la solicitud: $e");
-    }
   }
 
   @override
   void dispose() {
+    _consejoTimer.cancel();
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        Navigator.pushNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pushNamed(context, '/categorias');
-        break;
-      case 2:
-        Navigator.pushNamed(context, '/reposteros');
-        break;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Model3DViewer()),
-        );
-        break;
-      default:
-        return;
-    }
   }
 
   @override
@@ -129,116 +68,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF8C1B2F),
-        title: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Buscar pasteles...',
-                  filled: true,
-                  fillColor: Color(0xFFF2F0E4),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
+        title: Text("Borcelle", style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
         actions: [
-          if (!_isAuthenticated)
-            IconButton(
-              icon: Icon(Icons.login),
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/menuLoginRegister');
-              },
-              color: Color(0xFFF2F0E4),
-            ),
+          IconButton(
+            icon: Icon(Icons.search, color: Colors.white),
+            onPressed: () {
+              showSearch(context: context, delegate: SearchDelegateExample());
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.person, color: Colors.white),
+            onPressed: () {
+              Navigator.pushNamed(context, '/perfil');
+            },
+          ),
         ],
-      ),
-      drawer: Drawer(
-        backgroundColor: Color(0xFF8C1B2F),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color(0xFF731D3C),
-              ),
-              child: Text(
-                'Menú',
-                style: GoogleFonts.lora(
-                  color: Color(0xFFF2F0E4),
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.person, color: Color(0xFFF2F0E4)),
-              title: Text(
-                'Perfil',
-                style: GoogleFonts.lora(
-                  color: Color(0xFFF2F0E4),
-                ),
-              ),
-              onTap: () {
-                 Navigator.pushNamed(context, '/perfil');  // Redirige a la pantalla de perfil
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.shopping_basket, color: Color(0xFFF2F0E4)),
-              title: Text(
-                'Pedidos',
-                style: GoogleFonts.lora(
-                  color: Color(0xFFF2F0E4),
-                ),
-              ),
-              onTap: () {
-                Navigator.pushNamed(context, '/pedidos');  // Redirige a la pantalla de pedid
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.help, color: Color(0xFFF2F0E4)),
-              title: Text(
-                'Ayuda',
-                style: GoogleFonts.lora(
-                  color: Color(0xFFF2F0E4),
-                ),
-              ),
-              onTap: () {
-               Navigator.pushNamed(context, '/ayuda');  // Redirige a la pantalla de ayuda
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings, color: Color(0xFFF2F0E4)),
-              title: Text(
-                'Configuración',
-                style: GoogleFonts.lora(
-                  color: Color(0xFFF2F0E4),
-                ),
-              ),
-              onTap: () {
-                 Navigator.pushNamed(context, '/configuracion');  // Redirige a la pantalla de configuración
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app, color: Color(0xFFF2F0E4)),
-              title: Text(
-                'Cerrar sesión',
-                style: GoogleFonts.lora(
-                  color: Color(0xFFF2F0E4),
-                ),
-              ),
-              onTap: () {
-                _mostrarDialogoCerrarSesion(context);
-              },
-            ),
-          ],
-        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -248,37 +92,11 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 20),
             _buildDestacados(),
             SizedBox(height: 20),
-            ListView.builder(
-              itemCount: _searchResults.length,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(
-                    _searchResults[index],
-                    style: TextStyle(
-                      color: _searchResults[index] == "No encontrado" ? Colors.red : Colors.black,
-                      fontWeight: _searchResults[index] == "No encontrado" ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    textAlign: _searchResults[index] == "No encontrado" ? TextAlign.center : TextAlign.start,
-                  ),
-                );
-              },
-            ),
+            _buildConsejos(),
+            SizedBox(height: 20),
+            _buildFeedRedes(),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
-          BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'EditarPastel'),
-        ],
-        selectedItemColor: Color(0xFFF2F0E4),
-        unselectedItemColor: Color(0xFF731D3C),
       ),
     );
   }
@@ -296,11 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Text(
             "Ofertas Especiales",
-            style: GoogleFonts.lora(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF8C1B2F),
-            ),
+            style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
           ),
           SizedBox(height: 10),
           CarouselSlider(
@@ -333,11 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Text(
             "Destacados",
-            style: GoogleFonts.lora(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF8C1B2F),
-            ),
+            style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
           ),
           SizedBox(height: 10),
           GridView.builder(
@@ -360,9 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return Card(
                 elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -370,14 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(10),
                       child: Image.asset(cakes[index]["image"]!, fit: BoxFit.cover, height: 120, width: double.infinity),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text(cakes[index]["name"]!, style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(cakes[index]["price"]!),
-                    ),
+                    Padding(padding: EdgeInsets.all(8), child: Text(cakes[index]["name"]!, style: TextStyle(fontWeight: FontWeight.bold))),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text(cakes[index]["price"]!)),
                   ],
                 ),
               );
@@ -388,30 +190,37 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _mostrarDialogoCerrarSesion(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Cerrar sesión"),
-          content: Text("¿Estás seguro de que deseas cerrar sesión?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Cancelar"),
-            ),
-            TextButton(
-              onPressed: () async {
-                cerrarSesion();
-                Navigator.pushReplacementNamed(context, '/menuLoginRegister');
-              },
-              child: Text("Sí"),
-            ),
-          ],
-        );
-      },
+  Widget _buildConsejos() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(color: Colors.amber[100], borderRadius: BorderRadius.circular(10)),
+      child: Text("💡 Consejo: $consejoActual", style: GoogleFonts.lora(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F))),
     );
   }
+
+  Widget _buildFeedRedes() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("📢 Últimas noticias de redes", style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F))),
+          SizedBox(height: 10),
+          Text("📸 Instagram: ¡Nuevo diseño de pastel disponible! 🎂"),
+          Text("🐦 Twitter: Sorpresas este fin de semana. 🎉"),
+        ],
+      ),
+    );
+  }
+}
+
+class SearchDelegateExample extends SearchDelegate<String> {
+  @override
+  List<IconButton> buildActions(BuildContext context) => [IconButton(icon: Icon(Icons.clear), onPressed: () => query = "")];
+  @override
+  Widget buildLeading(BuildContext context) => IconButton(icon: Icon(Icons.arrow_back), onPressed: () => close(context, ""));
+  @override
+  Widget buildResults(BuildContext context) => Center(child: Text("Resultados para: $query"));
+  @override
+  Widget buildSuggestions(BuildContext context) => ListView();
 }

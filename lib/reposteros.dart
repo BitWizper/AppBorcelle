@@ -30,7 +30,9 @@ class ReposterosScreen extends StatefulWidget {
 
 class _ReposterosScreenState extends State<ReposterosScreen> {
   int _selectedIndex = 2; // El índice de la pantalla seleccionada
-  final List<Map<String, dynamic>> reposteros = [
+  TextEditingController _searchController = TextEditingController();
+
+  List<Map<String, dynamic>> reposteros = [
     {
       'nombre': 'Ana Martínez',
       'imagen': 'assets/repostera1.jpg',
@@ -50,7 +52,6 @@ class _ReposterosScreenState extends State<ReposterosScreen> {
   ];
 
   List<Map<String, dynamic>> _filteredReposteros = [];
-  String _searchQuery = '';
 
   @override
   void initState() {
@@ -58,36 +59,24 @@ class _ReposterosScreenState extends State<ReposterosScreen> {
     _filteredReposteros = reposteros;
   }
 
-  void _filterReposteros(String query) {
-    final filtered = reposteros.where((repostero) {
-      final nombreLower = repostero['nombre'].toLowerCase();
-      final descripcionLower = repostero['descripcion'].toLowerCase();
-      final queryLower = query.toLowerCase();
-
-      return nombreLower.contains(queryLower) || descripcionLower.contains(queryLower);
-    }).toList();
-
+  void _onSearchChanged() {
     setState(() {
-      _searchQuery = query;
-      _filteredReposteros = filtered;
+      _filteredReposteros = reposteros
+          .where((repostero) => repostero['nombre']
+              .toLowerCase()
+              .contains(_searchController.text.toLowerCase()))
+          .toList();
     });
   }
 
-  void _onItemTapped(int index) {
+  void _onFooterTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    // Navegar según el índice seleccionado
     if (index == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()), // Asegúrate que HomeScreen esté bien definido
-      );
+      Navigator.pushNamed(context, '/home');
     } else if (index == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const CategoriasScreen()), // Asegúrate que CategoriasScreen esté bien definido
-      );
+      Navigator.pushNamed(context, '/categorias');
     }
   }
 
@@ -95,151 +84,62 @@ class _ReposterosScreenState extends State<ReposterosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF8C1B2F),
-        title: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                onChanged: _filterReposteros,
-                decoration: InputDecoration(
-                  hintText: 'Buscar reposteros...',
-                  filled: true,
-                  fillColor: Color(0xFFF2F0E4),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            // Lista de reposteros
-            Expanded(
-              child: ListView.builder(
-                itemCount: _filteredReposteros.length,
-                itemBuilder: (context, index) {
-                  final repostero = _filteredReposteros[index];
-                  return ReposteroCard(
-                    repostero: repostero,
-                    onPressed: () => _showProfilePopup(context, index),
-                  );
-                },
-              ),
-            ),
-            // Footer
-            BottomNavigationBar(
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Inicio',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.cake),
-                  label: 'Pasteles',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Reposteros',
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showProfilePopup(BuildContext context, int index) {
-    final repostero = _filteredReposteros[index];
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(repostero['nombre']),
-          content: Text(repostero['descripcion']),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cerrar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class ReposteroCard extends StatelessWidget {
-  final Map<String, dynamic> repostero;
-  final VoidCallback onPressed;
-
-  const ReposteroCard({super.key, required this.repostero, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-            child: Image.asset(
-              repostero['imagen'],
-              width: double.infinity,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
+        title: const Text('Reposteros'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(context: context, delegate: CustomSearchDelegate());
+            },
           ),
+        ],
+      ),
+      body: Column(
+        children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Text(
-                  repostero['nombre'],
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  repostero['descripcion'],
-                  style: const TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: List.generate(5, (starIndex) {
-                    return Icon(
-                      starIndex < repostero['estrellas']
-                          ? Icons.star
-                          : Icons.star_border,
-                      color: Colors.orange,
-                      size: 20,
-                    );
-                  }),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Puntaje: ${repostero['puntaje']}',
-                  style: const TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: onPressed,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, backgroundColor: Colors.pink,
-                  ),
-                  child: const Text('Ver Perfil'),
-                ),
-              ],
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                _onSearchChanged();
+              },
+              decoration: const InputDecoration(
+                labelText: 'Buscar repostero',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.search),
+              ),
             ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredReposteros.length,
+              itemBuilder: (context, index) {
+                var repostero = _filteredReposteros[index];
+                return ListTile(
+                  leading: Image.asset(repostero['imagen']),
+                  title: Text(repostero['nombre']),
+                  subtitle: Text(repostero['descripcion']),
+                  trailing: Text(repostero['puntaje'].toString()),
+                  onTap: () {
+                    // Aquí puedes agregar la acción al hacer clic en el repostero.
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onFooterTapped,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.cake),
+            label: 'Categorías',
           ),
         ],
       ),
@@ -247,32 +147,79 @@ class ReposteroCard extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class CustomSearchDelegate extends SearchDelegate {
+  final List<Map<String, dynamic>> reposteros = [
+    {
+      'nombre': 'Ana Martínez',
+      'imagen': 'assets/repostera1.jpg',
+      'descripcion': 'Especialista en pasteles fondant.',
+    },
+    {
+      'nombre': 'Mario Pérez',
+      'imagen': 'assets/repostero3.jpg',
+      'descripcion': 'Experto en repostería francesa.',
+    },
+  ];
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF8C1B2F),
-        title: const Text('Inicio'),
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
       ),
-      body: const Center(child: Text('Pantalla de inicio')),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
     );
   }
-}
-
-class CategoriasScreen extends StatelessWidget {
-  const CategoriasScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF8C1B2F),
-        title: const Text('Categorías de Pasteles'),
-      ),
-      body: const Center(child: Text('Pantalla de categorías de pasteles')),
+  Widget buildResults(BuildContext context) {
+    return ListView.builder(
+      itemCount: reposteros
+          .where((repostero) => repostero['nombre']
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList()
+          .length,
+      itemBuilder: (context, index) {
+        var repostero = reposteros[index];
+        return ListTile(
+          leading: Image.asset(repostero['imagen']),
+          title: Text(repostero['nombre']),
+          subtitle: Text(repostero['descripcion']),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = reposteros
+        .where((repostero) => repostero['nombre']
+            .toLowerCase()
+            .contains(query.toLowerCase()))
+        .toList();
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        var repostero = suggestions[index];
+        return ListTile(
+          leading: Image.asset(repostero['imagen']),
+          title: Text(repostero['nombre']),
+          subtitle: Text(repostero['descripcion']),
+        );
+      },
     );
   }
 }
