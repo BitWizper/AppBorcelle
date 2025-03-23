@@ -4,7 +4,7 @@ import 'perfil.dart';
 import 'pedidos.dart';
 import 'ayuda.dart';
 import 'configuracion.dart';
-import 'package:borcelle/categorias.dart';
+import 'package:borcelle/categorias.dart' as categorias;
 import 'reposteros.dart';
 import 'menuLoginRegister.dart';
 import 'package:carousel_slider/carousel_slider.dart';

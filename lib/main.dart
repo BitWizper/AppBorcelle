@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:borcelle/home.dart'; // Pantalla de inicio
+import 'package:borcelle/home.dart' as home; // Pantalla de inicio
 import 'package:borcelle/menuLoginRegister.dart'; // Pantalla de login/register
-import 'package:borcelle/categorias.dart'; // Pantalla de categorias
-import 'package:borcelle/reposteros.dart'; // Pantalla de reposteros
+import 'package:borcelle/categorias.dart' as categorias; // Pantalla de categorias
+import 'package:borcelle/reposteros.dart' as reposteros; // Pantalla de reposteros
 import 'package:borcelle/ayuda.dart'; // Pantalla de ayuda
 import 'package:borcelle/perfil.dart'; // Pantalla de perfil
 import 'package:borcelle/configuracion.dart'; // pantalla de configuracion
@@ -23,9 +23,9 @@ class SelectRegisterApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/inicio', // Asegúrate de que coincide con las rutas definidas
       routes: {
-        '/inicio': (context) => HomeScreen(),
-        '/categorias': (context) => CategoriasScreen(),
-        '/reposteros': (context) => ReposterosScreen(),
+        '/inicio': (context) => home.HomeScreen(),
+        '/categorias': (context) => categorias.CategoriasScreen(),
+        '/reposteros': (context) => reposteros.ReposterosScreen(),
         '/menuLoginRegister': (context) => AuthScreen(),
         '/ayuda': (context) => HelpScreen(),
         '/configuracion': (context) => SettingsScreen(),
