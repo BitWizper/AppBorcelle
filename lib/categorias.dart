@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:borcelle/reposteros.dart';
 import 'package:borcelle/Model3D/MainMenuUI.dart';
-import 'package:borcelle/home.dart'; // Importación asegurada
 
 class CategoriasScreen extends StatefulWidget {
   const CategoriasScreen({super.key});
@@ -58,18 +56,13 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
 
     switch (index) {
       case 0: // Ir a HomeScreen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()), // ✅ Sin 'const'
-        );
+        Navigator.pushNamed(context, '/home');
         break;
       case 1: // Categorías (Ya estamos aquí)
+        Navigator.pushNamed(context, '/categorias');
         break;
       case 2: // Reposteros
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ReposterosScreen()),
-        );
+        Navigator.pushNamed(context, '/reposteros');
         break;
       case 3: // Model 3D
         Navigator.push(
