@@ -4,13 +4,14 @@ import 'perfil.dart';
 import 'pedidos.dart';
 import 'ayuda.dart';
 import 'configuracion.dart';
-import 'categorias.dart';
+import 'package:borcelle/categorias.dart';
 import 'reposteros.dart';
 import 'menuLoginRegister.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Model3D/MainMenuUI.dart';
+
 
 void main() {
   runApp(MaterialApp(
@@ -28,6 +29,7 @@ void main() {
     },
   ));
 }
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

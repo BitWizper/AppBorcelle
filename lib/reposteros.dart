@@ -29,7 +29,7 @@ class ReposterosScreen extends StatefulWidget {
 }
 
 class _ReposterosScreenState extends State<ReposterosScreen> {
-  int _selectedIndex = 2; // Indica que 'Reposteros' es la opción seleccionada por defecto.
+  int _selectedIndex = 2; // El índice de la pantalla seleccionada
   final List<Map<String, dynamic>> reposteros = [
     {
       'nombre': 'Ana Martínez',
@@ -77,10 +77,16 @@ class _ReposterosScreenState extends State<ReposterosScreen> {
     setState(() {
       _selectedIndex = index;
     });
+    // Navegar según el índice seleccionado
     if (index == 0) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const ReposterosHomeScreen()),
+        MaterialPageRoute(builder: (context) => const HomeScreen()), // Asegúrate que HomeScreen esté bien definido
+      );
+    } else if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const CategoriasScreen()), // Asegúrate que CategoriasScreen esté bien definido
       );
     }
   }
@@ -112,69 +118,41 @@ class _ReposterosScreenState extends State<ReposterosScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: ListView.builder(
-          itemCount: _filteredReposteros.length,
-          itemBuilder: (context, index) {
-            final repostero = _filteredReposteros[index];
-            return Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                    child: Image.asset(
-                      repostero['imagen'],
-                      width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          repostero['nombre'],
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          repostero['descripcion'],
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: List.generate(5, (starIndex) {
-                            return Icon(
-                              starIndex < repostero['estrellas']
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              color: Colors.orange,
-                              size: 20,
-                            );
-                          }),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'Puntaje: ${repostero['puntaje']}',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: () => _showProfilePopup(context, index),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white, backgroundColor: Colors.pink,
-                          ),
-                          child: const Text('Ver Perfil'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+        child: Column(
+          children: [
+            // Lista de reposteros
+            Expanded(
+              child: ListView.builder(
+                itemCount: _filteredReposteros.length,
+                itemBuilder: (context, index) {
+                  final repostero = _filteredReposteros[index];
+                  return ReposteroCard(
+                    repostero: repostero,
+                    onPressed: () => _showProfilePopup(context, index),
+                  );
+                },
               ),
-            );
-          },
+            ),
+            // Footer
+            BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Inicio',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.cake),
+                  label: 'Pasteles',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Reposteros',
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -200,17 +178,101 @@ class _ReposterosScreenState extends State<ReposterosScreen> {
   }
 }
 
-class ReposterosHomeScreen extends StatelessWidget {
-  const ReposterosHomeScreen({super.key});
+class ReposteroCard extends StatelessWidget {
+  final Map<String, dynamic> repostero;
+  final VoidCallback onPressed;
+
+  const ReposteroCard({super.key, required this.repostero, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+            child: Image.asset(
+              repostero['imagen'],
+              width: double.infinity,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Text(
+                  repostero['nombre'],
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  repostero['descripcion'],
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: List.generate(5, (starIndex) {
+                    return Icon(
+                      starIndex < repostero['estrellas']
+                          ? Icons.star
+                          : Icons.star_border,
+                      color: Colors.orange,
+                      size: 20,
+                    );
+                  }),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Puntaje: ${repostero['puntaje']}',
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: onPressed,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: Colors.pink,
+                  ),
+                  child: const Text('Ver Perfil'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF8C1B2F),
-        title: const Text('Inicio Reposteros'),
+        title: const Text('Inicio'),
       ),
-      body: const Center(child: Text('Pantalla de inicio para reposteros')),
+      body: const Center(child: Text('Pantalla de inicio')),
+    );
+  }
+}
+
+class CategoriasScreen extends StatelessWidget {
+  const CategoriasScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF8C1B2F),
+        title: const Text('Categorías de Pasteles'),
+      ),
+      body: const Center(child: Text('Pantalla de categorías de pasteles')),
     );
   }
 }
