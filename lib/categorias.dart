@@ -28,7 +28,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
   ];
 
   List<Map<String, dynamic>> _filteredCategorias = [];
-  int _selectedIndex = 1; // "Categorías"
+  final int _selectedIndex = 1; // "Categorías"
 
   @override
   void initState() {
@@ -52,7 +52,10 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
     } else if (index == 1) {
       Navigator.pushReplacementNamed(context, '/categorias');
     } else if (index == 2) {
-      Navigator.pushReplacementNamed(context, '/reposteros');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ReposterosScreen()),
+      );
     }
   }
 
@@ -68,81 +71,6 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle, color: Color(0xFFF2F0E4)),
-            onPressed: () {
-              Navigator.pushNamed(context, '/perfil');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.shopping_bag, color: Color(0xFFF2F0E4)),
-            onPressed: () {
-              Navigator.pushNamed(context, '/pedidos');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings, color: Color(0xFFF2F0E4)),
-            onPressed: () {
-              Navigator.pushNamed(context, '/configuracion');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.help_outline, color: Color(0xFFF2F0E4)),
-            onPressed: () {
-              Navigator.pushNamed(context, '/ayuda');
-            },
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        backgroundColor: const Color(0xFF8C1B2F),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Color(0xFF731D3C)),
-              child: Text(
-                'Menú',
-                style: GoogleFonts.lora(
-                  color: const Color(0xFFF2F0E4),
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home, color: Color(0xFFF2F0E4)),
-              title: Text('Inicio', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
-              onTap: () => Navigator.pushReplacementNamed(context, '/home'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.category, color: Color(0xFFF2F0E4)),
-              title: Text('Categorías', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
-              onTap: () => Navigator.pushReplacementNamed(context, '/categorias'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.people, color: Color(0xFFF2F0E4)),
-              title: Text('Reposteros', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
-              onTap: () => Navigator.pushReplacementNamed(context, '/reposteros'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_bag, color: Color(0xFFF2F0E4)),
-              title: Text('Mis Pedidos', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
-              onTap: () => Navigator.pushNamed(context, '/pedidos'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Color(0xFFF2F0E4)),
-              title: Text('Configuración', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
-              onTap: () => Navigator.pushNamed(context, '/configuracion'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.help_outline, color: Color(0xFFF2F0E4)),
-              title: Text('Ayuda', style: GoogleFonts.lora(color: const Color(0xFFF2F0E4))),
-              onTap: () => Navigator.pushNamed(context, '/ayuda'),
-            ),
-          ],
         ),
       ),
       body: Padding(
@@ -220,3 +148,105 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
   }
 }
 
+class ReposterosScreen extends StatefulWidget {
+  const ReposterosScreen({super.key});
+
+  @override
+  _ReposterosScreenState createState() => _ReposterosScreenState();
+}
+
+class _ReposterosScreenState extends State<ReposterosScreen> {
+  final List<Map<String, dynamic>> reposteros = [
+    {
+      'nombre': 'Ana Martínez',
+      'imagen': 'assets/repostera1.jpg',
+      'descripcion': 'Especialista en pasteles fondant.',
+      'estrellas': 5,
+      'puntaje': 4.9,
+    },
+    {
+      'nombre': 'Mario Pérez',
+      'imagen': 'assets/repostero3.jpg',
+      'descripcion': 'Experto en repostería francesa.',
+      'estrellas': 4,
+      'puntaje': 4.5,
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF8C1B2F),
+        title: Text(
+          'Reposteros',
+          style: GoogleFonts.lora(
+            color: const Color(0xFFF2F0E4),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ListView.builder(
+          itemCount: reposteros.length,
+          itemBuilder: (context, index) {
+            final repostero = reposteros[index];
+            return Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                    child: Image.asset(
+                      repostero['imagen'],
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          repostero['nombre'],
+                          style: GoogleFonts.lora(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          repostero['descripcion'],
+                          style: GoogleFonts.lora(fontSize: 14),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(5, (starIndex) {
+                            return Icon(
+                              starIndex < repostero['estrellas']
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: Colors.orange,
+                              size: 20,
+                            );
+                          }),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'Puntaje: ${repostero['puntaje']}',
+                          style: GoogleFonts.lora(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

@@ -3,7 +3,7 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'dart:io';
 
 class Model3DViewer extends StatefulWidget {
-  const Model3DViewer({Key? key}) : super(key: key);
+  const Model3DViewer({super.key});
 
   @override
   State<Model3DViewer> createState() => _Model3DViewerState();
