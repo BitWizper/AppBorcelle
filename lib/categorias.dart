@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:borcelle/reposteros.dart';
+import 'package:borcelle/Model3D/MainMenuUI.dart';
+import 'package:borcelle/home.dart'; // Importación asegurada
 
 class CategoriasScreen extends StatefulWidget {
   const CategoriasScreen({super.key});
@@ -28,7 +31,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
   ];
 
   List<Map<String, dynamic>> _filteredCategorias = [];
-  final int _selectedIndex = 1; // "Categorías"
+  int _selectedIndex = 1; // "Pasteles"
 
   @override
   void initState() {
@@ -47,15 +50,35 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else if (index == 1) {
-      Navigator.pushReplacementNamed(context, '/categorias');
-    } else if (index == 2) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const ReposterosScreen()),
-      );
+    if (index == _selectedIndex) return; // Evita recargar la pantalla actual
+
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0: // Ir a HomeScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()), // ✅ Sin 'const'
+        );
+        break;
+      case 1: // Categorías (Ya estamos aquí)
+        break;
+      case 2: // Reposteros
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ReposterosScreen()),
+        );
+        break;
+      case 3: // Model 3D
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Model3DViewer()),
+        );
+        break;
+      default:
+        return;
     }
   }
 
@@ -63,6 +86,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, // ❌ Elimina la flecha de regreso
         backgroundColor: const Color(0xFF8C1B2F),
         title: Text(
           'Categorías',
@@ -130,6 +154,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
           BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Pasteles'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Reposteros'),
+          BottomNavigationBarItem(icon: Icon(Icons.view_in_ar), label: 'Model 3D'),
         ],
         selectedItemColor: Color(0xFFF2F0E4),
         unselectedItemColor: Color(0xFF731D3C),
@@ -143,109 +168,6 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
       SnackBar(
         content: Text('Detalles de la categoría: $categoria'),
         duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-}
-
-class ReposterosScreen extends StatefulWidget {
-  const ReposterosScreen({super.key});
-
-  @override
-  _ReposterosScreenState createState() => _ReposterosScreenState();
-}
-
-class _ReposterosScreenState extends State<ReposterosScreen> {
-  final List<Map<String, dynamic>> reposteros = [
-    {
-      'nombre': 'Ana Martínez',
-      'imagen': 'assets/repostera1.jpg',
-      'descripcion': 'Especialista en pasteles fondant.',
-      'estrellas': 5,
-      'puntaje': 4.9,
-    },
-    {
-      'nombre': 'Mario Pérez',
-      'imagen': 'assets/repostero3.jpg',
-      'descripcion': 'Experto en repostería francesa.',
-      'estrellas': 4,
-      'puntaje': 4.5,
-    },
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF8C1B2F),
-        title: Text(
-          'Reposteros',
-          style: GoogleFonts.lora(
-            color: const Color(0xFFF2F0E4),
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: ListView.builder(
-          itemCount: reposteros.length,
-          itemBuilder: (context, index) {
-            final repostero = reposteros[index];
-            return Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                    child: Image.asset(
-                      repostero['imagen'],
-                      width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          repostero['nombre'],
-                          style: GoogleFonts.lora(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          repostero['descripcion'],
-                          style: GoogleFonts.lora(fontSize: 14),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(5, (starIndex) {
-                            return Icon(
-                              starIndex < repostero['estrellas']
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              color: Colors.orange,
-                              size: 20,
-                            );
-                          }),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'Puntaje: ${repostero['puntaje']}',
-                          style: GoogleFonts.lora(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
       ),
     );
   }
