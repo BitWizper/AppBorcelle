@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Colors.amberAccent,
+        primaryColor: Color(0xFF8C1B2F),
+        scaffoldBackgroundColor: Color(0xFFF2F0E4),
       ),
       home: AuthScreen(),
     );
@@ -36,6 +37,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF2F0E4),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -84,64 +86,6 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildButton(BuildContext context, String text, bool isLogin) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFFA65168), // Rosa oscuro elegante
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 45, vertical: 18),
-        shadowColor: Colors.black.withOpacity(0.4),
-        elevation: 8,
-      ).copyWith(
-        overlayColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.pressed)) {
-            return Color(0xFF731D3C); // Cambia al presionar
-          }
-          return null;
-        }),
-      ),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RoleSelectionScreen(isLogin: isLogin)),
-        );
-      },
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 19,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          letterSpacing: 1.2,
-        ),
-      ),
-    );
-  }
-}
-
-class RoleSelectionScreen extends StatelessWidget {
-  final bool isLogin;
-  const RoleSelectionScreen({super.key, required this.isLogin});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Selecciona tu Rol")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildRoleButton(context, "Clientes", "Cliente"),
-            SizedBox(height: 15),
-            _buildRoleButton(context, "Reposteros", "Repostero"),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRoleButton(BuildContext context, String text, String role) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
         backgroundColor: Color(0xFFA65168),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25),
@@ -160,12 +104,17 @@ class RoleSelectionScreen extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => FormScreen(role: role, isLogin: isLogin)),
+          MaterialPageRoute(builder: (context) => FormScreen(role: "Cliente", isLogin: isLogin)),
         );
       },
       child: Text(
         text,
-        style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 19,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
@@ -191,7 +140,7 @@ class _FormScreenState extends State<FormScreen> {
     final loginData = {
       "correo": _correoController.text,
       "contrasena": _contrasenaController.text,
-      "tipo_usuario": widget.role,
+      "tipo_usuario": "Cliente",
     };
 
     final response = await http.post(
@@ -206,13 +155,9 @@ class _FormScreenState extends State<FormScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Inicio de sesión exitoso")));
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);  // Guarda el estado de sesión
+      await prefs.setBool('isLoggedIn', true);
 
-      if (widget.role == "Cliente") {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-      } else if (widget.role == "Repostero") {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ReposteroHomeScreen()));
-      }
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data["error"] ?? "Error en el inicio de sesión")));
     }
@@ -221,7 +166,14 @@ class _FormScreenState extends State<FormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("${widget.isLogin ? "Iniciar Sesión" : "Registro"} - ${widget.role}")),
+      backgroundColor: Color(0xFFF2F0E4),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF731D3C),
+        title: Text(
+          widget.isLogin ? "Iniciar Sesión" : "Registro",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -248,7 +200,7 @@ class _FormScreenState extends State<FormScreen> {
                     return null;
                   }),
                 ),
-                onPressed: widget.isLogin ? _loginUser : null, // Aquí puedes agregar _registerUser si es necesario
+                onPressed: widget.isLogin ? _loginUser : null,
                 child: Text(
                   widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta",
                   style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
@@ -262,12 +214,31 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15.0),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Color(0xFFD9B9AD),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
-        decoration: InputDecoration(labelText: label),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: Color(0xFF731D3C)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Color(0xFFD9B9AD),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Por favor ingrese $label';
+          }
+          return null;
+        },
       ),
     );
   }
