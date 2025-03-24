@@ -59,7 +59,6 @@ class HelpScreen extends StatelessWidget {
               _buildSection('¿Qué debo hacer si tengo problemas con mi pedido?', 'Puedes ponerte en contacto con nuestro equipo de soporte a través del chat en la aplicación o enviarnos un correo a soporte@borcelle.com.'),
               _buildSection('¿Puedo modificar mi pedido después de confirmarlo?', 'Sí, puedes hacer modificaciones hasta 24 horas después de realizar tu pedido. Luego, las modificaciones estarán sujetas a la disponibilidad del pastelero.'),
               SizedBox(height: 30),
-              _buildCTAButton(context),
             ],
           ),
         ),
@@ -112,29 +111,6 @@ class HelpScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildCTAButton(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => RegisterScreen()),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFFA65168),
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 5,
-        ),
-        child: Text(
-          'Comienza ahora',
-          style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
 }
 
 class RegisterScreen extends StatelessWidget {
@@ -146,6 +122,12 @@ class RegisterScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Registro', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Color(0xFF731D3C),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Center(
         child: Text('Pantalla de Registro',
