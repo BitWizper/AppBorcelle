@@ -13,8 +13,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Preguntas Frecuentes - BORCELLE',
       theme: ThemeData(
-        primarySwatch: Colors.pink,
-        fontFamily: 'Lora', // Cambié la tipografía a Lora
+        primaryColor: Color(0xFF8C1B2F),
+        fontFamily: 'Lora',
       ),
       home: HelpScreen(),
     );
@@ -30,36 +30,35 @@ class HelpScreen extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            // Logo de BORCELLE
             Image.asset(
-              'assets/fotodepasteles/iconoborcelle.jpg', // Ruta del logo en tu proyecto
-              height: 40, // Ajusta el tamaño del logo según sea necesario
+              'assets/fotodepasteles/iconoborcelle.jpg',
+              height: 40,
             ),
             SizedBox(width: 10),
-            Text(
-              'Preguntas Frecuentes - BORCELLE',
-            ),
+            Text('Preguntas Frecuentes', style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
-        backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
+        backgroundColor: Color(0xFF731D3C),
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        color: Color(0xFFF2F0E4),
+        padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(),
+              SizedBox(height: 20),
               _buildSection('¿Qué es BORCELLE?', 'Es una plataforma en línea que permite diseñar y encargar pasteles personalizados para eventos exclusivos como bodas, quince años y celebraciones especiales.'),
               _buildSection('¿Cómo funciona BORCELLE?', 'Los usuarios pueden crear un pastel único, eligiendo desde los sabores hasta las decoraciones, y ver el diseño en tiempo real mientras eligen las opciones.'),
-              _buildSection('¿Qué problemas resuelve BORCELLE?', 'Soluciona las dificultades que enfrentan las personas al no encontrar proveedores que ofrezcan pasteles con la calidad, sabor y diseño deseados.'),
               _buildSection('¿Puedo elegir al pastelero de mi preferencia?', 'Sí, en la plataforma puedes seleccionar el pastelero de acuerdo a su experiencia, trabajos anteriores y opiniones de otros clientes.'),
-              _buildSection('¿Cómo puedo contactar al pastelero?', 'A través de la plataforma, puedes agendar una cita para degustaciones y comunicarte con el pastelero para coordinar todos los detalles.'),
-              _buildSection('¿Cuál es el modelo de negocio de BORCELLE?', 'BORCELLE gana dinero mediante comisiones por pedido, suscripciones de pasteleros y publicidad en la plataforma.'),
-              _buildSection('¿Cómo puedo comenzar a usar la plataforma?', 'Solo tienes que registrarte, crear tu pastel personalizado y elegir al pastelero que mejor se adapte a tus necesidades.'),
-              _buildSection('¿BORCELLE está disponible para cualquier evento?', 'Está especialmente diseñado para eventos exclusivos como bodas, quince años y celebraciones de alto nivel.'),
-              _buildSection('¿Cómo se asegura la calidad de los pasteles?', 'BORCELLE trabaja solo con los mejores pasteleros de la ciudad, quienes tienen un historial comprobado de trabajos anteriores y son altamente calificados.'),
-              _buildSection('¿Qué pasa si no estoy satisfecho con el pastel?', 'La plataforma permite coordinar todos los detalles con el pastelero para asegurar que el pastel sea exactamente lo que buscas. Si hay algún problema, trabajamos para solucionarlo.'),
+              _buildSection('¿Cómo puedo pagar mi pedido?', 'BORCELLE ofrece múltiples métodos de pago seguros, incluyendo tarjetas de crédito, débito y transferencias bancarias.'),
+              _buildSection('¿Cuánto tiempo tarda en hacerse un pastel?', 'El tiempo de entrega varía según la complejidad del diseño, pero en general los pasteles están listos en un plazo de 3 a 7 días hábiles.'),
+              _buildSection('¿BORCELLE tiene garantía?', 'Sí, BORCELLE garantiza la calidad de los pasteles y ofrece reembolsos en caso de incumplimiento por parte del pastelero.'),
+              _buildSection('¿Qué debo hacer si tengo problemas con mi pedido?', 'Puedes ponerte en contacto con nuestro equipo de soporte a través del chat en la aplicación o enviarnos un correo a soporte@borcelle.com.'),
+              _buildSection('¿Puedo modificar mi pedido después de confirmarlo?', 'Sí, puedes hacer modificaciones hasta 24 horas después de realizar tu pedido. Luego, las modificaciones estarán sujetas a la disponibilidad del pastelero.'),
+              SizedBox(height: 30),
               _buildCTAButton(context),
             ],
           ),
@@ -71,46 +70,51 @@ class HelpScreen extends StatelessWidget {
   Widget _buildHeader() {
     return Center(
       child: Text(
-        'Preguntas Frecuentes - BORCELLE',
+        'Preguntas Frecuentes',
         style: TextStyle(
-          fontSize: 24,
+          fontSize: 26,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF8C1B2F), // Vino oscuro
+          color: Color(0xFF8C1B2F),
         ),
       ),
     );
   }
 
   Widget _buildSection(String question, String answer) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            question,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF8C1B2F), // Vino oscuro
+    return Card(
+      margin: EdgeInsets.only(bottom: 15),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      color: Color(0xFFD9B9AD),
+      child: Padding(
+        padding: EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              question,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF731D3C),
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            answer,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
+            SizedBox(height: 8),
+            Text(
+              answer,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildCTAButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
+    return Center(
       child: ElevatedButton(
         onPressed: () {
           Navigator.push(
@@ -119,15 +123,14 @@ class HelpScreen extends StatelessWidget {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          backgroundColor: Color(0xFFA65168),
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 5,
         ),
         child: Text(
           'Comienza ahora',
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -141,11 +144,12 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro'),
-        backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
+        title: Text('Registro', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Color(0xFF731D3C),
       ),
       body: Center(
-        child: Text('Pantalla de Registro'),
+        child: Text('Pantalla de Registro',
+            style: TextStyle(fontSize: 18, color: Color(0xFF8C1B2F))),
       ),
     );
   }

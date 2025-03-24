@@ -342,7 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Container(
+                              child: SizedBox(
                                 height: 120,
                                 width: double.infinity,
                                 child: CachedNetworkImage(
