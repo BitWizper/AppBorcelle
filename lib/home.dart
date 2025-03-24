@@ -109,39 +109,38 @@ class _HomeScreenState extends State<HomeScreen> {
   },
 ),
           PopupMenuButton<String>(
-            icon: Icon(Icons.menu, color: Colors.white),
-            onSelected: (value) {
-              switch (value) {
-                case 'pasteles':
-                  Navigator.pushNamed(context, '/categorias');
-                  break;
-                case 'reposteros':
-                  Navigator.pushNamed(context, '/reposteros');
-                  break;
-                  case 'crearpastel':
-                  Navigator.pushNamed(context, '/crearPastel');
-                  break;
-                  case 'perfil':
-                  Navigator.pushNamed(context, '/perfil');
-                  break;
-                case 'ayuda':
-                  Navigator.pushNamed(context, '/ayuda');
-                  break;
-                case 'configuracion':
-                  Navigator.pushNamed(context, '/configuracion');
-                  break;
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(value: 'categorias', child: Text('Categorías')),
-              PopupMenuItem(value: 'reposteros', child: Text('Reposteros')),
-              PopupMenuItem(value: 'crear pastel', child: Text('crearpastel')),
-              PopupMenuItem(value: 'perfil', child: Text('perfil')),
-              PopupMenuItem(value: 'ayuda', child: Text('Ayuda')),
-              PopupMenuItem(value: 'configuracion', child: Text('Configuración')),
-             
-            ],
-          ),
+  icon: Icon(Icons.menu, color: Colors.white),
+  onSelected: (value) {
+    switch (value) {
+      case 'categorias':  // Asegúrate de que el valor coincida con el PopupMenuItem
+        Navigator.pushNamed(context, '/categorias');
+        break;
+      case 'reposteros':
+        Navigator.pushNamed(context, '/reposteros');
+        break;
+      case 'crearpastel':
+        Navigator.pushNamed(context, '/crearPastel');
+        break;
+      case 'perfil':
+        Navigator.pushNamed(context, '/perfil');
+        break;
+      case 'ayuda':
+        Navigator.pushNamed(context, '/ayuda');
+        break;
+      case 'configuracion':
+        Navigator.pushNamed(context, '/configuracion');
+        break;
+    }
+  },
+  itemBuilder: (context) => [
+    PopupMenuItem(value: 'categorias', child: Text('Pasteles')), // Cambia el texto a "Pasteles"
+    PopupMenuItem(value: 'reposteros', child: Text('Reposteros')),
+    PopupMenuItem(value: 'crearpastel', child: Text('Crear Pastel')),
+    PopupMenuItem(value: 'perfil', child: Text('Perfil')),
+    PopupMenuItem(value: 'ayuda', child: Text('Ayuda')),
+    PopupMenuItem(value: 'configuracion', child: Text('Configuración')),
+  ],
+),
         ],
       ),
       body: SingleChildScrollView(
