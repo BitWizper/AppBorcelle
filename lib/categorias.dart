@@ -13,22 +13,21 @@ class CategoriasScreen extends StatelessWidget {
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
         "nombre": "Pastel de Chocolate",
         "precio": "\$25.00",
         "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Chocolate puro en cada bocado."
+      },
+      {
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },{
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
       },
     ],
     'Bautizos': [
@@ -39,117 +38,95 @@ class CategoriasScreen extends StatelessWidget {
         "reseña": "Pastel esponjoso con un toque de vainilla."
       },
       {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
         "nombre": "Pastel de Zanahoria",
         "precio": "\$22.00",
-        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Un pastel saludable con zanahoria y nueces."
+      },
+      {
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },{
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
       },
     ],
     'Bodas': [
       {
         "nombre": "Pastel de 3 pisos",
         "precio": "\$150.00",
-        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
-        "reseña": "Pastel elegante para bodas con decoraciones únicas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel Red Velvet",
-        "precio": "\$30.00",
-        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
-        "reseña": "Sabor intenso con queso crema."
-      },
-    ],
-    'cumpleaños': [
-      {
-        "nombre": "Pastel de 3 pisos",
-        "precio": "\$150.00",
-        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Pastel elegante para bodas con decoraciones únicas."
       },
       {
         "nombre": "Pastel Red Velvet",
         "precio": "\$30.00",
-        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Sabor intenso con queso crema."
       },
       {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },{
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
       },
     ],
-    'baby shower': [
+    'Cumpleaños': [
       {
         "nombre": "Pastel de 3 pisos",
         "precio": "\$150.00",
-        "imagen": "assets/fotodepasteles/boda.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Pastel elegante para bodas con decoraciones únicas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fotopastel4.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
-      },
-      {
-        "nombre": "Pastel de Fresas",
-        "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
-        "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel Red Velvet",
         "precio": "\$30.00",
-        "imagen": "assets/fotodepasteles/fotopastel4.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },
+      {
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },{
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },
+    ],
+    'Baby Shower': [
+      {
+        "nombre": "Pastel de 3 pisos",
+        "precio": "\$150.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Pastel elegante para bodas con decoraciones únicas."
+      },
+      {
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },
+      {
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },{
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Sabor intenso con queso crema."
       },
     ]
@@ -216,6 +193,19 @@ class CategoriasScreen extends StatelessWidget {
                                     width: 160,
                                     height: 110,
                                     fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      print('Error cargando imagen: $error');
+                                      return Container(
+                                        width: 160,
+                                        height: 110,
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                          Icons.error_outline,
+                                          color: Colors.red,
+                                          size: 40,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                                 Padding(
