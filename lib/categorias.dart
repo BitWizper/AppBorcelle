@@ -13,6 +13,18 @@ class CategoriasScreen extends StatelessWidget {
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
         "nombre": "Pastel de Chocolate",
         "precio": "\$25.00",
         "imagen": "assets/fotodepasteles/chocolate.jpg",
@@ -27,6 +39,18 @@ class CategoriasScreen extends StatelessWidget {
         "reseña": "Pastel esponjoso con un toque de vainilla."
       },
       {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
         "nombre": "Pastel de Zanahoria",
         "precio": "\$22.00",
         "imagen": "assets/fotodepasteles/zanahoria.jpg",
@@ -39,6 +63,88 @@ class CategoriasScreen extends StatelessWidget {
         "precio": "\$150.00",
         "imagen": "assets/fotodepasteles/boda.jpg",
         "reseña": "Pastel elegante para bodas con decoraciones únicas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/redvelvet.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },
+    ],
+    'cumpleaños': [
+      {
+        "nombre": "Pastel de 3 pisos",
+        "precio": "\$150.00",
+        "imagen": "assets/fotodepasteles/boda.jpg",
+        "reseña": "Pastel elegante para bodas con decoraciones únicas."
+      },
+      {
+        "nombre": "Pastel Red Velvet",
+        "precio": "\$30.00",
+        "imagen": "assets/fotodepasteles/redvelvet.jpg",
+        "reseña": "Sabor intenso con queso crema."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+    ],
+    'baby shower': [
+      {
+        "nombre": "Pastel de 3 pisos",
+        "precio": "\$150.00",
+        "imagen": "assets/fotodepasteles/boda.jpg",
+        "reseña": "Pastel elegante para bodas con decoraciones únicas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
+      },
+      {
+        "nombre": "Pastel de Fresas",
+        "precio": "\$20.00",
+        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel Red Velvet",
