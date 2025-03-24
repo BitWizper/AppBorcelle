@@ -11,6 +11,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:async';
 import 'package:borcelle/Model3D/MainMenuUI.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MaterialApp(
@@ -49,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String consejoActual = "";
   late Timer _consejoTimer;
   bool isLoggedIn = false;
+  List<Map<String, dynamic>> pasteles = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -60,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
     _checkLoginStatus();
+    _cargarPasteles();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -67,6 +72,53 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     });
+  }
+
+  Future<void> _cargarPasteles() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:3000/api/pastel/obtenerpasteles'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        print('Datos recibidos del backend: $data'); // Para debug
+
+        setState(() {
+          pasteles = data.where((pastel) => 
+            (pastel['popularidad'] ?? 0) > 4 && (pastel['destacado'] ?? false)
+          ).map((pastel) => {
+            'name': pastel['nombre'] ?? '',
+            'price': '${pastel['precio'] ?? 0} MXN',
+            'image': pastel['imagen_url'] ?? '',
+            'descripcion': pastel['descripcion'] ?? '',
+            'popularidad': pastel['popularidad'] ?? 0,
+            'id_pastel': pastel['id_pastel'],
+            'id_repostero': pastel['id_repostero'],
+            'id_categoria': pastel['id_categoria'],
+            'destacado': pastel['destacado'] ?? false,
+          }).toList();
+          isLoading = false;
+        });
+
+        print('Pasteles destacados cargados: ${pasteles.length}'); // Para debug
+      } else {
+        print('Error al cargar los pasteles: ${response.statusCode}');
+        print('Respuesta del servidor: ${response.body}'); // Para debug
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error al cargar los pasteles: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -94,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.search, color: Colors.white),
             onPressed: () {
-              showSearch(context: context, delegate: CustomSearchDelegate());
+              showSearch(context: context, delegate: CustomSearchDelegate(pasteles: pasteles));
             },
           ),
           IconButton(
@@ -256,51 +308,73 @@ class _HomeScreenState extends State<HomeScreen> {
             style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
           ),
           SizedBox(height: 10),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 0.8,
-            ),
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              List<Map<String, String>> cakes = [
-                {"image": "assets/fotodepasteles/fotopastel1.jpg", "name": "Pastel de Fresas", "price": "250 MXN"},
-                {"image": "assets/fotodepasteles/fotopastel5.jpg", "name": "Pastel de Chocolate", "price": "220 MXN"},
-                {"image": "assets/fotodepasteles/fotopastel3.jpg", "name": "Pastel Arcoíris", "price": "270 MXN"},
-                {"image": "assets/fotodepasteles/fotopastel4.jpg", "name": "Pastel Red Velvet", "price": "300 MXN"},
-              ];
-
-              return Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                child: InkWell(
-                  onTap: () {
-                    if (!isLoggedIn) {
-                      _showLoginRequiredDialog(context, 'ver detalles del pastel');
-                    } else {
-                      // Aquí iría la navegación al detalle del pastel cuando esté logueado
-                      Navigator.pushNamed(context, '/categorias');
-                    }
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(cakes[index]["image"]!, fit: BoxFit.cover, height: 120, width: double.infinity),
-                      ),
-                      Padding(padding: EdgeInsets.all(8), child: Text(cakes[index]["name"]!, style: TextStyle(fontWeight: FontWeight.bold))),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text(cakes[index]["price"]!)),
-                    ],
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.8,
                   ),
+                  itemCount: pasteles.length > 4 ? 4 : pasteles.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      child: InkWell(
+                        onTap: () {
+                          if (!isLoggedIn) {
+                            _showLoginRequiredDialog(context, 'ver detalles del pastel');
+                          } else {
+                            Navigator.pushNamed(context, '/categorias');
+                          }
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                pasteles[index]["image"],
+                                fit: BoxFit.cover,
+                                height: 120,
+                                width: double.infinity,
+                                errorBuilder: (context, error, stackTrace) {
+                                  print('Error cargando imagen: $error');
+                                  return Container(
+                                    height: 120,
+                                    width: double.infinity,
+                                    color: Colors.grey[300],
+                                    child: Icon(Icons.cake, size: 50, color: Color(0xFF8C1B2F)),
+                                  );
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                pasteles[index]["name"]!,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Text(
+                                pasteles[index]["price"]!,
+                                style: TextStyle(color: Color(0xFF8C1B2F)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         ],
       ),
     );
@@ -456,16 +530,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class CustomSearchDelegate extends SearchDelegate {
-  final List<Map<String, String>> pasteles = [
-    {"name": "Pastel de Fresas", "price": "250 MXN", "image": "assets/fotodepasteles/fotopastel1.jpg"},
-    {"name": "Pastel de Chocolate", "price": "220 MXN", "image": "assets/fotodepasteles/fotopastel5.jpg"},
-    {"name": "Pastel Arcoíris", "price": "270 MXN", "image": "assets/fotodepasteles/fotopastel3.jpg"},
-    {"name": "Pastel Red Velvet", "price": "300 MXN", "image": "assets/fotodepasteles/fotopastel4.jpg"},
-    {"name": "Pastel de Vainilla", "price": "200 MXN", "image": "assets/fotodepasteles/fotopastel1.jpg"},
-    {"name": "Pastel de Zanahoria", "price": "230 MXN", "image": "assets/fotodepasteles/fotopastel5.jpg"},
-    {"name": "Pastel de Moka", "price": "280 MXN", "image": "assets/fotodepasteles/fotopastel3.jpg"},
-    {"name": "Pastel de Tres Leches", "price": "310 MXN", "image": "assets/fotodepasteles/fotopastel4.jpg"},
-  ];
+  final List<Map<String, dynamic>> pasteles;
+
+  CustomSearchDelegate({required this.pasteles});
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -491,7 +558,7 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    List<Map<String, String>> resultados = pasteles
+    List<Map<String, dynamic>> resultados = pasteles
         .where((pastel) => pastel["name"]!.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
@@ -513,11 +580,20 @@ class CustomSearchDelegate extends SearchDelegate {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                child: Image.asset(
-                  resultados[index]["image"]!,
+                child: Image.network(
+                  resultados[index]["image"],
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    print('Error cargando imagen en búsqueda: $error');
+                    return Container(
+                      height: 120,
+                      width: double.infinity,
+                      color: Colors.grey[300],
+                      child: Icon(Icons.cake, size: 50, color: Color(0xFF8C1B2F)),
+                    );
+                  },
                 ),
               ),
               Padding(
@@ -564,7 +640,7 @@ class CustomSearchDelegate extends SearchDelegate {
       );
     }
 
-    List<Map<String, String>> sugerencias = pasteles
+    List<Map<String, dynamic>> sugerencias = pasteles
         .where((pastel) => pastel["name"]!.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
@@ -573,7 +649,14 @@ class CustomSearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         return ListTile(
           leading: CircleAvatar(
-            backgroundImage: AssetImage(sugerencias[index]["image"]!),
+            backgroundColor: Colors.grey[300],
+            backgroundImage: NetworkImage(
+              sugerencias[index]["image"],
+            ),
+            onBackgroundImageError: (exception, stackTrace) {
+              print('Error cargando imagen en sugerencia: $exception');
+            },
+            child: Icon(Icons.cake, size: 24, color: Color(0xFF8C1B2F)),
           ),
           title: Text(sugerencias[index]["name"]!),
           subtitle: Text(sugerencias[index]["price"]!),
