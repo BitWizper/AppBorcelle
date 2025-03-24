@@ -44,6 +44,10 @@ class _AuthScreenState extends State<AuthScreen> {
           image: DecorationImage(
             image: AssetImage("assets/fotodepasteles/pastelprimero.jpg"),
             fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.5),
+              BlendMode.darken,
+            ),
           ),
         ),
         child: Center(
@@ -51,61 +55,87 @@ class _AuthScreenState extends State<AuthScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircleAvatar(
-                  radius: 75,
-                  backgroundImage: AssetImage("assets/fotodepasteles/iconoborcelle.jpg"),
+                Container(
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    shape: BoxShape.circle,
+                  ),
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundImage: AssetImage("assets/fotodepasteles/iconoborcelle.jpg"),
+                  ),
                 ),
                 SizedBox(height: 30),
-                Text(
-                  "Borcelle",
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 10.0,
-                        color: Colors.black54,
-                        offset: Offset(3, 3),
-                      )
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF8C1B2F).withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Text(
+                    "Borcelle",
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
                     ],
                   ),
-                ),
-                SizedBox(height: 30),
-                _buildButton(context, "Iniciar Sesión", true),
-                SizedBox(height: 15),
-                _buildButton(context, "Registrarse", false),
-                SizedBox(height: 30),
-                Text(
-                  "O continúa con",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                  child: Column(
+                    children: [
+                      _buildButton(context, "Iniciar Sesión", true),
+                      SizedBox(height: 15),
+                      _buildButton(context, "Registrarse", false),
+                      SizedBox(height: 20),
+                      Text(
+                        "O continúa con",
+                        style: TextStyle(
+                          color: Color(0xFF8C1B2F),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildSocialButton(
+                            icon: FontAwesomeIcons.google,
+                            color: Colors.red,
+                            onPressed: () => _handleGoogleSignIn(),
+                          ),
+                          SizedBox(width: 20),
+                          _buildSocialButton(
+                            icon: FontAwesomeIcons.facebook,
+                            color: Colors.blue,
+                            onPressed: () => _handleFacebookSignIn(),
+                          ),
+                          SizedBox(width: 20),
+                          _buildSocialButton(
+                            icon: FontAwesomeIcons.phone,
+                            color: Colors.green,
+                            onPressed: () => _handlePhoneSignIn(),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildSocialButton(
-                      icon: FontAwesomeIcons.google,
-                      color: Colors.red,
-                      onPressed: () => _handleGoogleSignIn(),
-                    ),
-                    SizedBox(width: 20),
-                    _buildSocialButton(
-                      icon: FontAwesomeIcons.facebook,
-                      color: Colors.blue,
-                      onPressed: () => _handleFacebookSignIn(),
-                    ),
-                    SizedBox(width: 20),
-                    _buildSocialButton(
-                      icon: FontAwesomeIcons.phone,
-                      color: Colors.green,
-                      onPressed: () => _handlePhoneSignIn(),
-                    ),
-                  ],
                 ),
               ],
             ),
