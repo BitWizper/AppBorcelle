@@ -9,25 +9,25 @@ class CategoriasScreen extends StatelessWidget {
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel de Chocolate",
         "precio": "\$25.00",
-        "imagen": "assets/fotodepasteles/chocolate.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Chocolate puro en cada bocado."
       },
     ],
@@ -35,25 +35,25 @@ class CategoriasScreen extends StatelessWidget {
       {
         "nombre": "Pastel de Vainilla",
         "precio": "\$18.00",
-        "imagen": "assets/fotodepasteles/vainilla.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel1.jpg",
         "reseña": "Pastel esponjoso con un toque de vainilla."
       },
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel de Zanahoria",
         "precio": "\$22.00",
-        "imagen": "assets/fotodepasteles/zanahoria.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
         "reseña": "Un pastel saludable con zanahoria y nueces."
       },
     ],
@@ -61,13 +61,13 @@ class CategoriasScreen extends StatelessWidget {
       {
         "nombre": "Pastel de 3 pisos",
         "precio": "\$150.00",
-        "imagen": "assets/fotodepasteles/boda.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
         "reseña": "Pastel elegante para bodas con decoraciones únicas."
       },
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel2.jpeg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
@@ -85,7 +85,7 @@ class CategoriasScreen extends StatelessWidget {
       {
         "nombre": "Pastel Red Velvet",
         "precio": "\$30.00",
-        "imagen": "assets/fotodepasteles/redvelvet.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
         "reseña": "Sabor intenso con queso crema."
       },
     ],
@@ -93,31 +93,31 @@ class CategoriasScreen extends StatelessWidget {
       {
         "nombre": "Pastel de 3 pisos",
         "precio": "\$150.00",
-        "imagen": "assets/fotodepasteles/boda.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
         "reseña": "Pastel elegante para bodas con decoraciones únicas."
       },
       {
         "nombre": "Pastel Red Velvet",
         "precio": "\$30.00",
-        "imagen": "assets/fotodepasteles/redvelvet.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
         "reseña": "Sabor intenso con queso crema."
       },
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel5.jpg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
     ],
@@ -137,7 +137,7 @@ class CategoriasScreen extends StatelessWidget {
       {
         "nombre": "Pastel de Fresas",
         "precio": "\$20.00",
-        "imagen": "assets/fotodepasteles/fresas.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel4.jpg",
         "reseña": "Un pastel delicioso con fresas frescas."
       },
       {
@@ -149,7 +149,7 @@ class CategoriasScreen extends StatelessWidget {
       {
         "nombre": "Pastel Red Velvet",
         "precio": "\$30.00",
-        "imagen": "assets/fotodepasteles/redvelvet.jpg",
+        "imagen": "assets/fotodepasteles/fotopastel4.jpg",
         "reseña": "Sabor intenso con queso crema."
       },
     ]
