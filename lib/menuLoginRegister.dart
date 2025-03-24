@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPreferences
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'home.dart';
 import 'repostero_home.dart';
@@ -46,37 +47,68 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Logo circular de Borcelle
-              CircleAvatar(
-                radius: 75,  // Ajusta el tamaño del círculo
-                backgroundImage: AssetImage("assets/fotodepasteles/iconoborcelle.jpg"),  // Ruta del logo
-              ),
-              SizedBox(height: 30),
-              // Texto del título
-              Text(
-                "Borcelle",
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 10.0,
-                      color: Colors.black54,
-                      offset: Offset(3, 3),
-                    )
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircleAvatar(
+                  radius: 75,
+                  backgroundImage: AssetImage("assets/fotodepasteles/iconoborcelle.jpg"),
+                ),
+                SizedBox(height: 30),
+                Text(
+                  "Borcelle",
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 10.0,
+                        color: Colors.black54,
+                        offset: Offset(3, 3),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 30),
+                _buildButton(context, "Iniciar Sesión", true),
+                SizedBox(height: 15),
+                _buildButton(context, "Registrarse", false),
+                SizedBox(height: 30),
+                Text(
+                  "O continúa con",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildSocialButton(
+                      icon: FontAwesomeIcons.google,
+                      color: Colors.red,
+                      onPressed: () => _handleGoogleSignIn(),
+                    ),
+                    SizedBox(width: 20),
+                    _buildSocialButton(
+                      icon: FontAwesomeIcons.facebook,
+                      color: Colors.blue,
+                      onPressed: () => _handleFacebookSignIn(),
+                    ),
+                    SizedBox(width: 20),
+                    _buildSocialButton(
+                      icon: FontAwesomeIcons.phone,
+                      color: Colors.green,
+                      onPressed: () => _handlePhoneSignIn(),
+                    ),
                   ],
                 ),
-              ),
-              SizedBox(height: 30),
-              // Muestra siempre los botones "Iniciar Sesión" y "Registrarse"
-              _buildButton(context, "Iniciar Sesión", true),
-              SizedBox(height: 15),
-              _buildButton(context, "Registrarse", false),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -116,6 +148,52 @@ class _AuthScreenState extends State<AuthScreen> {
           letterSpacing: 1.2,
         ),
       ),
+    );
+  }
+
+  Widget _buildSocialButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: FaIcon(icon, color: color),
+        onPressed: onPressed,
+        iconSize: 24,
+      ),
+    );
+  }
+
+  void _handleGoogleSignIn() {
+    // Implementar inicio de sesión con Google
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Inicio de sesión con Google")),
+    );
+  }
+
+  void _handleFacebookSignIn() {
+    // Implementar inicio de sesión con Facebook
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Inicio de sesión con Facebook")),
+    );
+  }
+
+  void _handlePhoneSignIn() {
+    // Implementar inicio de sesión con teléfono
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Inicio de sesión con teléfono")),
     );
   }
 }
