@@ -81,96 +81,108 @@ class ReposterosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catálogo de Reposteros'),
+        title: Text('Reposteros', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Color(0xFF8C1B2F),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: categorias.entries.map((categoria) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    categoria.key,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF731D3C),
+      body: ListView.builder(
+        padding: EdgeInsets.all(16),
+        itemCount: categorias.length,
+        itemBuilder: (context, index) {
+          String categoria = categorias.keys.elementAt(index);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                categoria,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8C1B2F),
+                ),
+              ),
+              SizedBox(height: 16),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                itemCount: categorias[categoria]!.length,
+                itemBuilder: (context, reposteroIndex) {
+                  var repostero = categorias[categoria]![reposteroIndex];
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
                     ),
-                  ),
-                  SizedBox(
-                    height: 180,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: categoria.value.length,
-                      itemBuilder: (context, index) {
-                        var repostero = categoria.value[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                           child: Container(
-                            width: 140,
                             decoration: BoxDecoration(
-                              color: Color(0xFFF2F0E4),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Color(0xFFA65168), width: 2),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 4,
-                                  offset: Offset(2, 2),
-                                ),
-                              ],
+                              border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                             ),
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                                  child: Image.asset(
-                                    repostero['imagen'],
-                                    width: 140,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        repostero['nombre'],
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF731D3C),
-                                        ),
-                                      ),
-                                      Text(
-                                        '${repostero['calificacion']} ★',
-                                        style: TextStyle(color: Colors.orange[700]),
-                                      ),
-                                      Text(
-                                        repostero['reseñas'],
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 12, color: Colors.black87),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                            child: Image.asset(
+                              repostero['imagen'],
+                              height: 120,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        );
-                      },
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                repostero['nombre'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF8C1B2F),
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(Icons.star, color: Colors.amber, size: 16),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    repostero['calificacion'].toString(),
+                                    style: TextStyle(
+                                      color: Color(0xFFA65168),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                repostero['reseñas'],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFA65168),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
-            );
-          }).toList(),
-        ),
+              SizedBox(height: 32),
+            ],
+          );
+        },
       ),
     );
   }

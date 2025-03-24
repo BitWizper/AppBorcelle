@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,37 +29,75 @@ class HelpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/fotodepasteles/iconoborcelle.jpg',
-              height: 40,
-            ),
-            SizedBox(width: 10),
-            Text('Preguntas Frecuentes', style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
+        backgroundColor: Color(0xFF8C1B2F),
+        title: Text(
+          "Ayuda",
+          style: GoogleFonts.lora(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
-        backgroundColor: Color(0xFF731D3C),
-        elevation: 0,
       ),
-      body: Container(
-        color: Color(0xFFF2F0E4),
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              Text(
+                "Preguntas Frecuentes",
+                style: GoogleFonts.lora(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8C1B2F),
+                ),
+              ),
               SizedBox(height: 20),
-              _buildSection('¿Qué es BORCELLE?', 'Es una plataforma en línea que permite diseñar y encargar pasteles personalizados para eventos exclusivos como bodas, quince años y celebraciones especiales.'),
-              _buildSection('¿Cómo funciona BORCELLE?', 'Los usuarios pueden crear un pastel único, eligiendo desde los sabores hasta las decoraciones, y ver el diseño en tiempo real mientras eligen las opciones.'),
-              _buildSection('¿Puedo elegir al pastelero de mi preferencia?', 'Sí, en la plataforma puedes seleccionar el pastelero de acuerdo a su experiencia, trabajos anteriores y opiniones de otros clientes.'),
-              _buildSection('¿Cómo puedo pagar mi pedido?', 'BORCELLE ofrece múltiples métodos de pago seguros, incluyendo tarjetas de crédito, débito y transferencias bancarias.'),
-              _buildSection('¿Cuánto tiempo tarda en hacerse un pastel?', 'El tiempo de entrega varía según la complejidad del diseño, pero en general los pasteles están listos en un plazo de 3 a 7 días hábiles.'),
-              _buildSection('¿BORCELLE tiene garantía?', 'Sí, BORCELLE garantiza la calidad de los pasteles y ofrece reembolsos en caso de incumplimiento por parte del pastelero.'),
-              _buildSection('¿Qué debo hacer si tengo problemas con mi pedido?', 'Puedes ponerte en contacto con nuestro equipo de soporte a través del chat en la aplicación o enviarnos un correo a soporte@borcelle.com.'),
-              _buildSection('¿Puedo modificar mi pedido después de confirmarlo?', 'Sí, puedes hacer modificaciones hasta 24 horas después de realizar tu pedido. Luego, las modificaciones estarán sujetas a la disponibilidad del pastelero.'),
-              SizedBox(height: 30),
+              _buildFAQCard(
+                "¿Cómo puedo realizar un pedido?",
+                "Para realizar un pedido, primero debes iniciar sesión en tu cuenta. Luego, navega a la sección de pasteles, selecciona el que desees y sigue los pasos del proceso de compra."
+              ),
+              _buildFAQCard(
+                "¿Cuál es el tiempo de entrega?",
+                "El tiempo de entrega varía según la ubicación y el tipo de pastel. Por lo general, las entregas se realizan en un plazo de 24 a 48 horas después de la confirmación del pedido."
+              ),
+              _buildFAQCard(
+                "¿Puedo personalizar mi pastel?",
+                "Sí, ofrecemos opciones de personalización para nuestros pasteles. Puedes elegir el sabor, el tamaño, la decoración y agregar mensajes personalizados."
+              ),
+              _buildFAQCard(
+                "¿Qué métodos de pago aceptan?",
+                "Aceptamos tarjetas de crédito/débito, transferencias bancarias y pagos en efectivo al momento de la entrega."
+              ),
+              SizedBox(height: 20),
+              Text(
+                "Contacto",
+                style: GoogleFonts.lora(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8C1B2F),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Color(0xFFF2F0E4),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildContactItem(Icons.email, "Email: soporte@borcelle.com"),
+                    SizedBox(height: 10),
+                    _buildContactItem(Icons.phone, "Teléfono: (123) 456-7890"),
+                    SizedBox(height: 10),
+                    _buildContactItem(Icons.location_on, "Dirección: Av. Principal #123, Ciudad"),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -66,49 +105,51 @@ class HelpScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return Center(
-      child: Text(
-        'Preguntas Frecuentes',
-        style: TextStyle(
-          fontSize: 26,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF8C1B2F),
+  Widget _buildFAQCard(String question, String answer) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Color(0xFFF2F0E4),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+      ),
+      child: ExpansionTile(
+        title: Text(
+          question,
+          style: TextStyle(
+            color: Color(0xFF8C1B2F),
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              answer,
+              style: TextStyle(
+                color: Color(0xFFA65168),
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildSection(String question, String answer) {
-    return Card(
-      margin: EdgeInsets.only(bottom: 15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      color: Color(0xFFD9B9AD),
-      child: Padding(
-        padding: EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              question,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF731D3C),
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              answer,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-              ),
-            ),
-          ],
+  Widget _buildContactItem(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, color: Color(0xFF8C1B2F)),
+        SizedBox(width: 10),
+        Text(
+          text,
+          style: TextStyle(
+            color: Color(0xFF8C1B2F),
+            fontSize: 16,
+          ),
         ),
-      ),
+      ],
     );
   }
 }

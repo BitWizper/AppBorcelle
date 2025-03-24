@@ -286,13 +286,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (!isLoggedIn) {
                     _showLoginRequiredDialog(context, 'ver ofertas especiales');
                   } else {
-                    // Aquí iría la navegación a las ofertas cuando esté logueado
                     Navigator.pushNamed(context, '/categorias');
                   }
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity),
+                  ),
                 ),
               );
             }).toList(),
@@ -328,7 +333,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) {
                     return Card(
                       elevation: 5,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                      ),
                       child: InkWell(
                         onTap: () {
                           if (!isLoggedIn) {
@@ -342,40 +350,42 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: SizedBox(
-                                height: 120,
-                                width: double.infinity,
-                                child: CachedNetworkImage(
-                                  imageUrl: pasteles[index]["image"],
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(
-                                    child: CircularProgressIndicator(),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: SizedBox(
+                                  height: 120,
+                                  width: double.infinity,
+                                  child: CachedNetworkImage(
+                                    imageUrl: pasteles[index]["image"],
+                                    fit: BoxFit.cover,
                                   ),
-                                  errorWidget: (context, url, error) {
-                                    print('Error cargando imagen: $error');
-                                    print('URL que falló: $url');
-                                    return Container(
-                                      color: Colors.grey[300],
-                                      child: Icon(Icons.cake, size: 50, color: Color(0xFF8C1B2F)),
-                                    );
-                                  },
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Text(
-                                pasteles[index]["name"]!,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(
-                                pasteles[index]["price"]!,
-                                style: TextStyle(color: Color(0xFF8C1B2F)),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    pasteles[index]["name"],
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF8C1B2F),
+                                    ),
+                                  ),
+                                  Text(
+                                    pasteles[index]["price"],
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFFA65168),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -391,22 +401,78 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildConsejos() {
     return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.amber[100], borderRadius: BorderRadius.circular(10)),
-      child: Text("💡 Consejo: $consejoActual", style: GoogleFonts.lora(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F))),
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Consejos del Día",
+            style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
+          ),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Color(0xFFF2F0E4),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+            ),
+            child: Text(
+              consejoActual,
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xFFA65168),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildFeedRedes() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("📢 Últimas noticias de redes", style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F))),
+          Text(
+            "Síguenos en Redes Sociales",
+            style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
+          ),
           SizedBox(height: 10),
-          Text("📸 Instagram: ¡Nuevo diseño de pastel disponible! 🎂"),
-          Text("🕺🎵tik tok: Sorpresas este fin de semana, siguenos como Borcelle. 🎉"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildSocialButton(Icons.facebook, "Facebook"),
+              _buildSocialButton(Icons.camera_alt, "Instagram"),
+              _buildSocialButton(Icons.bookmark, "Pinterest"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialButton(IconData icon, String label) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: Color(0xFFA65168), size: 30),
+          SizedBox(height: 5),
+          Text(
+            label,
+            style: TextStyle(
+              color: Color(0xFFA65168),
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );

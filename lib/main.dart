@@ -32,7 +32,7 @@ class SelectRegisterApp extends StatelessWidget {
         '/perfil': (context) => ProfileScreen(),
         '/registro': (context) => RegisterScreen(),
         '/pedidos': (context) => OrdersScreen(),
-        '/model3d': (context) => Model3DViewer(),
+        '/crearPastel': (context) => Model3DViewer(),
       },
     );
   }

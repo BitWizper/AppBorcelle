@@ -176,7 +176,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
                                   decoration: BoxDecoration(
                                     color: Color(0xFFF2F0E4),
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: Color(0xFFA65168), width: 2),
+                                    border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black26,
@@ -191,11 +191,17 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
                                       ClipRRect(
                                         borderRadius: const BorderRadius.vertical(
                                             top: Radius.circular(8)),
-                                        child: Image.asset(
-                                          getImagenLocal(categoria['nombre']),
-                                          width: 160,
-                                          height: 100,
-                                          fit: BoxFit.cover,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                                            borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                                          ),
+                                          child: Image.asset(
+                                            getImagenLocal(categoria['nombre']),
+                                            width: 160,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
                                       Expanded(
@@ -209,15 +215,15 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
                                                 textAlign: TextAlign.center,
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF731D3C),
+                                                  color: Color(0xFF8C1B2F),
                                                 ),
                                               ),
                                               Text(
                                                 '\$${double.parse(pastel['precio'].toString()).toStringAsFixed(2)}',
                                                 style: TextStyle(
-                                                  color: Colors.orange[700],
+                                                  color: Color(0xFFA65168),
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -226,9 +232,9 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
                                                 textAlign: TextAlign.center,
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 12,
-                                                  color: Colors.black87,
+                                                  color: Color(0xFFA65168).withOpacity(0.8),
                                                 ),
                                               ),
                                             ],

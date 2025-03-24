@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,72 +37,116 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedLanguage = 'es';
   bool _emailNotifications = false;
   bool _showProfile = false;
+  bool notificaciones = false;
+  bool modoOscuro = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Configuración de Cuenta'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+        backgroundColor: Color(0xFF8C1B2F),
+        title: Text(
+          "Configuración",
+          style: GoogleFonts.lora(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
-        backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Botón de regreso
-              GestureDetector(
-                onTap: () => Navigator.of(context).pop(),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: Color(0xFF8C1B2F), // Vino oscuro
-                  size: 30,
+              Text(
+                "Preferencias",
+                style: GoogleFonts.lora(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8C1B2F),
                 ),
               ),
               SizedBox(height: 20),
-              // Título
-              Center(
-                child: Text(
-                  'Configuración de Cuenta',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF8C1B2F), // Vino oscuro
-                  ),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Color(0xFFF2F0E4),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                ),
+                child: Column(
+                  children: [
+                    SwitchListTile(
+                      title: Text(
+                        "Notificaciones",
+                        style: TextStyle(color: Color(0xFF8C1B2F)),
+                      ),
+                      value: notificaciones,
+                      onChanged: (bool value) {
+                        setState(() {
+                          notificaciones = value;
+                        });
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(
+                        "Modo Oscuro",
+                        style: TextStyle(color: Color(0xFF8C1B2F)),
+                      ),
+                      value: modoOscuro,
+                      onChanged: (bool value) {
+                        setState(() {
+                          modoOscuro = value;
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 20),
-
-              // Cambiar Contraseña
-              _buildSectionTitle('Cambiar Contraseña'),
-              _buildTextField('Contraseña Actual', _currentPasswordController, true),
-              _buildTextField('Nueva Contraseña', _newPasswordController, true),
-              _buildTextField('Confirmar Nueva Contraseña', _confirmPasswordController, true),
-              _buildButton('Actualizar Contraseña'),
-
-              // Preferencias de Idioma
-              _buildSectionTitle('Idioma'),
-              _buildDropdown(),
-              _buildButton('Guardar Preferencias'),
-
-              // Preferencias de Privacidad
-              _buildSectionTitle('Privacidad'),
-              _buildCheckbox('Recibir Notificaciones por Correo Electrónico', _emailNotifications, (value) {
-                setState(() {
-                  _emailNotifications = value!;
-                });
-              }),
-              _buildCheckbox('Mostrar mi perfil públicamente', _showProfile, (value) {
-                setState(() {
-                  _showProfile = value!;
-                });
-              }),
-              _buildButton('Actualizar Preferencias de Privacidad'),
+              Text(
+                "Cuenta",
+                style: GoogleFonts.lora(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8C1B2F),
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Color(0xFFF2F0E4),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.lock, color: Color(0xFF8C1B2F)),
+                      title: Text(
+                        "Cambiar Contraseña",
+                        style: TextStyle(color: Color(0xFF8C1B2F)),
+                      ),
+                      onTap: () {
+                        // Implementar cambio de contraseña
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.delete, color: Color(0xFF8C1B2F)),
+                      title: Text(
+                        "Eliminar Cuenta",
+                        style: TextStyle(color: Color(0xFF8C1B2F)),
+                      ),
+                      onTap: () {
+                        // Implementar eliminación de cuenta
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -118,7 +163,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFA65168), width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFA65168).withOpacity(0.5), width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFA65168), width: 2),
+          ),
         ),
       ),
     );
@@ -143,7 +199,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         },
         decoration: InputDecoration(
           labelText: 'Seleccionar Idioma',
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFA65168), width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFA65168).withOpacity(0.5), width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFA65168), width: 2),
+          ),
         ),
       ),
     );
@@ -153,15 +220,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildCheckbox(String label, bool value, ValueChanged<bool?> onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Checkbox(
-            value: value,
-            onChanged: onChanged,
-            activeColor: Color(0xFF8C1B2F), // Vino oscuro
-          ),
-          Text(label),
-        ],
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Checkbox(
+              value: value,
+              onChanged: onChanged,
+              activeColor: Color(0xFF8C1B2F), // Vino oscuro
+            ),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: Color(0xFFA65168).withOpacity(0.8),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -180,6 +261,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: Color(0xFFA65168), width: 1),
           ),
         ),
         child: Text(label),
@@ -191,12 +273,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF8C1B2F), // Vino oscuro
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+          ),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF8C1B2F), // Vino oscuro
+          ),
         ),
       ),
     );
