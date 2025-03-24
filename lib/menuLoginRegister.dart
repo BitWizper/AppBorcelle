@@ -211,34 +211,92 @@ class _FormScreenState extends State<FormScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _contrasenaController = TextEditingController();
+  bool _mostrarContrasena = false;
 
   Future<void> _loginUser() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final loginData = {
-      "correo": _correoController.text,
-      "contrasena": _contrasenaController.text,
-      "tipo_usuario": "Cliente",
-    };
+    try {
+      final loginData = {
+        "correo": _correoController.text,
+        "contrasena": _contrasenaController.text,
+        "tipo_usuario": "Cliente",
+      };
 
-    final response = await http.post(
-      Uri.parse("http://localhost:3000/api/usuario/loginuser"),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(loginData),
-    );
+      final response = await http.post(
+        Uri.parse("http://localhost:3000/api/usuario/loginuser"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(loginData),
+      );
 
-    final data = json.decode(response.body);
+      final data = json.decode(response.body);
 
-    if (response.statusCode == 200 && data["token"] != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Inicio de sesión exitoso")));
+      if (response.statusCode == 200 && data["token"] != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Inicio de sesión exitoso"),
+            backgroundColor: Colors.green,
+          ),
+        );
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
 
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data["error"] ?? "Error en el inicio de sesión")));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      } else {
+        _mostrarErrorDialog("Usuario o contraseña incorrectos");
+      }
+    } catch (e) {
+      _mostrarErrorDialog("Error de conexión. Por favor, intente nuevamente.");
     }
+  }
+
+  void _mostrarErrorDialog(String mensaje) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color(0xFFF2F0E4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.error_outline, color: Color(0xFF8C1B2F)),
+              SizedBox(width: 10),
+              Text(
+                "Error",
+                style: TextStyle(
+                  color: Color(0xFF8C1B2F),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            mensaje,
+            style: TextStyle(
+              color: Color(0xFF731D3C),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _contrasenaController.clear();
+              },
+              child: Text(
+                "Aceptar",
+                style: TextStyle(
+                  color: Color(0xFFA65168),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -300,7 +358,7 @@ class _FormScreenState extends State<FormScreen> {
       ),
       child: TextFormField(
         controller: controller,
-        obscureText: obscureText,
+        obscureText: obscureText && !_mostrarContrasena,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: Color(0xFF731D3C)),
@@ -310,10 +368,26 @@ class _FormScreenState extends State<FormScreen> {
           ),
           filled: true,
           fillColor: Color(0xFFD9B9AD),
+          suffixIcon: obscureText
+              ? IconButton(
+                  icon: Icon(
+                    _mostrarContrasena ? Icons.visibility : Icons.visibility_off,
+                    color: Color(0xFF731D3C),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _mostrarContrasena = !_mostrarContrasena;
+                    });
+                  },
+                )
+              : null,
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Por favor ingrese $label';
+          }
+          if (label == "Contraseña" && value.length < 6) {
+            return 'La contraseña debe tener al menos 6 caracteres';
           }
           return null;
         },
