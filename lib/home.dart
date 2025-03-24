@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ).map((pastel) => {
             'name': pastel['nombre'] ?? '',
             'price': '${pastel['precio'] ?? 0} MXN',
-            'image': pastel['imagen_url'] ?? '',
+            'image': 'http://localhost:3000/uploads/${pastel['imagen_url']}',
             'descripcion': pastel['descripcion'] ?? '',
             'popularidad': pastel['popularidad'] ?? 0,
             'id_pastel': pastel['id_pastel'],
@@ -105,10 +105,14 @@ class _HomeScreenState extends State<HomeScreen> {
           isLoading = false;
         });
 
-        print('Pasteles destacados cargados: ${pasteles.length}'); // Para debug
+        print('URLs de imágenes cargadas:');
+        for (var pastel in pasteles) {
+          print('Imagen URL: ${pastel['image']}');
+        }
+        print('Pasteles destacados cargados: ${pasteles.length}');
       } else {
         print('Error al cargar los pasteles: ${response.statusCode}');
-        print('Respuesta del servidor: ${response.body}'); // Para debug
+        print('Respuesta del servidor: ${response.body}');
         setState(() {
           isLoading = false;
         });
@@ -344,6 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: double.infinity,
                                 errorBuilder: (context, error, stackTrace) {
                                   print('Error cargando imagen: $error');
+                                  print('URL que falló: ${pasteles[index]["image"]}');
                                   return Container(
                                     height: 120,
                                     width: double.infinity,
