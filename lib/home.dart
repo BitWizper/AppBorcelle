@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
     _checkLoginStatus();
-    _cargarPasteles();
+    _loadPasteles();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -75,49 +75,55 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _cargarPasteles() async {
+  Future<void> _loadPasteles() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      final response = await http.get(
-        Uri.parse('http://localhost:3000/api/pastel/obtenerpasteles'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        print('Datos recibidos del backend: $data'); // Para debug
-
-        setState(() {
-          pasteles = data.where((pastel) => 
-            (pastel['popularidad'] ?? 0) > 4 && (pastel['destacado'] ?? false)
-          ).map((pastel) => {
-            'name': pastel['nombre'] ?? '',
-            'price': '${pastel['precio'] ?? 0} MXN',
-            'image': pastel['imagen_url'] ?? '',
-            'descripcion': pastel['descripcion'] ?? '',
-            'popularidad': pastel['popularidad'] ?? 0,
-            'id_pastel': pastel['id_pastel'],
-            'id_repostero': pastel['id_repostero'],
-            'id_categoria': pastel['id_categoria'],
-            'destacado': pastel['destacado'] ?? false,
-          }).toList();
-          isLoading = false;
-        });
-
-        print('URLs de imágenes cargadas:');
-        for (var pastel in pasteles) {
-          print('Imagen URL: ${pastel['image']}');
-        }
-        print('Pasteles destacados cargados: ${pasteles.length}');
-      } else {
-        print('Error al cargar los pasteles: ${response.statusCode}');
-        print('Respuesta del servidor: ${response.body}');
-        setState(() {
-          isLoading = false;
-        });
-      }
+      // Simulación de carga de datos
+      await Future.delayed(Duration(seconds: 2));
+      setState(() {
+        pasteles = [
+          {
+            "name": "Pastel de Chocolate",
+            "price": "\$450",
+            "image": "https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg",
+            "description": "Delicioso pastel de chocolate con decoración elegante"
+          },
+          {
+            "name": "Pastel de Fresa",
+            "price": "\$380",
+            "image": "https://i.pinimg.com/736x/f2/27/f7/f227f7e5778e8f43e95624fffb1f181a.jpg",
+            "description": "Fresco pastel de fresa con decoración moderna"
+          },
+          {
+            "name": "Pastel de Vainilla",
+            "price": "\$350",
+            "image": "https://i.pinimg.com/736x/90/22/37/902237e139c0a842bb30c1f440547c51.jpg",
+            "description": "Clásico pastel de vainilla con decoración tradicional"
+          },
+          {
+            "name": "Pastel de Almendra",
+            "price": "\$420",
+            "image": "https://i.pinimg.com/736x/8c/5b/1a/8c5b1a748e005348668423ffcb5a84c8.jpg",
+            "description": "Exquisito pastel de almendra con decoración elegante"
+          },
+          {
+            "name": "Pastel de Queso",
+            "price": "\$400",
+            "image": "https://i.pinimg.com/736x/42/76/61/427661b16c109e9c10770ea33a58c09b.jpg",
+            "description": "Cremoso pastel de queso con decoración moderna"
+          },
+          {
+            "name": "Pastel de Mandarina",
+            "price": "\$360",
+            "image": "https://i.pinimg.com/736x/99/e3/51/99e3515f3f5a4acfa13e352717626dcb.jpg",
+            "description": "Refrescante pastel de mandarina con decoración elegante"
+          }
+        ];
+        isLoading = false;
+      });
     } catch (e) {
       print('Error al cargar los pasteles: $e');
       setState(() {
@@ -361,6 +367,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: CachedNetworkImage(
                                     imageUrl: pasteles[index]["image"],
                                     fit: BoxFit.cover,
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8C1B2F)),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) {
+                                      print('Error cargando imagen: $error');
+                                      return Container(
+                                        color: Colors.grey[200],
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.cake,
+                                            size: 40,
+                                            color: Color(0xFF8C1B2F),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ),

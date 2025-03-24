@@ -49,6 +49,8 @@ flutter:
     - assets/fotodepasteles/pasteldequesodebola.jpg
     - assets/fotodepasteles/pastelferrero.jpg
     - assets/fotodepasteles/pasteldemandarina.png
+    - assets/fotodepasteles/
+    - lib/Model3D/models/
 
 
 

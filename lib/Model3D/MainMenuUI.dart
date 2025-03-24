@@ -23,20 +23,36 @@ class _Model3DViewerState extends State<Model3DViewer> {
   Future<void> loadModels() async {
     try {
       final String modelsPath = 'lib/Model3D/models';
-      final models = Directory(modelsPath)
+      print('Intentando cargar modelos desde: $modelsPath');
+      
+      final directory = Directory(modelsPath);
+      if (!await directory.exists()) {
+        print('El directorio no existe: $modelsPath');
+        return;
+      }
+
+      final models = directory
           .listSync()
-          .where((file) => file.path.endsWith('.glb'))
+          .where((file) => file.path.endsWith('.fbx'))
           .map((file) => file.path)
           .toList();
+      
+      print('Modelos encontrados: $models');
+      
+      if (models.isEmpty) {
+        print('No se encontraron archivos .fbx en el directorio');
+      }
       
       setState(() {
         modelFiles = models;
         if (models.isNotEmpty) {
           selectedModel = models[0];
+          print('Modelo seleccionado: $selectedModel');
         }
       });
     } catch (e) {
       print('Error al cargar los modelos: $e');
+      print('Stack trace: ${StackTrace.current}');
     }
   }
 
@@ -56,135 +72,115 @@ class _Model3DViewerState extends State<Model3DViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Color(0xFF8C1B2F),
+        title: Text(
+          "Visualizador 3D",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Column(
         children: [
-          // Header rosa con botón de retroceso y logo
-          Container(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            color: Color(0xFFFFD5E5),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.black),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('', style: TextStyle(fontSize: 18)),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    'assets/fotodepasteles/iconoborcelle.jpg',
-                    width: 40,
-                    height: 40,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Contenido principal
+          // Área del modelo 3D
           Expanded(
-            child: Row(
+            child: Container(
+              color: Color(0xFFF2F0E4),
+              child: selectedModel.isNotEmpty
+                  ? ModelViewer(
+                      src: selectedModel,
+                      alt: "Modelo 3D de pastel",
+                      ar: true,
+                      autoRotate: true,
+                      cameraControls: true,
+                      shadowIntensity: 1,
+                      backgroundColor: Color(0xFFF2F0E4),
+                      autoPlay: true,
+                      cameraOrbit: "45deg 55deg 2.5m",
+                      minCameraOrbit: "auto auto 0.1m",
+                      maxCameraOrbit: "auto auto 10m",
+                      minFieldOfView: "30deg",
+                      maxFieldOfView: "45deg",
+                      exposure: 1,
+                      loading: Loading.eager,
+                    )
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text(
+                            "Cargando modelos...",
+                            style: TextStyle(
+                              color: Color(0xFF8C1B2F),
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+          ),
+          // Menú de selección
+          Container(
+            padding: EdgeInsets.all(16),
+            color: Color(0xFFF2F0E4),
+            child: Column(
               children: [
-                // Área del modelo 3D
-                Expanded(
-                  child: Container(
-                    color: Colors.white,
-                    child: selectedModel.isNotEmpty
-                        ? ModelViewer(
-                            src: selectedModel,
-                            alt: 'Modelo 3D',
-                            autoRotate: true,
-                            cameraControls: true,
-                            backgroundColor: Colors.white,
-                          )
-                        : Center(child: CircularProgressIndicator()),
+                Text(
+                  "Seleccionar Modelo",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF8C1B2F),
                   ),
                 ),
-                // Menú lateral derecho
+                SizedBox(height: 10),
                 Container(
-                  width: 120,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFF5E1),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      bottomLeft: Radius.circular(20),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildMenuOption('Pisos/Capas', Icons.cake, () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Seleccionar Pisos'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: modelFiles.map((model) {
-                                String pisos = model.split('/').last.split('_')[0];
-                                return ListTile(
-                                  title: Text('$pisos Piso(s)'),
-                                  onTap: () {
-                                    setState(() => selectedModel = model);
-                                    Navigator.pop(context);
-                                  },
-                                );
-                              }).toList(),
+                  height: 100,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: modelFiles.length,
+                    itemBuilder: (context, index) {
+                      String fileName = modelFiles[index].split('/').last;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedModel = modelFiles[index];
+                          });
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 8),
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: selectedModel == modelFiles[index]
+                                ? Color(0xFF8C1B2F)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Color(0xFFA65168).withOpacity(0.3),
+                              width: 1,
                             ),
                           ),
-                        );
-                      }),
-                      _buildMenuOption('Bizcocho', Icons.color_lens, () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Seleccionar Sabor'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  title: Text('Chocolate'),
-                                  onTap: () {
-                                    cambiarColorBizcocho('Chocolate');
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                ListTile(
-                                  title: Text('Fresa'),
-                                  onTap: () {
-                                    cambiarColorBizcocho('Fresa');
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
+                          child: Center(
+                            child: Text(
+                              fileName,
+                              style: TextStyle(
+                                color: selectedModel == modelFiles[index]
+                                    ? Colors.white
+                                    : Color(0xFF8C1B2F),
+                              ),
                             ),
                           ),
-                        );
-                      }),
-                    ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
-            ),
-          ),
-          // Botón guardar en la parte inferior
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16),
-            color: Color(0xFFFFF5E1),
-            child: ElevatedButton(
-              onPressed: () {
-                // Aquí va la lógica para guardar
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFDEB887),
-                padding: EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: Text('Guardar', style: TextStyle(color: Colors.black)),
             ),
           ),
         ],
