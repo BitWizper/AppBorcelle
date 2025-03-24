@@ -9,7 +9,7 @@ import 'reposteros.dart';
 import 'menuLoginRegister.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:async';
-
+import 'package:borcelle/Model3D/MainMenuUI.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -23,6 +23,8 @@ void main() {
       '/categorias': (context) => CategoriasScreen(),
       '/reposteros': (context) => ReposterosScreen(),
       '/menuLoginRegister': (context) => AuthScreen(),
+      '/crearPastel': (context) => Model3DViewer(),
+
     },
   ));
 }
@@ -44,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   String consejoActual = "";
   late Timer _consejoTimer;
+  bool isLoggedIn = false;
 
   @override
   void initState() {
@@ -68,7 +71,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF8C1B2F),
-        title: Text("Borcelle", style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+        automaticallyImplyLeading: false, // Oculta el botón de volver
+        title: Text(
+          "Borcelle",
+          style: GoogleFonts.lora(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.search, color: Colors.white),
@@ -77,10 +88,59 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.person, color: Colors.white),
+            icon: Icon(Icons.shopping_cart, color: Colors.white),
             onPressed: () {
-              Navigator.pushNamed(context, '/perfil');
+              Navigator.pushNamed(context, '/pedidos');
             },
+          ),
+          IconButton(
+  icon: Icon(isLoggedIn ? Icons.exit_to_app : Icons.login, color: Colors.white),
+  onPressed: () {
+    if (isLoggedIn) {
+      _showLogoutDialog(context);
+    } else {
+      Navigator.pushNamed(context, '/menuLoginRegister').then((value) {
+        // Cuando vuelva desde el login, verificar si se autenticó
+        setState(() {
+          isLoggedIn = value == true; // Solo cambia si el login fue exitoso
+        });
+      });
+    }
+  },
+),
+          PopupMenuButton<String>(
+            icon: Icon(Icons.menu, color: Colors.white),
+            onSelected: (value) {
+              switch (value) {
+                case 'pasteles':
+                  Navigator.pushNamed(context, '/categorias');
+                  break;
+                case 'reposteros':
+                  Navigator.pushNamed(context, '/reposteros');
+                  break;
+                  case 'crearpastel':
+                  Navigator.pushNamed(context, '/crearPastel');
+                  break;
+                  case 'perfil':
+                  Navigator.pushNamed(context, '/perfil');
+                  break;
+                case 'ayuda':
+                  Navigator.pushNamed(context, '/ayuda');
+                  break;
+                case 'configuracion':
+                  Navigator.pushNamed(context, '/configuracion');
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(value: 'categorias', child: Text('Categorías')),
+              PopupMenuItem(value: 'reposteros', child: Text('Reposteros')),
+              PopupMenuItem(value: 'crear pastel', child: Text('crearpastel')),
+              PopupMenuItem(value: 'perfil', child: Text('perfil')),
+              PopupMenuItem(value: 'ayuda', child: Text('Ayuda')),
+              PopupMenuItem(value: 'configuracion', child: Text('Configuración')),
+             
+            ],
           ),
         ],
       ),
@@ -207,20 +267,96 @@ class _HomeScreenState extends State<HomeScreen> {
           Text("📢 Últimas noticias de redes", style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F))),
           SizedBox(height: 10),
           Text("📸 Instagram: ¡Nuevo diseño de pastel disponible! 🎂"),
-          Text("🐦 Twitter: Sorpresas este fin de semana. 🎉"),
+          Text("🕺🎵tik tok: Sorpresas este fin de semana, siguenos como Borcelle. 🎉"),
         ],
       ),
     );
   }
-}
 
-class SearchDelegateExample extends SearchDelegate<String> {
+  void _showLogoutDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text("Cerrar sesión"),
+        content: Text("¿Estás seguro de que deseas cerrar sesión?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Cancelar
+            child: Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                isLoggedIn = false;
+              });
+              Navigator.pop(context); // Cierra el diálogo
+              Navigator.pushReplacementNamed(context, '/menuLoginRegister'); // Redirige al login
+              },
+             child: Text("Cerrar sesión"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+ }
+
+ class SearchDelegateExample extends SearchDelegate {
   @override
-  List<IconButton> buildActions(BuildContext context) => [IconButton(icon: Icon(Icons.clear), onPressed: () => query = "")];
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
   @override
-  Widget buildLeading(BuildContext context) => IconButton(icon: Icon(Icons.arrow_back), onPressed: () => close(context, ""));
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
   @override
-  Widget buildResults(BuildContext context) => Center(child: Text("Resultados para: $query"));
+  Widget buildResults(BuildContext context) {
+    return Center(
+      child: Text('Resultados de búsqueda para "$query"'),
+    );
+  }
+
   @override
-  Widget buildSuggestions(BuildContext context) => ListView();
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = [
+      "Pastel de Fresas",
+      "Pastel de Chocolate",
+      "Pastel Arcoíris",
+      "Pastel Red Velvet"
+    ];
+
+    final result = query.isEmpty
+        ? suggestions
+        : suggestions.where((s) => s.toLowerCase().contains(query.toLowerCase())).toList();
+
+    return ListView.builder(
+      itemCount: result.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(result[index]),
+          onTap: () {
+            query = result[index];
+            showResults(context);
+          },
+        );
+      },
+    );
+  }
 }
