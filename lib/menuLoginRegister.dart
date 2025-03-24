@@ -206,7 +206,7 @@ class _FormScreenState extends State<FormScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Inicio de sesión exitoso")));
 
       final prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isLoggedIn', true);  // Guarda el estado de sesión
+      await prefs.setBool('isLoggedIn', true);  // Guarda el estado de sesión
 
       if (widget.role == "Cliente") {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));

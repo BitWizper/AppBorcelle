@@ -10,6 +10,8 @@ import 'menuLoginRegister.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:async';
 import 'package:borcelle/Model3D/MainMenuUI.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -57,6 +59,14 @@ class _HomeScreenState extends State<HomeScreen> {
         consejoActual = (consejos..shuffle()).first;
       });
     });
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    });
   }
 
   @override
@@ -84,63 +94,90 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.search, color: Colors.white),
             onPressed: () {
-              showSearch(context: context, delegate: SearchDelegateExample());
+              showSearch(context: context, delegate: CustomSearchDelegate());
             },
           ),
           IconButton(
             icon: Icon(Icons.shopping_cart, color: Colors.white),
             onPressed: () {
-              Navigator.pushNamed(context, '/pedidos');
+              if (!isLoggedIn) {
+                _showLoginRequiredDialog(context, 'carrito de compras');
+              } else {
+                Navigator.pushNamed(context, '/pedidos');
+              }
             },
           ),
           IconButton(
-  icon: Icon(isLoggedIn ? Icons.exit_to_app : Icons.login, color: Colors.white),
-  onPressed: () {
-    if (isLoggedIn) {
-      _showLogoutDialog(context);
-    } else {
-      Navigator.pushNamed(context, '/menuLoginRegister').then((value) {
-        // Cuando vuelva desde el login, verificar si se autenticó
-        setState(() {
-          isLoggedIn = value == true; // Solo cambia si el login fue exitoso
-        });
-      });
-    }
-  },
-),
+            icon: Icon(isLoggedIn ? Icons.exit_to_app : Icons.login, color: Colors.white),
+            onPressed: () {
+              if (isLoggedIn) {
+                _showLogoutDialog(context);
+              } else {
+                _showLoginRequiredDialog(context, 'iniciar sesión');
+              }
+            },
+          ),
           PopupMenuButton<String>(
-  icon: Icon(Icons.menu, color: Colors.white),
-  onSelected: (value) {
-    switch (value) {
-      case 'categorias':  // Asegúrate de que el valor coincida con el PopupMenuItem
-        Navigator.pushNamed(context, '/categorias');
-        break;
-      case 'reposteros':
-        Navigator.pushNamed(context, '/reposteros');
-        break;
-      case 'crearpastel':
-        Navigator.pushNamed(context, '/crearPastel');
-        break;
-      case 'perfil':
-        Navigator.pushNamed(context, '/perfil');
-        break;
-      case 'ayuda':
-        Navigator.pushNamed(context, '/ayuda');
-        break;
-      case 'configuracion':
-        Navigator.pushNamed(context, '/configuracion');
-        break;
-    }
-  },
-  itemBuilder: (context) => [
-    PopupMenuItem(value: 'categorias', child: Text('Pasteles')), // Cambia el texto a "Pasteles"
-    PopupMenuItem(value: 'reposteros', child: Text('Reposteros')),
-    PopupMenuItem(value: 'crearpastel', child: Text('Crear Pastel')),
-    PopupMenuItem(value: 'perfil', child: Text('Perfil')),
-    PopupMenuItem(value: 'ayuda', child: Text('Ayuda')),
-    PopupMenuItem(value: 'configuracion', child: Text('Configuración')),
-  ],
-),
+            icon: Icon(Icons.menu, color: Colors.white),
+            onSelected: (value) async {
+              if (!isLoggedIn) {
+                // Mostrar diálogo de inicio de sesión requerido
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(
+                        "Inicio de sesión requerido",
+                        style: TextStyle(color: Color(0xFF8C1B2F)),
+                      ),
+                      content: Text("Debes iniciar sesión para acceder a esta función."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context); // Cerrar diálogo
+                          },
+                          child: Text(
+                            "Cancelar",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context); // Cerrar diálogo
+                            Navigator.pushNamed(context, '/menuLoginRegister').then((value) {
+                              if (value == true) {
+                                setState(() {
+                                  isLoggedIn = true;
+                                });
+                                // Navegar a la opción seleccionada después de iniciar sesión
+                                _navigateToSelectedOption(value.toString());
+                              }
+                            });
+                          },
+                          child: Text(
+                            "Iniciar Sesión",
+                            style: TextStyle(color: Color(0xFF8C1B2F)),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                return;
+              }
+              // Si está logueado, navegar normalmente
+              _navigateToSelectedOption(value);
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(value: 'categorias', child: Text('Pasteles')),
+              PopupMenuItem(value: 'reposteros', child: Text('Reposteros')),
+              PopupMenuItem(value: 'crearpastel', child: Text('Crear Pastel')),
+              PopupMenuItem(value: 'perfil', child: Text('Perfil')),
+              PopupMenuItem(value: 'ayuda', child: Text('Ayuda')),
+              PopupMenuItem(value: 'configuracion', child: Text('Configuración')),
+            ],
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -187,9 +224,19 @@ class _HomeScreenState extends State<HomeScreen> {
               viewportFraction: 1,
             ),
             items: bannerImages.map((imagePath) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity),
+              return GestureDetector(
+                onTap: () {
+                  if (!isLoggedIn) {
+                    _showLoginRequiredDialog(context, 'ver ofertas especiales');
+                  } else {
+                    // Aquí iría la navegación a las ofertas cuando esté logueado
+                    Navigator.pushNamed(context, '/categorias');
+                  }
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity),
+                ),
               );
             }).toList(),
           ),
@@ -230,16 +277,26 @@ class _HomeScreenState extends State<HomeScreen> {
               return Card(
                 elevation: 5,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(cakes[index]["image"]!, fit: BoxFit.cover, height: 120, width: double.infinity),
-                    ),
-                    Padding(padding: EdgeInsets.all(8), child: Text(cakes[index]["name"]!, style: TextStyle(fontWeight: FontWeight.bold))),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text(cakes[index]["price"]!)),
-                  ],
+                child: InkWell(
+                  onTap: () {
+                    if (!isLoggedIn) {
+                      _showLoginRequiredDialog(context, 'ver detalles del pastel');
+                    } else {
+                      // Aquí iría la navegación al detalle del pastel cuando esté logueado
+                      Navigator.pushNamed(context, '/categorias');
+                    }
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(cakes[index]["image"]!, fit: BoxFit.cover, height: 120, width: double.infinity),
+                      ),
+                      Padding(padding: EdgeInsets.all(8), child: Text(cakes[index]["name"]!, style: TextStyle(fontWeight: FontWeight.bold))),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text(cakes[index]["price"]!)),
+                    ],
+                  ),
                 ),
               );
             },
@@ -273,26 +330,51 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showLogoutDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text("Cerrar sesión"),
-        content: Text("¿Estás seguro de que deseas cerrar sesión?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context), // Cancelar
-            child: Text("Cancelar"),
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Evita que se cierre al tocar fuera
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Cerrar sesión",
+            style: TextStyle(color: Color(0xFF8C1B2F)),
           ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                isLoggedIn = false;
-              });
-              Navigator.pop(context); // Cierra el diálogo
-              Navigator.pushReplacementNamed(context, '/menuLoginRegister'); // Redirige al login
+          content: Text("¿Estás seguro de que deseas cerrar sesión?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Cierra el diálogo
               },
-             child: Text("Cerrar sesión"),
+              child: Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Actualizar el estado
+                setState(() {
+                  isLoggedIn = false;
+                });
+                
+                // Limpiar las preferencias de sesión
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
+                
+                // Cerrar el diálogo
+                Navigator.pop(context);
+                
+                // Redirigir al login y limpiar el stack de navegación
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/menuLoginRegister',
+                  (route) => false,
+                );
+              },
+              child: Text(
+                "Aceptar",
+                style: TextStyle(color: Color(0xFF8C1B2F)),
+              ),
             ),
           ],
         );
@@ -300,11 +382,93 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
- }
+  // Agregar esta nueva función para manejar la navegación
+  void _navigateToSelectedOption(String value) {
+    switch (value) {
+      case 'categorias':
+        Navigator.pushNamed(context, '/categorias');
+        break;
+      case 'reposteros':
+        Navigator.pushNamed(context, '/reposteros');
+        break;
+      case 'crearpastel':
+        Navigator.pushNamed(context, '/crearPastel');
+        break;
+      case 'perfil':
+        Navigator.pushNamed(context, '/perfil');
+        break;
+      case 'ayuda':
+        Navigator.pushNamed(context, '/ayuda');
+        break;
+      case 'configuracion':
+        Navigator.pushNamed(context, '/configuracion');
+        break;
+    }
+  }
 
- class SearchDelegateExample extends SearchDelegate {
+  // Agregar esta nueva función para mostrar el diálogo de login requerido
+  void _showLoginRequiredDialog(BuildContext context, String feature) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Inicio de sesión requerido",
+            style: TextStyle(color: Color(0xFF8C1B2F)),
+          ),
+          content: Text("Debes iniciar sesión para acceder a la función de $feature."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Cerrar diálogo
+              },
+              child: Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Cerrar diálogo
+                Navigator.pushNamed(context, '/menuLoginRegister').then((value) {
+                  if (value == true) {
+                    setState(() {
+                      isLoggedIn = true;
+                    });
+                    // Si el usuario inició sesión exitosamente, realizar la acción original
+                    if (feature == 'carrito de compras') {
+                      Navigator.pushNamed(context, '/pedidos');
+                    }
+                  }
+                });
+              },
+              child: Text(
+                "Iniciar Sesión",
+                style: TextStyle(color: Color(0xFF8C1B2F)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  final List<Map<String, String>> pasteles = [
+    {"name": "Pastel de Fresas", "price": "250 MXN", "image": "assets/fotodepasteles/fotopastel1.jpg"},
+    {"name": "Pastel de Chocolate", "price": "220 MXN", "image": "assets/fotodepasteles/fotopastel5.jpg"},
+    {"name": "Pastel Arcoíris", "price": "270 MXN", "image": "assets/fotodepasteles/fotopastel3.jpg"},
+    {"name": "Pastel Red Velvet", "price": "300 MXN", "image": "assets/fotodepasteles/fotopastel4.jpg"},
+    {"name": "Pastel de Vainilla", "price": "200 MXN", "image": "assets/fotodepasteles/fotopastel1.jpg"},
+    {"name": "Pastel de Zanahoria", "price": "230 MXN", "image": "assets/fotodepasteles/fotopastel5.jpg"},
+    {"name": "Pastel de Moka", "price": "280 MXN", "image": "assets/fotodepasteles/fotopastel3.jpg"},
+    {"name": "Pastel de Tres Leches", "price": "310 MXN", "image": "assets/fotodepasteles/fotopastel4.jpg"},
+  ];
+
   @override
-  List<Widget>? buildActions(BuildContext context) {
+  List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
         icon: Icon(Icons.clear),
@@ -316,7 +480,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget? buildLeading(BuildContext context) {
+  Widget buildLeading(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
@@ -327,31 +491,94 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Center(
-      child: Text('Resultados de búsqueda para "$query"'),
+    List<Map<String, String>> resultados = pasteles
+        .where((pastel) => pastel["name"]!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    return GridView.builder(
+      padding: EdgeInsets.all(16),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: resultados.length,
+      itemBuilder: (context, index) {
+        return Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                child: Image.asset(
+                  resultados[index]["image"]!,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      resultados[index]["name"]!,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      resultados[index]["price"]!,
+                      style: TextStyle(color: Color(0xFF8C1B2F)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestions = [
-      "Pastel de Fresas",
-      "Pastel de Chocolate",
-      "Pastel Arcoíris",
-      "Pastel Red Velvet"
-    ];
+    if (query.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text(
+              "Busca tu pastel favorito",
+              style: TextStyle(color: Colors.grey, fontSize: 16),
+            ),
+          ],
+        ),
+      );
+    }
 
-    final result = query.isEmpty
-        ? suggestions
-        : suggestions.where((s) => s.toLowerCase().contains(query.toLowerCase())).toList();
+    List<Map<String, String>> sugerencias = pasteles
+        .where((pastel) => pastel["name"]!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
 
     return ListView.builder(
-      itemCount: result.length,
+      itemCount: sugerencias.length,
       itemBuilder: (context, index) {
         return ListTile(
-          title: Text(result[index]),
+          leading: CircleAvatar(
+            backgroundImage: AssetImage(sugerencias[index]["image"]!),
+          ),
+          title: Text(sugerencias[index]["name"]!),
+          subtitle: Text(sugerencias[index]["price"]!),
           onTap: () {
-            query = result[index];
+            query = sugerencias[index]["name"]!;
             showResults(context);
           },
         );
