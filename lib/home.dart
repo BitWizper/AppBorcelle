@@ -13,6 +13,7 @@ import 'package:borcelle/Model3D/MainMenuUI.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -94,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ).map((pastel) => {
             'name': pastel['nombre'] ?? '',
             'price': '${pastel['precio'] ?? 0} MXN',
-            'image': 'http://localhost:3000/uploads/${pastel['imagen_url']}',
+            'image': pastel['imagen_url'] ?? '',
             'descripcion': pastel['descripcion'] ?? '',
             'popularidad': pastel['popularidad'] ?? 0,
             'id_pastel': pastel['id_pastel'],
@@ -341,21 +342,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                pasteles[index]["image"],
-                                fit: BoxFit.cover,
+                              child: Container(
                                 height: 120,
                                 width: double.infinity,
-                                errorBuilder: (context, error, stackTrace) {
-                                  print('Error cargando imagen: $error');
-                                  print('URL que falló: ${pasteles[index]["image"]}');
-                                  return Container(
-                                    height: 120,
-                                    width: double.infinity,
-                                    color: Colors.grey[300],
-                                    child: Icon(Icons.cake, size: 50, color: Color(0xFF8C1B2F)),
-                                  );
-                                },
+                                child: CachedNetworkImage(
+                                  imageUrl: pasteles[index]["image"],
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  errorWidget: (context, url, error) {
+                                    print('Error cargando imagen: $error');
+                                    print('URL que falló: $url');
+                                    return Container(
+                                      color: Colors.grey[300],
+                                      child: Icon(Icons.cake, size: 50, color: Color(0xFF8C1B2F)),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                             Padding(
@@ -585,12 +589,15 @@ class CustomSearchDelegate extends SearchDelegate {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                child: Image.network(
-                  resultados[index]["image"],
+                child: CachedNetworkImage(
+                  imageUrl: resultados[index]["image"],
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) {
                     print('Error cargando imagen en búsqueda: $error');
                     return Container(
                       height: 120,
@@ -655,13 +662,17 @@ class CustomSearchDelegate extends SearchDelegate {
         return ListTile(
           leading: CircleAvatar(
             backgroundColor: Colors.grey[300],
-            backgroundImage: NetworkImage(
-              sugerencias[index]["image"],
+            child: ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: sugerencias[index]["image"],
+                fit: BoxFit.cover,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) {
+                  print('Error cargando imagen en sugerencia: $error');
+                  return Icon(Icons.cake, size: 24, color: Color(0xFF8C1B2F));
+                },
+              ),
             ),
-            onBackgroundImageError: (exception, stackTrace) {
-              print('Error cargando imagen en sugerencia: $exception');
-            },
-            child: Icon(Icons.cake, size: 24, color: Color(0xFF8C1B2F)),
           ),
           title: Text(sugerencias[index]["name"]!),
           subtitle: Text(sugerencias[index]["price"]!),
