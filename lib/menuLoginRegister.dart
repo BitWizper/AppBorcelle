@@ -241,6 +241,9 @@ class _FormScreenState extends State<FormScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _contrasenaController = TextEditingController();
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _direccionController = TextEditingController();
+  final TextEditingController _telefonoController = TextEditingController();
   bool _mostrarContrasena = false;
 
   Future<void> _loginUser() async {
@@ -275,6 +278,44 @@ class _FormScreenState extends State<FormScreen> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
       } else {
         _mostrarErrorDialog("Usuario o contraseña incorrectos");
+      }
+    } catch (e) {
+      _mostrarErrorDialog("Error de conexión. Por favor, intente nuevamente.");
+    }
+  }
+
+  Future<void> _registrarUsuario() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      final registroData = {
+        "userData": {
+          "nombre": _nombreController.text,
+          "correo": _correoController.text,
+          "contrasena": _contrasenaController.text,
+          "direccion": _direccionController.text,
+          "telefono": _telefonoController.text,
+          "tipo_usuario": "Cliente"
+        }
+      };
+
+      final response = await http.post(
+        Uri.parse("http://localhost:3000/api/usuario/crearusuarios"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(registroData),
+      );
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Registro exitoso"),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context); // Volver a la pantalla de login
+      } else {
+        final data = json.decode(response.body);
+        _mostrarErrorDialog(data["error"] ?? "Error al registrar usuario");
       }
     } catch (e) {
       _mostrarErrorDialog("Error de conexión. Por favor, intente nuevamente.");
@@ -344,35 +385,42 @@ class _FormScreenState extends State<FormScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              _buildTextField("Correo", _correoController),
-              _buildTextField("Contraseña", _contrasenaController, obscureText: true),
-              SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFA65168),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                if (!widget.isLogin) ...[
+                  _buildTextField("Nombre", _nombreController),
+                  _buildTextField("Dirección", _direccionController),
+                  _buildTextField("Teléfono", _telefonoController),
+                ],
+                _buildTextField("Correo", _correoController),
+                _buildTextField("Contraseña", _contrasenaController, obscureText: true),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFA65168),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 45, vertical: 18),
+                    shadowColor: Colors.black.withOpacity(0.4),
+                    elevation: 8,
+                  ).copyWith(
+                    overlayColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.pressed)) {
+                        return Color(0xFF731D3C);
+                      }
+                      return null;
+                    }),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 45, vertical: 18),
-                  shadowColor: Colors.black.withOpacity(0.4),
-                  elevation: 8,
-                ).copyWith(
-                  overlayColor: WidgetStateProperty.resolveWith((states) {
-                    if (states.contains(WidgetState.pressed)) {
-                      return Color(0xFF731D3C);
-                    }
-                    return null;
-                  }),
+                  onPressed: widget.isLogin ? _loginUser : _registrarUsuario,
+                  child: Text(
+                    widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta",
+                    style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 ),
-                onPressed: widget.isLogin ? _loginUser : null,
-                child: Text(
-                  widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta",
-                  style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
