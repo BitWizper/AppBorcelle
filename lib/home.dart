@@ -41,99 +41,41 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<String> consejos = [
-    "Usa ingredientes frescos para un mejor sabor.",
-    "Precalienta tu horno antes de hornear.",
-    "Deja que los pasteles se enfríen antes de decorarlos.",
-    "Usa una espátula caliente para un glaseado perfecto."
-  ];
-  String consejoActual = "";
-  late Timer _consejoTimer;
+  bool isLoading = true;
   bool isLoggedIn = false;
   List<Map<String, dynamic>> pasteles = [];
-  bool isLoading = true;
+  List<String> consejos = [
+    "¡Hoy es un día perfecto para probar nuestros deliciosos pasteles!",
+    "¿Sabías que nuestros pasteles son horneados diariamente?",
+    "¡No olvides que puedes personalizar tus pasteles!",
+    "¡Visita nuestra sección de ofertas especiales!",
+    "¡Los pasteles son la mejor manera de celebrar!",
+    "¡Prueba nuestros pasteles sin azúcar!",
+    "¡Haz tu pedido con anticipación para eventos especiales!",
+    "¡Sigue nuestras redes sociales para más consejos!",
+    "¡Los pasteles son el regalo perfecto!",
+    "¡Descubre nuestras nuevas creaciones!"
+  ];
+  int consejoActual = 0;
+  Timer? _timer;
+  List<Map<String, dynamic>> pasteleros = [];
+  List<Map<String, dynamic>> categorias = [];
 
   @override
   void initState() {
     super.initState();
-    consejoActual = consejos[0];
-    _consejoTimer = Timer.periodic(Duration(minutes: 2), (timer) {
-      setState(() {
-        consejoActual = (consejos..shuffle()).first;
-      });
-    });
-    _checkLoginStatus();
     _loadPasteles();
-  }
-
-  Future<void> _checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    });
-  }
-
-  Future<void> _loadPasteles() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      // Simulación de carga de datos
-      await Future.delayed(Duration(seconds: 2));
+    // Iniciar el timer para cambiar el consejo cada minuto
+    _timer = Timer.periodic(Duration(minutes: 1), (timer) {
       setState(() {
-        pasteles = [
-          {
-            "name": "Pastel de Chocolate",
-            "price": "\$450",
-            "image": "https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg",
-            "description": "Delicioso pastel de chocolate con decoración elegante"
-          },
-          {
-            "name": "Pastel de Fresa",
-            "price": "\$380",
-            "image": "https://i.pinimg.com/736x/f2/27/f7/f227f7e5778e8f43e95624fffb1f181a.jpg",
-            "description": "Fresco pastel de fresa con decoración moderna"
-          },
-          {
-            "name": "Pastel de Vainilla",
-            "price": "\$350",
-            "image": "https://i.pinimg.com/736x/90/22/37/902237e139c0a842bb30c1f440547c51.jpg",
-            "description": "Clásico pastel de vainilla con decoración tradicional"
-          },
-          {
-            "name": "Pastel de Almendra",
-            "price": "\$420",
-            "image": "https://i.pinimg.com/736x/8c/5b/1a/8c5b1a748e005348668423ffcb5a84c8.jpg",
-            "description": "Exquisito pastel de almendra con decoración elegante"
-          },
-          {
-            "name": "Pastel de Queso",
-            "price": "\$400",
-            "image": "https://i.pinimg.com/736x/42/76/61/427661b16c109e9c10770ea33a58c09b.jpg",
-            "description": "Cremoso pastel de queso con decoración moderna"
-          },
-          {
-            "name": "Pastel de Mandarina",
-            "price": "\$360",
-            "image": "https://i.pinimg.com/736x/99/e3/51/99e3515f3f5a4acfa13e352717626dcb.jpg",
-            "description": "Refrescante pastel de mandarina con decoración elegante"
-          }
-        ];
-        isLoading = false;
+        consejoActual = (consejoActual + 1) % consejos.length;
       });
-    } catch (e) {
-      print('Error al cargar los pasteles: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
+    });
   }
 
   @override
   void dispose() {
-    _consejoTimer.cancel();
-    _searchController.dispose();
+    _timer?.cancel(); // Cancelar el timer cuando se destruye el widget
     super.dispose();
   }
 
@@ -249,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 20),
             _buildDestacados(),
             SizedBox(height: 20),
-            _buildConsejos(),
+            _buildConsejoDelDia(),
             SizedBox(height: 20),
             _buildFeedRedes(),
           ],
@@ -421,31 +363,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildConsejos() {
+  Widget _buildConsejoDelDia() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Consejos del Día",
-            style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
-          ),
-          SizedBox(height: 10),
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Color(0xFFF2F0E4),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-            ),
-            child: Text(
-              consejoActual,
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFFA65168),
-                fontStyle: FontStyle.italic,
+          Row(
+            children: [
+              Icon(Icons.lightbulb_outline, color: Color(0xFF8C1B2F), size: 24),
+              SizedBox(width: 8),
+              Text(
+                "Consejo del Día",
+                style: GoogleFonts.lora(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8C1B2F),
+                ),
               ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Text(
+            consejos[consejoActual],
+            style: GoogleFonts.lora(
+              fontSize: 16,
+              color: Color(0xFFA65168),
             ),
           ),
         ],
@@ -623,6 +579,63 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  Future<void> _loadPasteles() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Simulación de carga de datos
+      await Future.delayed(Duration(seconds: 2));
+      setState(() {
+        pasteles = [
+          {
+            "name": "Pastel de Chocolate",
+            "price": "\$450",
+            "image": "https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg",
+            "description": "Delicioso pastel de chocolate con decoración elegante"
+          },
+          {
+            "name": "Pastel de Fresa",
+            "price": "\$380",
+            "image": "https://i.pinimg.com/736x/f2/27/f7/f227f7e5778e8f43e95624fffb1f181a.jpg",
+            "description": "Fresco pastel de fresa con decoración moderna"
+          },
+          {
+            "name": "Pastel de Vainilla",
+            "price": "\$350",
+            "image": "https://i.pinimg.com/736x/90/22/37/902237e139c0a842bb30c1f440547c51.jpg",
+            "description": "Clásico pastel de vainilla con decoración tradicional"
+          },
+          {
+            "name": "Pastel de Almendra",
+            "price": "\$420",
+            "image": "https://i.pinimg.com/736x/8c/5b/1a/8c5b1a748e005348668423ffcb5a84c8.jpg",
+            "description": "Exquisito pastel de almendra con decoración elegante"
+          },
+          {
+            "name": "Pastel de Queso",
+            "price": "\$400",
+            "image": "https://i.pinimg.com/736x/42/76/61/427661b16c109e9c10770ea33a58c09b.jpg",
+            "description": "Cremoso pastel de queso con decoración moderna"
+          },
+          {
+            "name": "Pastel de Mandarina",
+            "price": "\$360",
+            "image": "https://i.pinimg.com/736x/99/e3/51/99e3515f3f5a4acfa13e352717626dcb.jpg",
+            "description": "Refrescante pastel de mandarina con decoración elegante"
+          }
+        ];
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error al cargar los pasteles: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }
 
