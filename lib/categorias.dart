@@ -162,7 +162,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
                             ),
                           ],
                         ),
-                        Container(
+                        SizedBox(
                           height: 200,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
@@ -263,10 +263,10 @@ class DetalleCategoriaScreen extends StatelessWidget {
   final List<Map<String, dynamic>> pasteles;
 
   const DetalleCategoriaScreen({
-    Key? key,
+    super.key,
     required this.nombreCategoria,
     required this.pasteles,
-  }) : super(key: key);
+  });
 
   String getImagenLocal(String categoria) {
     switch (categoria.toLowerCase()) {

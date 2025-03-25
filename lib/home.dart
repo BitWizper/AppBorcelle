@@ -11,8 +11,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:async';
 import 'package:borcelle/Model3D/MainMenuUI.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 
 void main() {

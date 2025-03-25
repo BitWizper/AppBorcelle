@@ -35,8 +35,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   String _selectedLanguage = 'es';
-  bool _emailNotifications = false;
-  bool _showProfile = false;
+  final bool _emailNotifications = false;
+  final bool _showProfile = false;
   bool notificaciones = false;
   bool modoOscuro = false;
 

@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPr
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'home.dart';
-import 'repostero_home.dart';
 
 void main() {
   runApp(MyApp());

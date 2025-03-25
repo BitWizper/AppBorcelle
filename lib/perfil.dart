@@ -446,7 +446,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         SizedBox(height: 8),
-        Container(
+        SizedBox(
           height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,

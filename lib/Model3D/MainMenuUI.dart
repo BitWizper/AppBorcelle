@@ -139,7 +139,7 @@ class _Model3DViewerState extends State<Model3DViewer> {
                   ),
                 ),
                 SizedBox(height: 10),
-                Container(
+                SizedBox(
                   height: 100,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
