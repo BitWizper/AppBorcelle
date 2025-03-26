@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async'; // Agregado para TimeoutException
 import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPreferences
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -255,30 +256,93 @@ class _FormScreenState extends State<FormScreen> {
         "tipo_usuario": "Cliente",
       };
 
-      final response = await http.post(
-        Uri.parse("http://localhost:3000/api/usuario/loginuser"),
-        headers: {"Content-Type": "application/json"},
-        body: json.encode(loginData),
-      );
+      print('Intentando iniciar sesión con: ${_correoController.text}'); // Debug
+      print('Datos de login: ${json.encode(loginData)}'); // Debug
 
-      final data = json.decode(response.body);
+      // Intentar con diferentes URLs
+      final urls = [
+        "http://192.168.1.71:3000/api/usuario/loginuser", // IP de tu laptop
+        "http://10.0.2.2:3000/api/usuario/loginuser",     // Para emulador Android
+        "http://localhost:3000/api/usuario/loginuser",     // Localhost
+        "http://127.0.0.1:3000/api/usuario/loginuser"      // Localhost alternativo
+      ];
 
-      if (response.statusCode == 200 && data["token"] != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Inicio de sesión exitoso"),
-            backgroundColor: Colors.green,
-          ),
-        );
+      http.Response? response;
+      String? lastError;
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
+      for (final url in urls) {
+        try {
+          print('Intentando conectar a: $url'); // Debug
+          
+          response = await http.post(
+            Uri.parse(url),
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+            },
+            body: json.encode(loginData),
+          ).timeout(
+            Duration(seconds: 15),
+            onTimeout: () {
+              throw TimeoutException('La conexión tardó demasiado tiempo con $url');
+            },
+          );
 
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          print('Código de estado para $url: ${response.statusCode}'); // Debug
+          
+          if (response.statusCode == 200) {
+            print('Conexión exitosa con: $url'); // Debug
+            break;
+          }
+        } catch (e) {
+          lastError = e.toString();
+          print('Error al intentar conectar a $url: $e'); // Debug
+        }
+      }
+
+      if (response == null) {
+        throw Exception('No se pudo conectar a ninguna URL. Último error: $lastError');
+      }
+
+      print('Respuesta del servidor: ${response.body}'); // Debug
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        
+        if (data["usuario"] != null && data["usuario"]["usuario"] != null) {
+          final userData = data["usuario"]["usuario"];
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Inicio de sesión exitoso"),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
+          await prefs.setString('userId', userData['id_usuario'].toString());
+          await prefs.setString('userName', userData['nombre']);
+          await prefs.setString('userEmail', userData['correo']);
+          await prefs.setString('userPhone', userData['telefono'] ?? '');
+          await prefs.setString('userAddress', userData['direccion'] ?? '');
+
+          // Esperar un momento para que el usuario vea el mensaje de éxito
+          await Future.delayed(Duration(seconds: 1));
+          
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        } else {
+          print('Datos de usuario no encontrados en la respuesta'); // Debug
+          _mostrarErrorDialog("Error en la respuesta del servidor");
+        }
       } else {
-        _mostrarErrorDialog("Usuario o contraseña incorrectos");
+        print('Error en la respuesta: ${response.statusCode}'); // Debug
+        final errorData = json.decode(response.body);
+        _mostrarErrorDialog(errorData["error"] ?? "Usuario o contraseña incorrectos");
       }
     } catch (e) {
+      print('Error detallado al iniciar sesión: $e'); // Debug
+      print('Tipo de error: ${e.runtimeType}'); // Debug
       _mostrarErrorDialog("Error de conexión. Por favor, intente nuevamente.");
     }
   }
