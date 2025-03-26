@@ -64,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _checkLoginStatus();
     _loadPasteles();
     // Iniciar el timer para cambiar el consejo cada minuto
     _timer = Timer.periodic(Duration(minutes: 1), (timer) {
@@ -556,19 +557,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context); // Cerrar diálogo
-                Navigator.pushNamed(context, '/menuLoginRegister').then((value) {
-                  if (value == true) {
-                    setState(() {
-                      isLoggedIn = true;
-                    });
-                    // Si el usuario inició sesión exitosamente, realizar la acción original
-                    if (feature == 'carrito de compras') {
-                      Navigator.pushNamed(context, '/pedidos');
-                    }
+                final result = await Navigator.pushNamed(context, '/menuLoginRegister');
+                if (result == true) {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('isLoggedIn', true);
+                  setState(() {
+                    isLoggedIn = true;
+                  });
+                  // Si el usuario inició sesión exitosamente, realizar la acción original
+                  if (feature == 'carrito de compras') {
+                    Navigator.pushNamed(context, '/pedidos');
                   }
-                });
+                }
               },
               child: Text(
                 "Iniciar Sesión",
@@ -636,6 +638,13 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading = false;
       });
     }
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    });
   }
 }
 
