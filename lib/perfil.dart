@@ -3,8 +3,23 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
+
+// Configuración de URLs para diferentes entornos
+class ApiConfig {
+  static const bool isDevelopment = true; // Cambiar a false en producción
+  
+  static String get baseUrl {
+    if (isDevelopment) {
+      return "http://localhost:3000"; // URL de desarrollo
+    } else {
+      return "https://tu-servidor-produccion.com"; // URL de producción
+    }
+  }
+}
 
 void main() {
   runApp(MyApp());
@@ -28,6 +43,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -45,11 +62,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Lista de avatares predefinidos estilo Netflix
   final List<String> _netflixAvatars = [
-    'https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg', // Chocolate
-    'https://i.pinimg.com/736x/f2/27/f7/f227f7e5778e8f43e95624fffb1f181a.jpg', // Fresa
-    'https://i.pinimg.com/736x/90/22/37/902237e139c0a842bb30c1f440547c51.jpg', // Vainilla
-    'https://i.pinimg.com/736x/8c/5b/1a/8c5b1a748e005348668423ffcb5a84c8.jpg', // Almendra
-    'https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg', // Queso
+    'assets/fotodepasteles/iconoborcelle.jpg', // Chocolate
+    'assets/fotodepasteles/pastelprimero.jpg', // Fresa
+    'assets/fotodepasteles/pasteldealmendra.jpg', // Vainilla
+    'assets/fotodepasteles/pasteldequesodebola.jpg', // Almendra
+    'assets/fotodepasteles/pastelferrero.jpg', // Queso
   ];
 
   @override
@@ -65,28 +82,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final userId = prefs.getString('userId');
       
       if (userId != null) {
-        final response = await http.get(
-          Uri.parse("http://10.0.2.2:3000/api/usuario/obtenerusuario/$userId"),
-        );
+        print('Cargando datos del usuario ID: $userId');
+        
+        // Intentar cargar datos del servidor
+        try {
+          final response = await http.get(
+            Uri.parse("${ApiConfig.baseUrl}/api/usuario/obtenerusuario/$userId"),
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          ).timeout(
+            Duration(seconds: 15),
+            onTimeout: () {
+              throw TimeoutException('La conexión tardó demasiado tiempo');
+            },
+          );
 
-        if (response.statusCode == 200) {
-          final data = json.decode(response.body);
-          final userData = data['usuario'];
-          
-          setState(() {
-            _nombreController.text = userData['nombre'] ?? '';
-            _correoController.text = userData['correo'] ?? '';
-            _telefonoController.text = userData['telefono'] ?? '';
-            _direccionController.text = userData['direccion'] ?? '';
-            _currentImageUrl = userData['imagen_perfil'] ?? _netflixAvatars[0];
-          });
+          print('Código de respuesta: ${response.statusCode}');
+          print('Respuesta del servidor: ${response.body}');
+
+          if (response.statusCode == 200) {
+            final data = json.decode(response.body);
+            final userData = data['usuario'];
+            
+            setState(() {
+              _nombreController.text = userData['nombre'] ?? '';
+              _correoController.text = userData['correo'] ?? '';
+              _telefonoController.text = userData['telefono'] ?? '';
+              _direccionController.text = userData['direccion'] ?? '';
+              _currentImageUrl = userData['imagen_perfil'] ?? 'https://via.placeholder.com/150';
+            });
+          } else {
+            print('Error en la respuesta del servidor: ${response.statusCode}');
+            _cargarDatosDesdeSharedPreferences(prefs);
+          }
+        } catch (e) {
+          print('Error al cargar datos del servidor: $e');
+          _cargarDatosDesdeSharedPreferences(prefs);
         }
+      } else {
+        print('No se encontró ID de usuario en SharedPreferences');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("No se encontró información del usuario"),
+            backgroundColor: Colors.orange,
+          ),
+        );
       }
     } catch (e) {
-      print('Error al cargar datos: $e');
+      print('Error detallado al cargar datos: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error al cargar los datos. Por favor, intente nuevamente."),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _cargarDatosDesdeSharedPreferences(SharedPreferences prefs) async {
+    final userName = prefs.getString('userName') ?? '';
+    final userEmail = prefs.getString('userEmail') ?? '';
+    final userPhone = prefs.getString('userPhone') ?? '';
+    final userAddress = prefs.getString('userAddress') ?? '';
+    
+    setState(() {
+      _nombreController.text = userName;
+      _correoController.text = userEmail;
+      _telefonoController.text = userPhone;
+      _direccionController.text = userAddress;
+      _currentImageUrl = _netflixAvatars[0];
+    });
+
+    print('Datos cargados desde SharedPreferences:');
+    print('Nombre: $userName');
+    print('Email: $userEmail');
+    print('Teléfono: $userPhone');
+    print('Dirección: $userAddress');
   }
 
   Future<void> _guardarCambios() async {
@@ -98,49 +173,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final userId = prefs.getString('userId');
 
       if (userId != null) {
-        final userData = {
-          "nombre": _nombreController.text,
-          "correo": _correoController.text,
-          "telefono": _telefonoController.text,
-          "direccion": _direccionController.text,
-          "imagen_perfil": _selectedImagePath ?? _currentImageUrl,
-        };
+        // Intentar guardar en el servidor
+        try {
+          final userData = {
+            "nombre": _nombreController.text,
+            "correo": _correoController.text,
+            "telefono": _telefonoController.text,
+            "direccion": _direccionController.text,
+            "imagen_perfil": _selectedImagePath ?? _currentImageUrl,
+          };
 
-        final response = await http.put(
-          Uri.parse("http://10.0.2.2:3000/api/usuario/actualizarusuario/$userId"),
-          headers: {"Content-Type": "application/json"},
-          body: json.encode(userData),
-        );
+          final response = await http.put(
+            Uri.parse("${ApiConfig.baseUrl}/api/usuario/actualizarusuario/$userId"),
+            headers: {"Content-Type": "application/json"},
+            body: json.encode(userData),
+          ).timeout(
+            Duration(seconds: 10),
+            onTimeout: () {
+              throw TimeoutException('La conexión tardó demasiado tiempo');
+            },
+          );
 
-        if (response.statusCode == 200) {
+          if (response.statusCode == 200) {
+            // Si el servidor responde correctamente, guardar en SharedPreferences
+            await _guardarEnSharedPreferences(prefs);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Perfil actualizado exitosamente"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          } else {
+            throw Exception("Error al actualizar el perfil: ${response.statusCode}");
+          }
+        } catch (e) {
+          print('Error al guardar en servidor: $e');
+          // Si falla el servidor, guardar solo en SharedPreferences
+          await _guardarEnSharedPreferences(prefs);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Perfil actualizado exitosamente"),
-              backgroundColor: Colors.green,
+              content: Text("Perfil actualizado localmente. Algunos cambios pueden no estar sincronizados."),
+              backgroundColor: Colors.orange,
             ),
           );
-          
-          // Actualizar SharedPreferences
-          await prefs.setString('userName', _nombreController.text);
-          await prefs.setString('userEmail', _correoController.text);
-          await prefs.setString('userPhone', _telefonoController.text);
-          await prefs.setString('userAddress', _direccionController.text);
-          if (_selectedImagePath != null) {
-            await prefs.setString('userImage', _selectedImagePath!);
-          }
-        } else {
-          throw Exception("Error al actualizar el perfil");
         }
       }
     } catch (e) {
+      print('Error detallado al guardar cambios: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error al guardar los cambios"),
+          content: Text("Error al guardar los cambios. Por favor, intente nuevamente."),
           backgroundColor: Colors.red,
         ),
       );
     } finally {
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _guardarEnSharedPreferences(SharedPreferences prefs) async {
+    await prefs.setString('userName', _nombreController.text);
+    await prefs.setString('userEmail', _correoController.text);
+    await prefs.setString('userPhone', _telefonoController.text);
+    await prefs.setString('userAddress', _direccionController.text);
+    if (_selectedImagePath != null) {
+      await prefs.setString('userImage', _selectedImagePath!);
     }
   }
 
@@ -153,6 +250,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _selectedImagePath = image.path;
       });
     }
+  }
+
+  Widget _buildProfileImage() {
+    return CircleAvatar(
+      radius: 50,
+      backgroundColor: Color(0xFFD9B9AD),
+      child: ClipOval(
+        child: _selectedImagePath != null
+            ? Image.file(
+                File(_selectedImagePath!),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  print('Error cargando imagen local: $error');
+                  return Icon(Icons.person, size: 50, color: Color(0xFF731D3C));
+                },
+              )
+            : (_currentImageUrl != null
+                ? CachedNetworkImage(
+                    imageUrl: _currentImageUrl!,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) {
+                      print('Error cargando imagen de red: $error');
+                      return Icon(Icons.person, size: 50, color: Color(0xFF731D3C));
+                    },
+                  )
+                : Icon(Icons.person, size: 50, color: Color(0xFF731D3C))),
+      ),
+    );
   }
 
   @override
@@ -190,14 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Stack(
                       alignment: Alignment.bottomRight,
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: _selectedImagePath != null
-                              ? FileImage(File(_selectedImagePath!))
-                              : (_currentImageUrl != null
-                                  ? NetworkImage(_currentImageUrl!) as ImageProvider
-                                  : AssetImage("assets/fotodepasteles/iconoborcelle.jpg")),
-                        ),
+                        _buildProfileImage(),
                         if (_isEditing)
                           Container(
                             decoration: BoxDecoration(
@@ -222,7 +343,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       SizedBox(height: 10),
-                      Container(
+                      SizedBox(
                         height: 100,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
@@ -247,9 +368,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         : Colors.transparent,
                                     width: 3,
                                   ),
-                                  image: DecorationImage(
-                                    image: NetworkImage(_netflixAvatars[index]),
+                                ),
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: _netflixAvatars[index],
                                     fit: BoxFit.cover,
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    errorWidget: (context, url, error) {
+                                      print('Error cargando avatar: $error');
+                                      return Icon(Icons.person, size: 40, color: Color(0xFF731D3C));
+                                    },
                                   ),
                                 ),
                               ),
