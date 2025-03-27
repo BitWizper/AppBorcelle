@@ -53,6 +53,7 @@ flutter:
     - assets/fotodepasteles/pastelferrero.jpg
     - assets/fotodepasteles/pasteldemandarina.png
     - assets/fotodepasteles/
+    - assets/models/
     - lib/Model3D/models/
 
 flutter_launcher_icons:

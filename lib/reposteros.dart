@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,7 +27,12 @@ class ReposterosScreen extends StatelessWidget {
 
   final Map<String, List<Map<String, dynamic>>> categorias = const {
     'XV Años': [
-      {'nombre': 'Ana Martínez', 'imagen': 'assets/repostera1.jpg', 'calificacion': 4.9, 'reseñas': 'Excelente servicio'},
+      {
+        'nombre': 'Ana Martínez',
+        'imagen': 'assets/fotodepasteles/iconoborcelle.jpg',
+        'calificacion': 4.9,
+        'reseñas': 'Excelente servicio'
+      },
       {'nombre': 'Carlos Gómez', 'imagen': 'assets/repostero2.jpg', 'calificacion': 4.7, 'reseñas': 'Deliciosos pasteles'},
       {'nombre': 'Ana Martínez', 'imagen': 'assets/repostera1.jpg', 'calificacion': 4.9, 'reseñas': 'Excelente servicio'},
       {'nombre': 'Carlos Gómez', 'imagen': 'assets/repostero2.jpg', 'calificacion': 4.7, 'reseñas': 'Deliciosos pasteles'},
@@ -81,11 +87,11 @@ class ReposterosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reposteros', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Color(0xFF8C1B2F),
+        title: const Text('Reposteros', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF8C1B2F),
       ),
       body: ListView.builder(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         itemCount: categorias.length,
         itemBuilder: (context, index) {
           String categoria = categorias.keys.elementAt(index);
@@ -94,17 +100,17 @@ class ReposterosScreen extends StatelessWidget {
             children: [
               Text(
                 categoria,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF8C1B2F),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               GridView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
@@ -116,60 +122,111 @@ class ReposterosScreen extends StatelessWidget {
                     elevation: 4,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                      side: BorderSide(color: const Color(0xFFA65168).withOpacity(0.3), width: 1),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                           child: Container(
                             decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                              border: Border.all(color: const Color(0xFFA65168).withOpacity(0.3), width: 1),
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                             ),
-                            child: Image.asset(
-                              repostero['imagen'],
+                            child: SizedBox(
                               height: 120,
                               width: double.infinity,
-                              fit: BoxFit.cover,
+                              child: CachedNetworkImage(
+                                imageUrl: repostero['imagen'],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: Colors.grey[200],
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          'assets/fotodepasteles/iconoborcelle.jpg',
+                                          width: 40,
+                                          height: 40,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8C1B2F)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) {
+                                  debugPrint('Error cargando imagen: $error');
+                                  return Container(
+                                    color: Colors.grey[200],
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            'assets/fotodepasteles/iconoborcelle.jpg',
+                                            width: 40,
+                                            height: 40,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          const Text(
+                                            'Cargando...',
+                                            style: TextStyle(
+                                              color: Color(0xFF8C1B2F),
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 repostero['nombre'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF8C1B2F),
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  Icon(Icons.star, color: Colors.amber, size: 16),
-                                  SizedBox(width: 4),
+                                  const Icon(Icons.star, color: Colors.amber, size: 16),
+                                  const SizedBox(width: 4),
                                   Text(
                                     repostero['calificacion'].toString(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Color(0xFFA65168),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 repostero['reseñas'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
                                   color: Color(0xFFA65168),
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -179,7 +236,7 @@ class ReposterosScreen extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
             ],
           );
         },

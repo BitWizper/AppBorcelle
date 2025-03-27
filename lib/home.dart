@@ -257,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDestacados() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -265,13 +265,13 @@ class _HomeScreenState extends State<HomeScreen> {
             "Destacados",
             style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           _isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : GridView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
@@ -285,77 +285,98 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(10),
                         side: BorderSide(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
                       ),
-                      child: InkWell(
-                        onTap: () {
-                          if (!_isLoggedIn) {
-                            _showLoginRequiredDialog(context, 'ver detalles del pastel');
-                          } else {
-                            Navigator.pushNamed(context, '/categorias');
-                          }
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: SizedBox(
-                                  height: 120,
-                                  width: double.infinity,
-                                  child: CachedNetworkImage(
-                                    imageUrl: _pasteles[index]["image"],
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8C1B2F)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                              ),
+                              child: SizedBox(
+                                height: 120,
+                                width: double.infinity,
+                                child: CachedNetworkImage(
+                                  imageUrl: _pasteles[index]["image"],
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    color: Colors.grey[200],
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            'assets/fotodepasteles/iconoborcelle.jpg',
+                                            width: 40,
+                                            height: 40,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          const CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8C1B2F)),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    errorWidget: (context, url, error) {
-                                      print('Error cargando imagen: $error');
-                                      return Container(
-                                        color: Colors.grey[200],
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.cake,
-                                            size: 40,
-                                            color: Color(0xFF8C1B2F),
-                                          ),
-                                        ),
-                                      );
-                                    },
                                   ),
+                                  errorWidget: (context, url, error) {
+                                    debugPrint('Error cargando imagen: $error');
+                                    return Container(
+                                      color: Colors.grey[200],
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              'assets/fotodepasteles/iconoborcelle.jpg',
+                                              width: 40,
+                                              height: 40,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            const Text(
+                                              'Cargando...',
+                                              style: TextStyle(
+                                                color: Color(0xFF8C1B2F),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _pasteles[index]["name"],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF8C1B2F),
-                                    ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _pasteles[index]["name"],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8C1B2F),
                                   ),
-                                  Text(
-                                    _pasteles[index]["price"],
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xFFA65168),
-                                    ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _pasteles[index]["price"],
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFFA65168),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   },
