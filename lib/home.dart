@@ -7,11 +7,13 @@ import 'configuracion.dart';
 import 'package:borcelle/categorias.dart';
 import 'reposteros.dart';
 import 'menuLoginRegister.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'dart:async';
 import 'package:borcelle/Model3D/MainMenuUI.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MaterialApp(
@@ -209,25 +211,16 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Ofertas Especiales",
-            style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
+            style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF8C1B2F)),
           ),
-          SizedBox(height: 10),
-          CarouselSlider(
-            options: CarouselOptions(
-              height: 200,
-              autoPlay: true,
-              autoPlayInterval: Duration(seconds: 3),
-              autoPlayAnimationDuration: Duration(milliseconds: 800),
-              autoPlayCurve: Curves.fastOutSlowIn,
-              enlargeCenterPage: true,
-              viewportFraction: 1,
-            ),
+          const SizedBox(height: 10),
+          FlutterCarousel(
             items: bannerImages.map((imagePath) {
               return GestureDetector(
                 onTap: () {
@@ -241,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
+                      border: Border.all(color: const Color(0xFFA65168).withOpacity(0.3), width: 1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity),
@@ -249,6 +242,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             }).toList(),
+            options: CarouselOptions(
+              height: 200,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 3),
+              autoPlayAnimationDuration: const Duration(milliseconds: 800),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enlargeCenterPage: true,
+              viewportFraction: 1,
+            ),
           ),
         ],
       ),
@@ -279,108 +281,96 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   itemCount: _pasteles.length > 4 ? 4 : _pasteles.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-                      ),
+                    return _buildPastelCard(_pasteles[index]);
+                  },
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPastelCard(Map<String, dynamic> pastel) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: const Color(0xFFA65168).withOpacity(0.3), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFA65168).withOpacity(0.3), width: 1),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+              ),
+              child: Image.asset(
+                pastel["image"],
+                height: 120,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  debugPrint('Error cargando imagen: $error');
+                  return Container(
+                    height: 120,
+                    width: double.infinity,
+                    color: Colors.grey[200],
+                    child: Center(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                              ),
-                              child: SizedBox(
-                                height: 120,
-                                width: double.infinity,
-                                child: CachedNetworkImage(
-                                  imageUrl: _pasteles[index]["image"],
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(
-                                    color: Colors.grey[200],
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            'assets/fotodepasteles/iconoborcelle.jpg',
-                                            width: 40,
-                                            height: 40,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          const CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8C1B2F)),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) {
-                                    debugPrint('Error cargando imagen: $error');
-                                    return Container(
-                                      color: Colors.grey[200],
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              'assets/fotodepasteles/iconoborcelle.jpg',
-                                              width: 40,
-                                              height: 40,
-                                            ),
-                                            const SizedBox(height: 8),
-                                            const Text(
-                                              'Cargando...',
-                                              style: TextStyle(
-                                                color: Color(0xFF8C1B2F),
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
+                          Image.asset(
+                            'assets/fotodepasteles/iconoborcelle.jpg',
+                            width: 40,
+                            height: 40,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _pasteles[index]["name"],
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8C1B2F),
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _pasteles[index]["price"],
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFFA65168),
-                                  ),
-                                ),
-                              ],
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Cargando...',
+                            style: TextStyle(
+                              color: Color(0xFF8C1B2F),
+                              fontSize: 12,
                             ),
                           ),
                         ],
                       ),
-                    );
-                  },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  pastel["name"],
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF8C1B2F),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  pastel["price"],
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFFA65168),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -606,55 +596,58 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadPasteles() async {
-    if (!mounted) return;
-    
-    setState(() {
-      _isLoading = true;
-    });
-
     try {
-      await Future.delayed(const Duration(seconds: 2));
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Datos temporales mientras se desarrolla el backend
+      final List<Map<String, dynamic>> pastelesTemporales = [
+        {
+          "name": "Pastel de Chocolate Premium",
+          "price": "\$450",
+          "image": "assets/fotodepasteles/pastelprimero.jpg",
+          "description": "Delicioso pastel de chocolate con decoración elegante"
+        },
+        {
+          "name": "Pastel de Fresa Silvestre",
+          "price": "\$380",
+          "image": "assets/fotodepasteles/fotopastel1.jpg",
+          "description": "Fresco pastel de fresa con decoración moderna"
+        },
+        {
+          "name": "Pastel de Vainilla Francesa",
+          "price": "\$350",
+          "image": "assets/fotodepasteles/fotopastel2.jpeg",
+          "description": "Clásico pastel de vainilla con decoración tradicional"
+        },
+        {
+          "name": "Pastel de Almendra Gourmet",
+          "price": "\$420",
+          "image": "assets/fotodepasteles/pasteldealmendra.jpg",
+          "description": "Exquisito pastel de almendra con decoración elegante"
+        },
+        {
+          "name": "Pastel de Queso New York",
+          "price": "\$400",
+          "image": "assets/fotodepasteles/pasteldequesodebola.jpg",
+          "description": "Cremoso pastel de queso con decoración moderna"
+        },
+        {
+          "name": "Pastel de Mandarina Refrescante",
+          "price": "\$360",
+          "image": "assets/fotodepasteles/pasteldemandarina.png",
+          "description": "Refrescante pastel de mandarina con decoración elegante"
+        }
+      ];
+
+      // Simular delay de red
+      await Future.delayed(const Duration(seconds: 1));
+      
       if (!mounted) return;
       
       setState(() {
-        _pasteles = [
-          {
-            "name": "Pastel de Chocolate",
-            "price": "\$450",
-            "image": "https://i.pinimg.com/736x/8d/4d/20/8d4d20b75a8d8b13e3d2907c5c58e633.jpg",
-            "description": "Delicioso pastel de chocolate con decoración elegante"
-          },
-          {
-            "name": "Pastel de Fresa",
-            "price": "\$380",
-            "image": "https://i.pinimg.com/736x/f2/27/f7/f227f7e5778e8f43e95624fffb1f181a.jpg",
-            "description": "Fresco pastel de fresa con decoración moderna"
-          },
-          {
-            "name": "Pastel de Vainilla",
-            "price": "\$350",
-            "image": "https://i.pinimg.com/736x/90/22/37/902237e139c0a842bb30c1f440547c51.jpg",
-            "description": "Clásico pastel de vainilla con decoración tradicional"
-          },
-          {
-            "name": "Pastel de Almendra",
-            "price": "\$420",
-            "image": "https://i.pinimg.com/736x/8c/5b/1a/8c5b1a748e005348668423ffcb5a84c8.jpg",
-            "description": "Exquisito pastel de almendra con decoración elegante"
-          },
-          {
-            "name": "Pastel de Queso",
-            "price": "\$400",
-            "image": "https://i.pinimg.com/736x/42/76/61/427661b16c109e9c10770ea33a58c09b.jpg",
-            "description": "Cremoso pastel de queso con decoración moderna"
-          },
-          {
-            "name": "Pastel de Mandarina",
-            "price": "\$360",
-            "image": "https://i.pinimg.com/736x/99/e3/51/99e3515f3f5a4acfa13e352717626dcb.jpg",
-            "description": "Refrescante pastel de mandarina con decoración elegante"
-          }
-        ];
+        _pasteles = pastelesTemporales;
         _isLoading = false;
       });
     } catch (e) {
@@ -717,7 +710,7 @@ class CustomSearchDelegate extends SearchDelegate {
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.75,
       ),
       itemCount: resultados.length,
       itemBuilder: (context, index) {
@@ -726,24 +719,42 @@ class CustomSearchDelegate extends SearchDelegate {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                child: CachedNetworkImage(
-                  imageUrl: resultados[index]["image"],
+                child: Image.asset(
+                  resultados[index]["image"],
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  errorWidget: (context, url, error) {
+                  errorBuilder: (context, error, stackTrace) {
                     print('Error cargando imagen en búsqueda: $error');
                     return Container(
                       height: 120,
                       width: double.infinity,
                       color: Colors.grey[300],
-                      child: Icon(Icons.cake, size: 50, color: Color(0xFF8C1B2F)),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              'assets/fotodepasteles/iconoborcelle.jpg',
+                              width: 40,
+                              height: 40,
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Cargando...',
+                              style: TextStyle(
+                                color: Color(0xFF8C1B2F),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -752,6 +763,7 @@ class CustomSearchDelegate extends SearchDelegate {
                 padding: EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       resultados[index]["name"]!,
@@ -803,13 +815,16 @@ class CustomSearchDelegate extends SearchDelegate {
           leading: CircleAvatar(
             backgroundColor: Colors.grey[300],
             child: ClipOval(
-              child: CachedNetworkImage(
-                imageUrl: sugerencias[index]["image"],
+              child: Image.asset(
+                sugerencias[index]["image"],
                 fit: BoxFit.cover,
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) {
+                errorBuilder: (context, error, stackTrace) {
                   print('Error cargando imagen en sugerencia: $error');
-                  return Icon(Icons.cake, size: 24, color: Color(0xFF8C1B2F));
+                  return Image.asset(
+                    'assets/fotodepasteles/iconoborcelle.jpg',
+                    width: 24,
+                    height: 24,
+                  );
                 },
               ),
             ),

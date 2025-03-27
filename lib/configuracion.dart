@@ -5,7 +5,12 @@ import 'theme.dart' as app_theme;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class ConfiguracionScreen extends StatefulWidget {
-  const ConfiguracionScreen({super.key});
+  final Function(app_theme.AppThemeMode)? onThemeChanged;
+  
+  const ConfiguracionScreen({
+    super.key,
+    this.onThemeChanged,
+  });
 
   @override
   _ConfiguracionScreenState createState() => _ConfiguracionScreenState();
@@ -52,6 +57,12 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
     await prefs.setBool('notificacionesPromociones', _notificacionesPromociones);
     await prefs.setBool('notificacionesPedidos', _notificacionesPedidos);
     await prefs.setBool('notificacionesNovedades', _notificacionesNovedades);
+    
+    // Notificar al widget padre sobre el cambio de tema
+    if (mounted) {
+      widget.onThemeChanged?.call(_currentTheme);
+      Navigator.pop(context);
+    }
   }
 
   @override

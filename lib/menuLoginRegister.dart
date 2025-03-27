@@ -37,8 +37,10 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: Color(0xFFF2F0E4),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -58,7 +60,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 Container(
                   padding: EdgeInsets.all(15),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: theme.cardColor.withOpacity(0.9),
                     shape: BoxShape.circle,
                   ),
                   child: CircleAvatar(
@@ -70,7 +72,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Color(0xFF8C1B2F).withOpacity(0.8),
+                    color: theme.primaryColor.withOpacity(0.8),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Text(
@@ -78,7 +80,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: theme.colorScheme.onPrimary,
                       letterSpacing: 2,
                     ),
                   ),
@@ -87,7 +89,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: theme.cardColor.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -106,7 +108,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       Text(
                         "O continúa con",
                         style: TextStyle(
-                          color: Color(0xFF8C1B2F),
+                          color: theme.primaryColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -146,9 +148,11 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _buildButton(BuildContext context, String text, bool isLogin) {
+    final theme = Theme.of(context);
+    
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFFA65168),
+        backgroundColor: theme.colorScheme.secondary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25),
         ),
@@ -156,9 +160,9 @@ class _AuthScreenState extends State<AuthScreen> {
         shadowColor: Colors.black.withOpacity(0.4),
         elevation: 8,
       ).copyWith(
-        overlayColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.pressed)) {
-            return Color(0xFF731D3C);
+        overlayColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return theme.primaryColor;
           }
           return null;
         }),
@@ -174,7 +178,7 @@ class _AuthScreenState extends State<AuthScreen> {
         style: TextStyle(
           fontSize: 19,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: theme.colorScheme.onSecondary,
           letterSpacing: 1.2,
         ),
       ),
@@ -186,9 +190,11 @@ class _AuthScreenState extends State<AuthScreen> {
     required Color color,
     required VoidCallback onPressed,
   }) {
+    final theme = Theme.of(context);
+    
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
@@ -256,15 +262,25 @@ class _FormScreenState extends State<FormScreen> {
         "tipo_usuario": "Cliente",
       };
 
-      print('Intentando iniciar sesión con: ${_correoController.text}'); // Debug
-      print('Datos de login: ${json.encode(loginData)}'); // Debug
+      // Mostrar indicador de carga
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8C1B2F)),
+            ),
+          );
+        },
+      );
 
       // Intentar con diferentes URLs
       final urls = [
-        "http://192.168.1.71:3000/api/usuario/loginuser", // IP de tu laptop
-        "http://10.0.2.2:3000/api/usuario/loginuser",     // Para emulador Android
-        "http://localhost:3000/api/usuario/loginuser",     // Localhost
-        "http://127.0.0.1:3000/api/usuario/loginuser"      // Localhost alternativo
+        "http://192.168.1.71:3000/api/usuario/loginuser",
+        "http://10.0.2.2:3000/api/usuario/loginuser",
+        "http://localhost:3000/api/usuario/loginuser",
+        "http://127.0.0.1:3000/api/usuario/loginuser"
       ];
 
       http.Response? response;
@@ -272,8 +288,6 @@ class _FormScreenState extends State<FormScreen> {
 
       for (final url in urls) {
         try {
-          print('Intentando conectar a: $url'); // Debug
-          
           response = await http.post(
             Uri.parse(url),
             headers: {
@@ -282,29 +296,29 @@ class _FormScreenState extends State<FormScreen> {
             },
             body: json.encode(loginData),
           ).timeout(
-            Duration(seconds: 15),
+            Duration(seconds: 10),
             onTimeout: () {
-              throw TimeoutException('La conexión tardó demasiado tiempo con $url');
+              throw TimeoutException('La conexión tardó demasiado tiempo');
             },
           );
 
-          print('Código de estado para $url: ${response.statusCode}'); // Debug
-          
           if (response.statusCode == 200) {
-            print('Conexión exitosa con: $url'); // Debug
             break;
           }
         } catch (e) {
           lastError = e.toString();
-          print('Error al intentar conectar a $url: $e'); // Debug
         }
       }
 
-      if (response == null) {
-        throw Exception('No se pudo conectar a ninguna URL. Último error: $lastError');
-      }
+      // Cerrar el indicador de carga
+      Navigator.of(context).pop();
 
-      print('Respuesta del servidor: ${response.body}'); // Debug
+      if (response == null) {
+        _mostrarErrorDialog(
+          "No se pudo conectar al servidor. Por favor, verifica tu conexión a internet y vuelve a intentarlo."
+        );
+        return;
+      }
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -327,23 +341,23 @@ class _FormScreenState extends State<FormScreen> {
           await prefs.setString('userPhone', userData['telefono'] ?? '');
           await prefs.setString('userAddress', userData['direccion'] ?? '');
 
-          // Esperar un momento para que el usuario vea el mensaje de éxito
-          await Future.delayed(Duration(seconds: 1));
-          
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
         } else {
-          print('Datos de usuario no encontrados en la respuesta'); // Debug
           _mostrarErrorDialog("Error en la respuesta del servidor");
         }
       } else {
-        print('Error en la respuesta: ${response.statusCode}'); // Debug
         final errorData = json.decode(response.body);
         _mostrarErrorDialog(errorData["error"] ?? "Usuario o contraseña incorrectos");
       }
     } catch (e) {
-      print('Error detallado al iniciar sesión: $e'); // Debug
-      print('Tipo de error: ${e.runtimeType}'); // Debug
-      _mostrarErrorDialog("Error de conexión. Por favor, intente nuevamente.");
+      // Cerrar el indicador de carga si aún está visible
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      }
+      
+      _mostrarErrorDialog(
+        "Error de conexión. Por favor, verifica tu conexión a internet y vuelve a intentarlo."
+      );
     }
   }
 
@@ -435,13 +449,15 @@ class _FormScreenState extends State<FormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: Color(0xFFF2F0E4),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Color(0xFF731D3C),
+        backgroundColor: theme.primaryColor,
         title: Text(
           widget.isLogin ? "Iniciar Sesión" : "Registro",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: theme.colorScheme.onPrimary),
         ),
       ),
       body: Padding(
@@ -461,7 +477,7 @@ class _FormScreenState extends State<FormScreen> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFA65168),
+                    backgroundColor: theme.colorScheme.secondary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
@@ -469,9 +485,9 @@ class _FormScreenState extends State<FormScreen> {
                     shadowColor: Colors.black.withOpacity(0.4),
                     elevation: 8,
                   ).copyWith(
-                    overlayColor: WidgetStateProperty.resolveWith((states) {
-                      if (states.contains(WidgetState.pressed)) {
-                        return Color(0xFF731D3C);
+                    overlayColor: MaterialStateProperty.resolveWith((states) {
+                      if (states.contains(MaterialState.pressed)) {
+                        return theme.primaryColor;
                       }
                       return null;
                     }),
@@ -479,7 +495,11 @@ class _FormScreenState extends State<FormScreen> {
                   onPressed: widget.isLogin ? _loginUser : _registrarUsuario,
                   child: Text(
                     widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta",
-                    style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: theme.colorScheme.onSecondary,
+                      fontWeight: FontWeight.bold
+                    ),
                   ),
                 ),
               ],
@@ -491,10 +511,12 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
+    final theme = Theme.of(context);
+    
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: Color(0xFFD9B9AD),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
       ),
       child: TextFormField(
@@ -502,18 +524,18 @@ class _FormScreenState extends State<FormScreen> {
         obscureText: obscureText && !_mostrarContrasena,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Color(0xFF731D3C)),
+          labelStyle: TextStyle(color: theme.primaryColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
           ),
           filled: true,
-          fillColor: Color(0xFFD9B9AD),
+          fillColor: theme.colorScheme.surface,
           suffixIcon: obscureText
               ? IconButton(
                   icon: Icon(
                     _mostrarContrasena ? Icons.visibility : Icons.visibility_off,
-                    color: Color(0xFF731D3C),
+                    color: theme.primaryColor,
                   ),
                   onPressed: () {
                     setState(() {

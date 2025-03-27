@@ -25,9 +25,9 @@ class AppTheme {
   }
 
   static final ThemeData _lightTheme = ThemeData(
-    primaryColor: Color(0xFF8C1B2F),
+    primaryColor: const Color(0xFF8C1B2F),
     scaffoldBackgroundColor: Colors.white,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF8C1B2F),
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
@@ -37,7 +37,7 @@ class AppTheme {
         fontWeight: FontWeight.bold,
       ),
     ),
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.black87),
       bodyMedium: TextStyle(color: Colors.black87),
     ),
@@ -45,12 +45,19 @@ class AppTheme {
       color: Colors.white,
       elevation: 2,
     ),
+    colorScheme: ColorScheme.light(
+      primary: const Color(0xFF8C1B2F),
+      secondary: const Color(0xFFA65168),
+      surface: Colors.white,
+      background: Colors.white,
+      error: Colors.red,
+    ),
   );
 
   static final ThemeData _darkTheme = ThemeData(
-    primaryColor: Color(0xFF8C1B2F),
-    scaffoldBackgroundColor: Color(0xFF121212),
-    appBarTheme: AppBarTheme(
+    primaryColor: const Color(0xFF8C1B2F),
+    scaffoldBackgroundColor: const Color(0xFF121212),
+    appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1E1E1E),
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
@@ -60,67 +67,88 @@ class AppTheme {
         fontWeight: FontWeight.bold,
       ),
     ),
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Colors.white),
     ),
     cardTheme: CardTheme(
-      color: Color(0xFF1E1E1E),
+      color: const Color(0xFF1E1E1E),
       elevation: 2,
+    ),
+    colorScheme: ColorScheme.dark(
+      primary: const Color(0xFF8C1B2F),
+      secondary: const Color(0xFFA65168),
+      surface: const Color(0xFF1E1E1E),
+      background: const Color(0xFF121212),
+      error: Colors.red,
     ),
   );
 
   static final ThemeData _pinkTheme = ThemeData(
-    primaryColor: Color(0xFFE91E63),
-    scaffoldBackgroundColor: Color(0xFFFFF0F5),
+    primaryColor: Colors.pink,
+    scaffoldBackgroundColor: Colors.pink[50],
     appBarTheme: AppBarTheme(
-      backgroundColor: Color(0xFFE91E63),
+      backgroundColor: Colors.pink,
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
-      titleTextStyle: TextStyle(
+      iconTheme: const IconThemeData(color: Colors.white),
+      titleTextStyle: const TextStyle(
         color: Colors.white,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     ),
     textTheme: TextTheme(
-      bodyLarge: TextStyle(color: Color(0xFF4A4A4A)),
-      bodyMedium: TextStyle(color: Color(0xFF4A4A4A)),
+      bodyLarge: TextStyle(color: Colors.pink[900]),
+      bodyMedium: TextStyle(color: Colors.pink[900]),
     ),
     cardTheme: CardTheme(
       color: Colors.white,
       elevation: 2,
+    ),
+    colorScheme: ColorScheme.light(
+      primary: Colors.pink,
+      secondary: Colors.pink[300]!,
+      surface: Colors.white,
+      background: Colors.pink[50]!,
+      error: Colors.red,
     ),
   );
 
   static final ThemeData _pastelTheme = ThemeData(
-    primaryColor: Color(0xFF98D8AA),
-    scaffoldBackgroundColor: Color(0xFFF5F5F5),
+    primaryColor: Colors.blue[300],
+    scaffoldBackgroundColor: Colors.blue[50],
     appBarTheme: AppBarTheme(
-      backgroundColor: Color(0xFF98D8AA),
+      backgroundColor: Colors.blue[300],
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
-      titleTextStyle: TextStyle(
+      iconTheme: const IconThemeData(color: Colors.white),
+      titleTextStyle: const TextStyle(
         color: Colors.white,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     ),
     textTheme: TextTheme(
-      bodyLarge: TextStyle(color: Color(0xFF4A4A4A)),
-      bodyMedium: TextStyle(color: Color(0xFF4A4A4A)),
+      bodyLarge: TextStyle(color: Colors.blue[900]),
+      bodyMedium: TextStyle(color: Colors.blue[900]),
     ),
     cardTheme: CardTheme(
       color: Colors.white,
       elevation: 2,
+    ),
+    colorScheme: ColorScheme.light(
+      primary: Colors.blue[300]!,
+      secondary: Colors.blue[200]!,
+      surface: Colors.white,
+      background: Colors.blue[50]!,
+      error: Colors.red,
     ),
   );
 
   static final ThemeData _borcelleTheme = ThemeData(
-    primaryColor: Color(0xFFD4AF37),
-    scaffoldBackgroundColor: Color(0xFFFFF8E7),
-    appBarTheme: AppBarTheme(
-      backgroundColor: Color(0xFFD4AF37),
+    primaryColor: const Color(0xFF8C1B2F),
+    scaffoldBackgroundColor: const Color(0xFFF2F0E4),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF8C1B2F),
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
       titleTextStyle: TextStyle(
@@ -129,13 +157,24 @@ class AppTheme {
         fontWeight: FontWeight.bold,
       ),
     ),
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(color: Color(0xFF4A4A4A)),
-      bodyMedium: TextStyle(color: Color(0xFF4A4A4A)),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: Color(0xFF8C1B2F)),
+      bodyMedium: TextStyle(color: Color(0xFFA65168)),
     ),
     cardTheme: CardTheme(
       color: Colors.white,
       elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: const Color(0xFFA65168).withOpacity(0.3)),
+      ),
+    ),
+    colorScheme: ColorScheme.light(
+      primary: const Color(0xFF8C1B2F),
+      secondary: const Color(0xFFA65168),
+      surface: Colors.white,
+      background: const Color(0xFFF2F0E4),
+      error: Colors.red,
     ),
   );
 } 

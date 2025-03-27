@@ -45,20 +45,36 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _actualizarTema(app_theme.AppThemeMode nuevoTema) {
+    setState(() {
+      _currentTheme = nuevoTema;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Borcelle',
       theme: app_theme.AppTheme.getTheme(_currentTheme),
-      initialRoute: '/inicio', // Asegúrate de que coincide con las rutas definidas
+      darkTheme: app_theme.AppTheme.getTheme(app_theme.AppThemeMode.dark),
+      themeMode: _currentTheme == app_theme.AppThemeMode.dark ? ThemeMode.dark : ThemeMode.light,
+      initialRoute: '/home',
+      builder: (context, child) {
+        return Theme(
+          data: app_theme.AppTheme.getTheme(_currentTheme),
+          child: child!,
+        );
+      },
       routes: {
-        '/inicio': (context) => const home.HomeScreen(),
+        '/home': (context) => const home.HomeScreen(),
         '/categorias': (context) => const CategoriasScreen(),
         '/reposteros': (context) => const ReposterosScreen(),
         '/menuLoginRegister': (context) => const AuthScreen(),
         '/ayuda': (context) => const HelpScreen(),
-        '/configuracion': (context) => const ConfiguracionScreen(),
+        '/configuracion': (context) => ConfiguracionScreen(
+          onThemeChanged: _actualizarTema,
+        ),
         '/perfil': (context) => const ProfileScreen(),
         '/registro': (context) => const RegisterScreen(),
         '/pedidos': (context) => const OrdersScreen(),
