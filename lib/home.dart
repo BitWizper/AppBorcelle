@@ -22,12 +22,11 @@ void main() {
       '/perfil': (context) => ProfileScreen(),
       '/pedidos': (context) => OrdersScreen(),
       '/ayuda': (context) => HelpScreen(),
-      '/configuracion': (context) => SettingsScreen(),
+      '/configuracion': (context) => ConfiguracionScreen(),
       '/categorias': (context) => CategoriasScreen(),
       '/reposteros': (context) => ReposterosScreen(),
       '/menuLoginRegister': (context) => AuthScreen(),
       '/crearPastel': (context) => Model3DViewer(),
-
     },
   ));
 }
@@ -41,10 +40,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  bool isLoading = true;
-  bool isLoggedIn = false;
-  List<Map<String, dynamic>> pasteles = [];
-  List<String> consejos = [
+  bool _isLoading = true;
+  bool _isLoggedIn = false;
+  List<Map<String, dynamic>> _pasteles = [];
+  final List<String> _consejos = [
     "¡Hoy es un día perfecto para probar nuestros deliciosos pasteles!",
     "¿Sabías que nuestros pasteles son horneados diariamente?",
     "¡No olvides que puedes personalizar tus pasteles!",
@@ -56,27 +55,29 @@ class _HomeScreenState extends State<HomeScreen> {
     "¡Los pasteles son el regalo perfecto!",
     "¡Descubre nuestras nuevas creaciones!"
   ];
-  int consejoActual = 0;
+  int _consejoActual = 0;
   Timer? _timer;
-  List<Map<String, dynamic>> pasteleros = [];
-  List<Map<String, dynamic>> categorias = [];
+  List<Map<String, dynamic>> _pasteleros = [];
+  List<Map<String, dynamic>> _categorias = [];
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
     _loadPasteles();
-    // Iniciar el timer para cambiar el consejo cada minuto
-    _timer = Timer.periodic(Duration(minutes: 1), (timer) {
-      setState(() {
-        consejoActual = (consejoActual + 1) % consejos.length;
-      });
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          _consejoActual = (_consejoActual + 1) % _consejos.length;
+        });
+      }
     });
   }
 
   @override
   void dispose() {
-    _timer?.cancel(); // Cancelar el timer cuando se destruye el widget
+    _timer?.cancel();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -98,13 +99,13 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.search, color: Colors.white),
             onPressed: () {
-              showSearch(context: context, delegate: CustomSearchDelegate(pasteles: pasteles));
+              showSearch(context: context, delegate: CustomSearchDelegate(pasteles: _pasteles));
             },
           ),
           IconButton(
             icon: Icon(Icons.shopping_cart, color: Colors.white),
             onPressed: () {
-              if (!isLoggedIn) {
+              if (!_isLoggedIn) {
                 _showLoginRequiredDialog(context, 'carrito de compras');
               } else {
                 Navigator.pushNamed(context, '/pedidos');
@@ -112,9 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           IconButton(
-            icon: Icon(isLoggedIn ? Icons.exit_to_app : Icons.login, color: Colors.white),
+            icon: Icon(_isLoggedIn ? Icons.exit_to_app : Icons.login, color: Colors.white),
             onPressed: () {
-              if (isLoggedIn) {
+              if (_isLoggedIn) {
                 _showLogoutDialog(context);
               } else {
                 _showLoginRequiredDialog(context, 'iniciar sesión');
@@ -124,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
           PopupMenuButton<String>(
             icon: Icon(Icons.menu, color: Colors.white),
             onSelected: (value) async {
-              if (!isLoggedIn) {
+              if (!_isLoggedIn) {
                 // Mostrar diálogo de inicio de sesión requerido
                 showDialog(
                   context: context,
@@ -152,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.pushNamed(context, '/menuLoginRegister').then((value) {
                               if (value == true) {
                                 setState(() {
-                                  isLoggedIn = true;
+                                  _isLoggedIn = true;
                                 });
                                 // Navegar a la opción seleccionada después de iniciar sesión
                                 _navigateToSelectedOption(value.toString());
@@ -230,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
             items: bannerImages.map((imagePath) {
               return GestureDetector(
                 onTap: () {
-                  if (!isLoggedIn) {
+                  if (!_isLoggedIn) {
                     _showLoginRequiredDialog(context, 'ver ofertas especiales');
                   } else {
                     Navigator.pushNamed(context, '/categorias');
@@ -265,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
           ),
           SizedBox(height: 10),
-          isLoading
+          _isLoading
               ? Center(child: CircularProgressIndicator())
               : GridView.builder(
                   shrinkWrap: true,
@@ -276,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisSpacing: 10,
                     childAspectRatio: 0.8,
                   ),
-                  itemCount: pasteles.length > 4 ? 4 : pasteles.length,
+                  itemCount: _pasteles.length > 4 ? 4 : _pasteles.length,
                   itemBuilder: (context, index) {
                     return Card(
                       elevation: 5,
@@ -286,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          if (!isLoggedIn) {
+                          if (!_isLoggedIn) {
                             _showLoginRequiredDialog(context, 'ver detalles del pastel');
                           } else {
                             Navigator.pushNamed(context, '/categorias');
@@ -306,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   height: 120,
                                   width: double.infinity,
                                   child: CachedNetworkImage(
-                                    imageUrl: pasteles[index]["image"],
+                                    imageUrl: _pasteles[index]["image"],
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) => Center(
                                       child: CircularProgressIndicator(
@@ -336,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    pasteles[index]["name"],
+                                    _pasteles[index]["name"],
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -344,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    pasteles[index]["price"],
+                                    _pasteles[index]["price"],
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFFA65168),
@@ -399,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            consejos[consejoActual],
+            _consejos[_consejoActual],
             style: GoogleFonts.lora(
               fontSize: 16,
               color: Color(0xFFA65168),
@@ -482,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () async {
                 // Actualizar el estado
                 setState(() {
-                  isLoggedIn = false;
+                  _isLoggedIn = false;
                 });
                 
                 // Limpiar las preferencias de sesión
@@ -564,7 +565,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('isLoggedIn', true);
                   setState(() {
-                    isLoggedIn = true;
+                    _isLoggedIn = true;
                   });
                   // Si el usuario inició sesión exitosamente, realizar la acción original
                   if (feature == 'carrito de compras') {
@@ -584,15 +585,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadPasteles() async {
+    if (!mounted) return;
+    
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
 
     try {
-      // Simulación de carga de datos
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      
       setState(() {
-        pasteles = [
+        _pasteles = [
           {
             "name": "Pastel de Chocolate",
             "price": "\$450",
@@ -630,20 +634,25 @@ class _HomeScreenState extends State<HomeScreen> {
             "description": "Refrescante pastel de mandarina con decoración elegante"
           }
         ];
-        isLoading = false;
+        _isLoading = false;
       });
     } catch (e) {
-      print('Error al cargar los pasteles: $e');
+      if (!mounted) return;
       setState(() {
-        isLoading = false;
+        _isLoading = false;
       });
+      debugPrint('Error al cargar los pasteles: $e');
     }
   }
 
   Future<void> _checkLoginStatus() async {
+    if (!mounted) return;
+    
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    
     setState(() {
-      isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+      _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     });
   }
 }

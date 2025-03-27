@@ -1,294 +1,187 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'theme.dart' as app_theme;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ConfiguracionScreen extends StatefulWidget {
+  const ConfiguracionScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Configuración',
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-        fontFamily: 'Lora', // Cambié la tipografía a Lora
-      ),
-      home: SettingsScreen(),
-    );
+  _ConfiguracionScreenState createState() => _ConfiguracionScreenState();
+}
+
+class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
+  app_theme.AppThemeMode _currentTheme = app_theme.AppThemeMode.light;
+  bool _notificacionesActivas = true;
+  bool _notificacionesPromociones = true;
+  bool _notificacionesPedidos = true;
+  bool _notificacionesNovedades = true;
+  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarConfiguracion();
+    _inicializarNotificaciones();
   }
-}
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  Future<void> _inicializarNotificaciones() async {
+    const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
+    const iosSettings = DarwinInitializationSettings();
+    const initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
+    
+    await _notifications.initialize(initSettings);
+  }
 
-  @override
-  _SettingsScreenState createState() => _SettingsScreenState();
-}
+  Future<void> _cargarConfiguracion() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _currentTheme = app_theme.AppThemeMode.values[prefs.getInt('themeMode') ?? 0];
+      _notificacionesActivas = prefs.getBool('notificacionesActivas') ?? true;
+      _notificacionesPromociones = prefs.getBool('notificacionesPromociones') ?? true;
+      _notificacionesPedidos = prefs.getBool('notificacionesPedidos') ?? true;
+      _notificacionesNovedades = prefs.getBool('notificacionesNovedades') ?? true;
+    });
+  }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  // Controladores para los formularios
-  final _currentPasswordController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  String _selectedLanguage = 'es';
-  final bool _emailNotifications = false;
-  final bool _showProfile = false;
-  bool notificaciones = false;
-  bool modoOscuro = false;
+  Future<void> _guardarConfiguracion() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('themeMode', _currentTheme.index);
+    await prefs.setBool('notificacionesActivas', _notificacionesActivas);
+    await prefs.setBool('notificacionesPromociones', _notificacionesPromociones);
+    await prefs.setBool('notificacionesPedidos', _notificacionesPedidos);
+    await prefs.setBool('notificacionesNovedades', _notificacionesNovedades);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF8C1B2F),
-        title: Text(
-          "Configuración",
-          style: GoogleFonts.lora(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+        title: Text('Configuración'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Preferencias",
-                style: GoogleFonts.lora(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF8C1B2F),
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Color(0xFFF2F0E4),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-                ),
-                child: Column(
-                  children: [
-                    SwitchListTile(
-                      title: Text(
-                        "Notificaciones",
-                        style: TextStyle(color: Color(0xFF8C1B2F)),
-                      ),
-                      value: notificaciones,
-                      onChanged: (bool value) {
-                        setState(() {
-                          notificaciones = value;
-                        });
-                      },
-                    ),
-                    SwitchListTile(
-                      title: Text(
-                        "Modo Oscuro",
-                        style: TextStyle(color: Color(0xFF8C1B2F)),
-                      ),
-                      value: modoOscuro,
-                      onChanged: (bool value) {
-                        setState(() {
-                          modoOscuro = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              Text(
-                "Cuenta",
-                style: GoogleFonts.lora(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF8C1B2F),
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Color(0xFFF2F0E4),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-                ),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.lock, color: Color(0xFF8C1B2F)),
-                      title: Text(
-                        "Cambiar Contraseña",
-                        style: TextStyle(color: Color(0xFF8C1B2F)),
-                      ),
-                      onTap: () {
-                        // Implementar cambio de contraseña
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.delete, color: Color(0xFF8C1B2F)),
-                      title: Text(
-                        "Eliminar Cuenta",
-                        style: TextStyle(color: Color(0xFF8C1B2F)),
-                      ),
-                      onTap: () {
-                        // Implementar eliminación de cuenta
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
+      body: ListView(
+        children: [
+          _buildSectionTitle('Apariencia'),
+          _buildThemeSelector(),
+          _buildSectionTitle('Notificaciones'),
+          _buildNotificationSwitch(
+            'Activar Notificaciones',
+            _notificacionesActivas,
+            (value) {
+              setState(() {
+                _notificacionesActivas = value;
+                if (!value) {
+                  _notificacionesPromociones = false;
+                  _notificacionesPedidos = false;
+                  _notificacionesNovedades = false;
+                }
+              });
+              _guardarConfiguracion();
+            },
           ),
-        ),
-      ),
-    );
-  }
-
-  // Widget para los campos de texto (contraseña)
-  Widget _buildTextField(String label, TextEditingController controller, bool obscureText) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFFA65168), width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFFA65168).withOpacity(0.5), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFFA65168), width: 2),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Widget para el selector de idioma (Dropdown)
-  Widget _buildDropdown() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        value: _selectedLanguage,
-        items: [
-          DropdownMenuItem(value: 'es', child: Text('Español')),
-          DropdownMenuItem(value: 'en', child: Text('Inglés')),
-          DropdownMenuItem(value: 'fr', child: Text('Francés')),
-          DropdownMenuItem(value: 'de', child: Text('Alemán')),
-        ],
-        onChanged: (value) {
-          setState(() {
-            _selectedLanguage = value!;
-          });
-        },
-        decoration: InputDecoration(
-          labelText: 'Seleccionar Idioma',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFFA65168), width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFFA65168).withOpacity(0.5), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFFA65168), width: 2),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Widget para las casillas de verificación (checkbox)
-  Widget _buildCheckbox(String label, bool value, ValueChanged<bool?> onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Checkbox(
-              value: value,
-              onChanged: onChanged,
-              activeColor: Color(0xFF8C1B2F), // Vino oscuro
+          if (_notificacionesActivas) ...[
+            _buildNotificationSwitch(
+              'Promociones y Ofertas',
+              _notificacionesPromociones,
+              (value) {
+                setState(() => _notificacionesPromociones = value);
+                _guardarConfiguracion();
+              },
             ),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: Color(0xFFA65168).withOpacity(0.8),
-                ),
-              ),
+            _buildNotificationSwitch(
+              'Estado de Pedidos',
+              _notificacionesPedidos,
+              (value) {
+                setState(() => _notificacionesPedidos = value);
+                _guardarConfiguracion();
+              },
+            ),
+            _buildNotificationSwitch(
+              'Novedades y Actualizaciones',
+              _notificacionesNovedades,
+              (value) {
+                setState(() => _notificacionesNovedades = value);
+                _guardarConfiguracion();
+              },
             ),
           ],
-        ),
+        ],
       ),
     );
   }
 
-  // Widget para el botón de acción
-  Widget _buildButton(String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: ElevatedButton(
-        onPressed: () {
-          // Implementar la acción del botón (por ejemplo, enviar los datos a un servidor)
-          print('Acción: $label');
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF8C1B2F), // Vino oscuro
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: Color(0xFFA65168), width: 1),
-          ),
-        ),
-        child: Text(label),
-      ),
-    );
-  }
-
-  // Widget para el título de cada sección
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-          ),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF8C1B2F), // Vino oscuro
-          ),
+      padding: const EdgeInsets.all(16),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
         ),
       ),
+    );
+  }
+
+  Widget _buildThemeSelector() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Tema de la Aplicación',
+            style: TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            children: [
+              _buildThemeOption('Claro', app_theme.AppThemeMode.light, Icons.light_mode),
+              _buildThemeOption('Oscuro', app_theme.AppThemeMode.dark, Icons.dark_mode),
+              _buildThemeOption('Rosa', app_theme.AppThemeMode.pink, Icons.favorite),
+              _buildThemeOption('Pastel', app_theme.AppThemeMode.pastel, Icons.palette),
+              _buildThemeOption('Borcelle', app_theme.AppThemeMode.borcelle, Icons.star),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeOption(String label, app_theme.AppThemeMode mode, IconData icon) {
+    final isSelected = _currentTheme == mode;
+    return ChoiceChip(
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16),
+          const SizedBox(width: 4),
+          Text(label),
+        ],
+      ),
+      selected: isSelected,
+      onSelected: (selected) {
+        setState(() {
+          _currentTheme = mode;
+        });
+        _guardarConfiguracion();
+      },
+      selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
+      checkmarkColor: Theme.of(context).primaryColor,
+    );
+  }
+
+  Widget _buildNotificationSwitch(String title, bool value, Function(bool) onChanged) {
+    return SwitchListTile(
+      title: Text(title),
+      value: value,
+      onChanged: onChanged,
     );
   }
 }
