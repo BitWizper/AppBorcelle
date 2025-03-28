@@ -6,13 +6,13 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   http: ^1.1.0
-  cupertino_icons: ^1.0.6
+  cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
   shared_preferences: ^2.2.2
   flutter_local_notifications: ^16.3.0
@@ -21,38 +21,39 @@ dependencies:
   flutter_carousel_widget: ^2.2.0
   model_viewer_plus: ^1.7.0
   path_provider: ^2.1.2
-  font_awesome_flutter: ^10.7.0
+  font_awesome_flutter: ^10.6.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.13.1
   
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/fotodeiconos/iconodeboda.jpg
-    - assets/fotodeiconos/iconodequinceaños.jpg
-    - assets/fotodeiconos/iconodecumpleaños.jpg
-    - assets/fotodeiconos/iconodebautizo.png
-    - assets/fotodeiconos/iconodebabyshower.png
+    - assets/fotodepasteles/
+    - assets/fotodepasteles/pastelprimero.jpg
     - assets/fotodepasteles/fotopastel1.jpg
     - assets/fotodepasteles/fotopastel2.jpeg
-    - assets/fotodepasteles/fotopastel3.jpg
-    - assets/fotodepasteles/fotopastel4.jpg
-    - assets/fotodepasteles/fotopastel5.jpg
-    - assets/fotodepasteles/fotopastel6.jpg
-    - assets/fotodepasteles/pastelprimero.jpg
-    - assets/fotodepasteles/banner1borcellitas.jpg
-    - assets/fotodepasteles/banner2borcellitas.jpg
-    - assets/fotodepasteles/iconoborcelle.jpg
     - assets/fotodepasteles/pasteldealmendra.jpg
     - assets/fotodepasteles/pasteldequesodebola.jpg
-    - assets/fotodepasteles/pastelferrero.jpg
     - assets/fotodepasteles/pasteldemandarina.png
-    - assets/fotodepasteles/
+    - assets/fotodepasteles/iconoborcelle.jpg
+    - assets/fotodepasteles/pastelprimero.jpg
+    - assets/fotodepasteles/pastelchocolate.jpg
+    - assets/fotodepasteles/pastelfresa.jpg
+    - assets/fotodepasteles/pastelvainilla.jpg
+    - assets/fotodepasteles/pastelqueso.jpg
+    - assets/fotodepasteles/pastelalmendra.jpg
+    - assets/fotodepasteles/pastelmandarina.jpg
+    - assets/fotodepasteles/pastelchocolate.jpg
+    - assets/fotodepasteles/pastelfresa.jpg
+    - assets/fotodepasteles/pastelvainilla.jpg
+    - assets/fotodepasteles/pastelqueso.jpg
+    - assets/fotodepasteles/pastelalmendra.jpg
+    - assets/fotodepasteles/pastelmandarina.jpg
 
 flutter_launcher_icons:
   android: "launcher_icon"
