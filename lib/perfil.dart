@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
@@ -14,9 +12,9 @@ class ApiConfig {
   
   static String get baseUrl {
     if (isDevelopment) {
-      return "http://localhost:3000"; // URL para Chrome
+      return 'http://localhost:3000'; // URL para Chrome
     } else {
-      return "https://tu-servidor-produccion.com"; // URL de producción
+      return 'https://tu-servidor-produccion.com'; // URL de producción
     }
   }
 }
@@ -98,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("No se encontró ID de usuario"),
+            content: Text('No se encontró ID de usuario'),
             backgroundColor: Colors.red,
           ),
         );
@@ -110,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       
       // Intentar cargar datos del servidor
       try {
-        final url = "${ApiConfig.baseUrl}/api/usuario/obtenerusuario/$userId";
+        final url = '${ApiConfig.baseUrl}/api/usuario/obtenerusuario/$userId';
         print('Intentando conectar a: $url');
         
         final response = await http.get(
@@ -154,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error al cargar datos: ${e.toString()}"),
+          content: Text('Error al cargar datos: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -203,18 +201,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Intentar guardar en el servidor
       try {
         final userData = {
-          "nombre": _nombreController.text,
-          "correo": _correoController.text,
-          "telefono": _telefonoController.text,
-          "direccion": _direccionController.text,
-          "imagen_perfil": _selectedImagePath ?? _currentImageUrl,
+          'nombre': _nombreController.text,
+          'correo': _correoController.text,
+          'telefono': _telefonoController.text,
+          'direccion': _direccionController.text,
+          'imagen_perfil': _selectedImagePath ?? _currentImageUrl,
         };
 
         final response = await http.put(
-          Uri.parse("${ApiConfig.baseUrl}/api/usuario/actualizarusuario/$userId"),
+          Uri.parse('${ApiConfig.baseUrl}/api/usuario/actualizarusuario/$userId'),
           headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
           },
           body: json.encode(userData),
         ).timeout(
@@ -232,12 +230,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           await _guardarEnSharedPreferences(prefs);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Perfil actualizado exitosamente"),
+              content: Text('Perfil actualizado exitosamente'),
               backgroundColor: Colors.green,
             ),
           );
         } else {
-          throw Exception("Error al actualizar el perfil: ${response.statusCode}");
+          throw Exception('Error al actualizar el perfil: ${response.statusCode}');
         }
       } catch (e) {
         print('Error al guardar en servidor: $e');
@@ -245,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await _guardarEnSharedPreferences(prefs);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Perfil actualizado localmente. Algunos cambios pueden no estar sincronizados."),
+            content: Text('Perfil actualizado localmente. Algunos cambios pueden no estar sincronizados.'),
             backgroundColor: Colors.orange,
           ),
         );
@@ -254,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error al guardar cambios: ${e.toString()}"),
+          content: Text('Error al guardar cambios: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -294,7 +292,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error al seleccionar imagen: ${e.toString()}"),
+          content: Text('Error al seleccionar imagen: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -342,7 +340,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
         title: Text(
-          "Mi Perfil",
+          'Mi Perfil',
           style: TextStyle(color: Colors.white),
         ),
         actions: [
@@ -387,7 +385,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (_isEditing) ...[
                       SizedBox(height: 20),
                       Text(
-                        "Avatares Predefinidos",
+                        'Avatares Predefinidos',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -438,10 +436,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ],
                     SizedBox(height: 20),
-                    _buildInfoField("Nombre", _nombreController, _isEditing),
-                    _buildInfoField("Correo", _correoController, _isEditing),
-                    _buildInfoField("Teléfono", _telefonoController, _isEditing),
-                    _buildInfoField("Dirección", _direccionController, _isEditing),
+                    _buildInfoField('Nombre', _nombreController, _isEditing),
+                    _buildInfoField('Correo', _correoController, _isEditing),
+                    _buildInfoField('Teléfono', _telefonoController, _isEditing),
+                    _buildInfoField('Dirección', _direccionController, _isEditing),
             ],
           ),
         ),
@@ -487,7 +485,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                 )
               : Text(
-                  controller.text.isEmpty ? "No especificado" : controller.text,
+                  controller.text.isEmpty ? 'No especificado' : controller.text,
                   style: TextStyle(
                     fontSize: 16,
                     color: Color(0xFF731D3C),

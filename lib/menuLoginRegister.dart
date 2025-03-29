@@ -44,7 +44,7 @@ class _AuthScreenState extends State<AuthScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/fotodepasteles/pastelprimero.jpg"),
+            image: AssetImage('assets/fotodepasteles/pastelprimero.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.5),
@@ -65,7 +65,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   child: CircleAvatar(
                     radius: 70,
-                    backgroundImage: AssetImage("assets/fotodepasteles/iconoborcelle.jpg"),
+                    backgroundImage: AssetImage('assets/fotodepasteles/iconoborcelle.jpg'),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -76,7 +76,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Text(
-                    "Borcelle",
+                    'Borcelle',
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -101,12 +101,12 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   child: Column(
                     children: [
-                      _buildButton(context, "Iniciar Sesión", true),
+                      _buildButton(context, 'Iniciar Sesión', true),
                       SizedBox(height: 15),
-                      _buildButton(context, "Registrarse", false),
+                      _buildButton(context, 'Registrarse', false),
                       SizedBox(height: 20),
                       Text(
-                        "O continúa con",
+                        'O continúa con',
                         style: TextStyle(
                           color: theme.primaryColor,
                           fontSize: 16,
@@ -160,8 +160,8 @@ class _AuthScreenState extends State<AuthScreen> {
         shadowColor: Colors.black.withOpacity(0.4),
         elevation: 8,
       ).copyWith(
-        overlayColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.pressed)) {
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.pressed)) {
             return theme.primaryColor;
           }
           return null;
@@ -170,7 +170,7 @@ class _AuthScreenState extends State<AuthScreen> {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => FormScreen(role: "Cliente", isLogin: isLogin)),
+          MaterialPageRoute(builder: (context) => FormScreen(role: 'Cliente', isLogin: isLogin)),
         );
       },
       child: Text(
@@ -215,21 +215,21 @@ class _AuthScreenState extends State<AuthScreen> {
   void _handleGoogleSignIn() {
     // Implementar inicio de sesión con Google
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Inicio de sesión con Google")),
+      SnackBar(content: Text('Inicio de sesión con Google')),
     );
   }
 
   void _handleFacebookSignIn() {
     // Implementar inicio de sesión con Facebook
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Inicio de sesión con Facebook")),
+      SnackBar(content: Text('Inicio de sesión con Facebook')),
     );
   }
 
   void _handlePhoneSignIn() {
     // Implementar inicio de sesión con teléfono
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Inicio de sesión con teléfono")),
+      SnackBar(content: Text('Inicio de sesión con teléfono')),
     );
   }
 }
@@ -257,9 +257,9 @@ class _FormScreenState extends State<FormScreen> {
 
     try {
       final loginData = {
-        "correo": _correoController.text,
-        "contrasena": _contrasenaController.text,
-        "tipo_usuario": "Cliente",
+        'correo': _correoController.text,
+        'contrasena': _contrasenaController.text,
+        'tipo_usuario': 'Cliente',
       };
 
       // Mostrar indicador de carga
@@ -277,10 +277,10 @@ class _FormScreenState extends State<FormScreen> {
 
       // Intentar con diferentes URLs
       final urls = [
-        "http://192.168.1.71:3000/api/usuario/loginuser",
-        "http://10.0.2.2:3000/api/usuario/loginuser",
-        "http://localhost:3000/api/usuario/loginuser",
-        "http://127.0.0.1:3000/api/usuario/loginuser"
+        'http://192.168.1.71:3000/api/usuario/loginuser',
+        'http://10.0.2.2:3000/api/usuario/loginuser',
+        'http://localhost:3000/api/usuario/loginuser',
+        'http://127.0.0.1:3000/api/usuario/loginuser'
       ];
 
       http.Response? response;
@@ -291,8 +291,8 @@ class _FormScreenState extends State<FormScreen> {
           response = await http.post(
             Uri.parse(url),
             headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json",
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
             },
             body: json.encode(loginData),
           ).timeout(
@@ -315,7 +315,7 @@ class _FormScreenState extends State<FormScreen> {
 
       if (response == null) {
         _mostrarErrorDialog(
-          "No se pudo conectar al servidor. Por favor, verifica tu conexión a internet y vuelve a intentarlo."
+          'No se pudo conectar al servidor. Por favor, verifica tu conexión a internet y vuelve a intentarlo.'
         );
         return;
       }
@@ -323,12 +323,12 @@ class _FormScreenState extends State<FormScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         
-        if (data["usuario"] != null && data["usuario"]["usuario"] != null) {
-          final userData = data["usuario"]["usuario"];
+        if (data['usuario'] != null && data['usuario']['usuario'] != null) {
+          final userData = data['usuario']['usuario'];
           
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Inicio de sesión exitoso"),
+              content: Text('Inicio de sesión exitoso'),
               backgroundColor: Colors.green,
             ),
           );
@@ -343,11 +343,11 @@ class _FormScreenState extends State<FormScreen> {
 
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
         } else {
-          _mostrarErrorDialog("Error en la respuesta del servidor");
+          _mostrarErrorDialog('Error en la respuesta del servidor');
         }
       } else {
         final errorData = json.decode(response.body);
-        _mostrarErrorDialog(errorData["error"] ?? "Usuario o contraseña incorrectos");
+        _mostrarErrorDialog(errorData['error'] ?? 'Usuario o contraseña incorrectos');
       }
     } catch (e) {
       // Cerrar el indicador de carga si aún está visible
@@ -356,7 +356,7 @@ class _FormScreenState extends State<FormScreen> {
       }
       
       _mostrarErrorDialog(
-        "Error de conexión. Por favor, verifica tu conexión a internet y vuelve a intentarlo."
+        'Error de conexión. Por favor, verifica tu conexión a internet y vuelve a intentarlo.'
       );
     }
   }
@@ -366,36 +366,36 @@ class _FormScreenState extends State<FormScreen> {
 
     try {
       final registroData = {
-        "userData": {
-          "nombre": _nombreController.text,
-          "correo": _correoController.text,
-          "contrasena": _contrasenaController.text,
-          "direccion": _direccionController.text,
-          "telefono": _telefonoController.text,
-          "tipo_usuario": "Cliente"
+        'userData': {
+          'nombre': _nombreController.text,
+          'correo': _correoController.text,
+          'contrasena': _contrasenaController.text,
+          'direccion': _direccionController.text,
+          'telefono': _telefonoController.text,
+          'tipo_usuario': 'Cliente'
         }
       };
 
       final response = await http.post(
-        Uri.parse("http://localhost:3000/api/usuario/crearusuarios"),
-        headers: {"Content-Type": "application/json"},
+        Uri.parse('http://localhost:3000/api/usuario/crearusuarios'),
+        headers: {'Content-Type': 'application/json'},
         body: json.encode(registroData),
       );
 
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Registro exitoso"),
+            content: Text('Registro exitoso'),
             backgroundColor: Colors.green,
           ),
         );
         Navigator.pop(context); // Volver a la pantalla de login
       } else {
         final data = json.decode(response.body);
-        _mostrarErrorDialog(data["error"] ?? "Error al registrar usuario");
+        _mostrarErrorDialog(data['error'] ?? 'Error al registrar usuario');
       }
     } catch (e) {
-      _mostrarErrorDialog("Error de conexión. Por favor, intente nuevamente.");
+      _mostrarErrorDialog('Error de conexión. Por favor, intente nuevamente.');
     }
   }
 
@@ -409,11 +409,11 @@ class _FormScreenState extends State<FormScreen> {
             borderRadius: BorderRadius.circular(15),
           ),
           title: Row(
-            children: [
+            children: const [
               Icon(Icons.error_outline, color: Color(0xFF8C1B2F)),
               SizedBox(width: 10),
               Text(
-                "Error",
+                'Error',
                 style: TextStyle(
                   color: Color(0xFF8C1B2F),
                   fontWeight: FontWeight.bold,
@@ -434,7 +434,7 @@ class _FormScreenState extends State<FormScreen> {
                 _contrasenaController.clear();
               },
               child: Text(
-                "Aceptar",
+                'Aceptar',
                 style: TextStyle(
                   color: Color(0xFFA65168),
                   fontWeight: FontWeight.bold,
@@ -456,7 +456,7 @@ class _FormScreenState extends State<FormScreen> {
       appBar: AppBar(
         backgroundColor: theme.primaryColor,
         title: Text(
-          widget.isLogin ? "Iniciar Sesión" : "Registro",
+          widget.isLogin ? 'Iniciar Sesión' : 'Registro',
           style: TextStyle(color: theme.colorScheme.onPrimary),
         ),
       ),
@@ -468,12 +468,12 @@ class _FormScreenState extends State<FormScreen> {
             child: Column(
               children: [
                 if (!widget.isLogin) ...[
-                  _buildTextField("Nombre", _nombreController),
-                  _buildTextField("Dirección", _direccionController),
-                  _buildTextField("Teléfono", _telefonoController),
+                  _buildTextField('Nombre', _nombreController),
+                  _buildTextField('Dirección', _direccionController),
+                  _buildTextField('Teléfono', _telefonoController),
                 ],
-                _buildTextField("Correo", _correoController),
-                _buildTextField("Contraseña", _contrasenaController, obscureText: true),
+                _buildTextField('Correo', _correoController),
+                _buildTextField('Contraseña', _contrasenaController, obscureText: true),
                 SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -485,8 +485,8 @@ class _FormScreenState extends State<FormScreen> {
                     shadowColor: Colors.black.withOpacity(0.4),
                     elevation: 8,
                   ).copyWith(
-                    overlayColor: MaterialStateProperty.resolveWith((states) {
-                      if (states.contains(MaterialState.pressed)) {
+                    overlayColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.pressed)) {
                         return theme.primaryColor;
                       }
                       return null;
@@ -494,7 +494,7 @@ class _FormScreenState extends State<FormScreen> {
                   ),
                   onPressed: widget.isLogin ? _loginUser : _registrarUsuario,
                   child: Text(
-                    widget.isLogin ? "Iniciar Sesión" : "Crear Cuenta",
+                    widget.isLogin ? 'Iniciar Sesión' : 'Crear Cuenta',
                     style: TextStyle(
                       fontSize: 18,
                       color: theme.colorScheme.onSecondary,
@@ -549,7 +549,7 @@ class _FormScreenState extends State<FormScreen> {
           if (value == null || value.isEmpty) {
             return 'Por favor ingrese $label';
           }
-          if (label == "Contraseña" && value.length < 6) {
+          if (label == 'Contraseña' && value.length < 6) {
             return 'La contraseña debe tener al menos 6 caracteres';
           }
           return null;

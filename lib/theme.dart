@@ -49,7 +49,6 @@ class AppTheme {
       primary: const Color(0xFF8C1B2F),
       secondary: const Color(0xFFA65168),
       surface: Colors.white,
-      background: Colors.white,
       error: Colors.red,
     ),
   );
@@ -79,7 +78,6 @@ class AppTheme {
       primary: const Color(0xFF8C1B2F),
       secondary: const Color(0xFFA65168),
       surface: const Color(0xFF1E1E1E),
-      background: const Color(0xFF121212),
       error: Colors.red,
     ),
   );
@@ -109,7 +107,6 @@ class AppTheme {
       primary: Colors.pink,
       secondary: Colors.pink[300]!,
       surface: Colors.white,
-      background: Colors.pink[50]!,
       error: Colors.red,
     ),
   );
@@ -139,7 +136,6 @@ class AppTheme {
       primary: Colors.blue[300]!,
       secondary: Colors.blue[200]!,
       surface: Colors.white,
-      background: Colors.blue[50]!,
       error: Colors.red,
     ),
   );
@@ -173,7 +169,6 @@ class AppTheme {
       primary: const Color(0xFF8C1B2F),
       secondary: const Color(0xFFA65168),
       surface: Colors.white,
-      background: const Color(0xFFF2F0E4),
       error: Colors.red,
     ),
   );

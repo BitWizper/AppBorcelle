@@ -11,9 +11,6 @@ import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'dart:async';
 import 'package:borcelle/Model3D/MainMenuUI.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 void main() {
   runApp(MaterialApp(
@@ -46,16 +43,16 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoggedIn = false;
   List<Map<String, dynamic>> _pasteles = [];
   final List<String> _consejos = [
-    "¡Hoy es un día perfecto para probar nuestros deliciosos pasteles!",
-    "¿Sabías que nuestros pasteles son horneados diariamente?",
-    "¡No olvides que puedes personalizar tus pasteles!",
-    "¡Visita nuestra sección de ofertas especiales!",
-    "¡Los pasteles son la mejor manera de celebrar!",
-    "¡Prueba nuestros pasteles sin azúcar!",
-    "¡Haz tu pedido con anticipación para eventos especiales!",
-    "¡Sigue nuestras redes sociales para más consejos!",
-    "¡Los pasteles son el regalo perfecto!",
-    "¡Descubre nuestras nuevas creaciones!"
+    '¡Hoy es un día perfecto para probar nuestros deliciosos pasteles!',
+    '¿Sabías que nuestros pasteles son horneados diariamente?',
+    '¡No olvides que puedes personalizar tus pasteles!',
+    '¡Visita nuestra sección de ofertas especiales!',
+    '¡Los pasteles son la mejor manera de celebrar!',
+    '¡Prueba nuestros pasteles sin azúcar!',
+    '¡Haz tu pedido con anticipación para eventos especiales!',
+    '¡Sigue nuestras redes sociales para más consejos!',
+    '¡Los pasteles son el regalo perfecto!',
+    '¡Descubre nuestras nuevas creaciones!'
   ];
   int _consejoActual = 0;
   Timer? _timer;
@@ -90,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Color(0xFF8C1B2F),
         automaticallyImplyLeading: false, // Oculta el botón de volver
         title: Text(
-          "Borcelle",
+          'Borcelle',
           style: GoogleFonts.lora(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -135,17 +132,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: Text(
-                        "Inicio de sesión requerido",
+                        'Inicio de sesión requerido',
                         style: TextStyle(color: Color(0xFF8C1B2F)),
                       ),
-                      content: Text("Debes iniciar sesión para acceder a esta función."),
+                      content: Text('Debes iniciar sesión para acceder a esta función.'),
                       actions: [
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context); // Cerrar diálogo
                           },
                           child: Text(
-                            "Cancelar",
+                            'Cancelar',
                             style: TextStyle(color: Colors.grey),
                           ),
                         ),
@@ -163,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                           },
                           child: Text(
-                            "Iniciar Sesión",
+                            'Iniciar Sesión',
                             style: TextStyle(color: Color(0xFF8C1B2F)),
                           ),
                         ),
@@ -206,8 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildOfertasEspeciales() {
     List<String> bannerImages = [
-      "assets/fotodepasteles/banner1borcellitas.jpg",
-      "assets/fotodepasteles/banner2borcellitas.jpg",
+      'assets/fotodepasteles/banner1borcellitas.jpg',
+      'assets/fotodepasteles/banner2borcellitas.jpg',
     ];
 
     return Container(
@@ -216,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Ofertas Especiales",
+            'Ofertas Especiales',
             style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF8C1B2F)),
           ),
           const SizedBox(height: 10),
@@ -264,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Destacados",
+            'Destacados',
             style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
           ),
           const SizedBox(height: 10),
@@ -308,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
               ),
               child: Image.asset(
-                pastel["image"],
+                pastel['image'],
                 height: 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -351,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  pastel["name"],
+                  pastel['name'],
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -362,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  pastel["price"],
+                  pastel['price'],
                   style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xFFA65168),
@@ -400,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon(Icons.lightbulb_outline, color: Color(0xFF8C1B2F), size: 24),
               SizedBox(width: 8),
               Text(
-                "Consejo del Día",
+                'Consejo del Día',
                 style: GoogleFonts.lora(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -429,16 +426,16 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Síguenos en Redes Sociales",
+            'Síguenos en Redes Sociales',
             style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8C1B2F)),
           ),
           SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildSocialButton(Icons.facebook, "Facebook"),
-              _buildSocialButton(Icons.camera_alt, "Instagram"),
-              _buildSocialButton(Icons.bookmark, "Pinterest"),
+              _buildSocialButton(Icons.facebook, 'Facebook'),
+              _buildSocialButton(Icons.camera_alt, 'Instagram'),
+              _buildSocialButton(Icons.bookmark, 'Pinterest'),
             ],
           ),
         ],
@@ -476,17 +473,17 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            "Cerrar sesión",
+            'Cerrar sesión',
             style: TextStyle(color: Color(0xFF8C1B2F)),
           ),
-          content: Text("¿Estás seguro de que deseas cerrar sesión?"),
+          content: Text('¿Estás seguro de que deseas cerrar sesión?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Cierra el diálogo
               },
               child: Text(
-                "Cancelar",
+                'Cancelar',
                 style: TextStyle(color: Colors.grey),
               ),
             ),
@@ -512,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: Text(
-                "Aceptar",
+                'Aceptar',
                 style: TextStyle(color: Color(0xFF8C1B2F)),
               ),
             ),
@@ -554,17 +551,17 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            "Inicio de sesión requerido",
+            'Inicio de sesión requerido',
             style: TextStyle(color: Color(0xFF8C1B2F)),
           ),
-          content: Text("Debes iniciar sesión para acceder a la función de $feature."),
+          content: Text('Debes iniciar sesión para acceder a la función de $feature.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Cerrar diálogo
               },
               child: Text(
-                "Cancelar",
+                'Cancelar',
                 style: TextStyle(color: Colors.grey),
               ),
             ),
@@ -585,7 +582,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
               child: Text(
-                "Iniciar Sesión",
+                'Iniciar Sesión',
                 style: TextStyle(color: Color(0xFF8C1B2F)),
               ),
             ),
@@ -604,40 +601,40 @@ class _HomeScreenState extends State<HomeScreen> {
       // Datos temporales mientras se desarrolla el backend
       final List<Map<String, dynamic>> pastelesTemporales = [
         {
-          "name": "Pastel de Chocolate Premium",
-          "price": "\$450",
-          "image": "assets/fotodepasteles/pastelprimero.jpg",
-          "description": "Delicioso pastel de chocolate con decoración elegante"
+          'name': 'Pastel de Chocolate Premium',
+          'price': '\$450',
+          'image': 'assets/fotodepasteles/pastelprimero.jpg',
+          'description': 'Delicioso pastel de chocolate con decoración elegante'
         },
         {
-          "name": "Pastel de Fresa Silvestre",
-          "price": "\$380",
-          "image": "assets/fotodepasteles/fotopastel1.jpg",
-          "description": "Fresco pastel de fresa con decoración moderna"
+          'name': 'Pastel de Fresa Silvestre',
+          'price': '\$380',
+          'image': 'assets/fotodepasteles/fotopastel1.jpg',
+          'description': 'Fresco pastel de fresa con decoración moderna'
         },
         {
-          "name": "Pastel de Vainilla Francesa",
-          "price": "\$350",
-          "image": "assets/fotodepasteles/fotopastel2.jpeg",
-          "description": "Clásico pastel de vainilla con decoración tradicional"
+          'name': 'Pastel de Vainilla Francesa',
+          'price': '\$350',
+          'image': 'assets/fotodepasteles/fotopastel2.jpeg',
+          'description': 'Clásico pastel de vainilla con decoración tradicional'
         },
         {
-          "name": "Pastel de Almendra Gourmet",
-          "price": "\$420",
-          "image": "assets/fotodepasteles/pasteldealmendra.jpg",
-          "description": "Exquisito pastel de almendra con decoración elegante"
+          'name': 'Pastel de Almendra Gourmet',
+          'price': '\$420',
+          'image': 'assets/fotodepasteles/pasteldealmendra.jpg',
+          'description': 'Exquisito pastel de almendra con decoración elegante'
         },
         {
-          "name": "Pastel de Queso New York",
-          "price": "\$400",
-          "image": "assets/fotodepasteles/pasteldequesodebola.jpg",
-          "description": "Cremoso pastel de queso con decoración moderna"
+          'name': 'Pastel de Queso New York',
+          'price': '\$400',
+          'image': 'assets/fotodepasteles/pasteldequesodebola.jpg',
+          'description': 'Cremoso pastel de queso con decoración moderna'
         },
         {
-          "name": "Pastel de Mandarina Refrescante",
-          "price": "\$360",
-          "image": "assets/fotodepasteles/pasteldemandarina.png",
-          "description": "Refrescante pastel de mandarina con decoración elegante"
+          'name': 'Pastel de Mandarina Refrescante',
+          'price': '\$360',
+          'image': 'assets/fotodepasteles/pasteldemandarina.png',
+          'description': 'Refrescante pastel de mandarina con decoración elegante'
         }
       ];
 
@@ -701,7 +698,7 @@ class CustomSearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     List<Map<String, dynamic>> resultados = pasteles
-        .where((pastel) => pastel["name"]!.toLowerCase().contains(query.toLowerCase()))
+        .where((pastel) => pastel['name']!.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
     return GridView.builder(
@@ -724,7 +721,7 @@ class CustomSearchDelegate extends SearchDelegate {
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                 child: Image.asset(
-                  resultados[index]["image"],
+                  resultados[index]['image'],
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -766,14 +763,14 @@ class CustomSearchDelegate extends SearchDelegate {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      resultados[index]["name"]!,
+                      resultados[index]['name']!,
                       style: TextStyle(fontWeight: FontWeight.bold),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 4),
                     Text(
-                      resultados[index]["price"]!,
+                      resultados[index]['price']!,
                       style: TextStyle(color: Color(0xFF8C1B2F)),
                     ),
                   ],
@@ -792,11 +789,11 @@ class CustomSearchDelegate extends SearchDelegate {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Icon(Icons.search, size: 64, color: Colors.grey),
             SizedBox(height: 16),
             Text(
-              "Busca tu pastel favorito",
+              'Busca tu pastel favorito',
               style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
           ],
@@ -805,7 +802,7 @@ class CustomSearchDelegate extends SearchDelegate {
     }
 
     List<Map<String, dynamic>> sugerencias = pasteles
-        .where((pastel) => pastel["name"]!.toLowerCase().contains(query.toLowerCase()))
+        .where((pastel) => pastel['name']!.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
     return ListView.builder(
@@ -816,7 +813,7 @@ class CustomSearchDelegate extends SearchDelegate {
             backgroundColor: Colors.grey[300],
             child: ClipOval(
               child: Image.asset(
-                sugerencias[index]["image"],
+                sugerencias[index]['image'],
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   print('Error cargando imagen en sugerencia: $error');
@@ -829,10 +826,10 @@ class CustomSearchDelegate extends SearchDelegate {
               ),
             ),
           ),
-          title: Text(sugerencias[index]["name"]!),
-          subtitle: Text(sugerencias[index]["price"]!),
+          title: Text(sugerencias[index]['name']!),
+          subtitle: Text(sugerencias[index]['price']!),
           onTap: () {
-            query = sugerencias[index]["name"]!;
+            query = sugerencias[index]['name']!;
             showResults(context);
           },
         );

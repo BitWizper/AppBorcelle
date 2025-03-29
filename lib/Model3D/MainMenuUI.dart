@@ -48,7 +48,7 @@ class _Model3DViewerState extends State<Model3DViewer> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF8C1B2F),
         title: const Text(
-          "Visualizador 3D",
+          'Visualizador 3D',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class _Model3DViewerState extends State<Model3DViewer> {
                     ),
                     SizedBox(height: 16),
                     Text(
-                      "Cargando modelo...",
+                      'Cargando modelo...',
                       style: TextStyle(
                         color: Color(0xFF8C1B2F),
                         fontSize: 16,
@@ -112,18 +112,18 @@ class _Model3DViewerState extends State<Model3DViewer> {
                   )
                 : ModelViewer(
                     src: selectedModel,
-                    alt: "Modelo 3D de pastel",
+                    alt: 'Modelo 3D de pastel',
                     ar: true,
                     autoRotate: true,
                     cameraControls: true,
                     shadowIntensity: 1,
                     backgroundColor: const Color(0xFFF2F0E4),
                     autoPlay: true,
-                    cameraOrbit: "45deg 55deg 2.5m",
-                    minCameraOrbit: "auto auto 0.1m",
-                    maxCameraOrbit: "auto auto 10m",
-                    minFieldOfView: "30deg",
-                    maxFieldOfView: "45deg",
+                    cameraOrbit: '45deg 55deg 2.5m',
+                    minCameraOrbit: 'auto auto 0.1m',
+                    maxCameraOrbit: 'auto auto 10m',
+                    minFieldOfView: '30deg',
+                    maxFieldOfView: '45deg',
                     exposure: 1,
                     loading: Loading.eager,
                   ),

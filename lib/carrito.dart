@@ -214,7 +214,7 @@ class BottomNavBar extends StatelessWidget {
           // Navigate to the profile screen
         }
       },
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.shopping_cart),
           label: 'Carrito',

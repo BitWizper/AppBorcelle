@@ -110,7 +110,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
       appBar: AppBar(
         backgroundColor: Color(0xFF8C1B2F),
         title: Text(
-          "Catálogo de Pasteles",
+          'Catálogo de Pasteles',
           style: GoogleFonts.lora(fontSize: 22, fontWeight: FontWeight.bold),
         ),
       ),
@@ -144,7 +144,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
                                 pasteles,
                               ),
                               child: Row(
-                                children: [
+                                children: const [
                                   Text(
                                     'Ver más',
                                     style: TextStyle(
@@ -177,7 +177,7 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
                                     color: Color(0xFFF2F0E4),
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(color: Color(0xFFA65168).withOpacity(0.3), width: 1),
-                                    boxShadow: [
+                                    boxShadow: const [
                                       BoxShadow(
                                         color: Colors.black26,
                                         blurRadius: 4,
@@ -311,7 +311,7 @@ class DetalleCategoriaScreen extends StatelessWidget {
               color: Color(0xFFF2F0E4),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Color(0xFFA65168), width: 2),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 4,

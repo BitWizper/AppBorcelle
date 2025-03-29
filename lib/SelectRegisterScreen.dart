@@ -177,8 +177,8 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Registro Cliente")),
-      body: Center(child: Text("Pantalla de registro para Cliente")),
+      appBar: AppBar(title: Text('Registro Cliente')),
+      body: Center(child: Text('Pantalla de registro para Cliente')),
     );
   }
 }
@@ -189,8 +189,8 @@ class RegisterReposteroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Registro Repostero")),
-      body: Center(child: Text("Pantalla de registro para Repostero")),
+      appBar: AppBar(title: Text('Registro Repostero')),
+      body: Center(child: Text('Pantalla de registro para Repostero')),
     );
   }
 }

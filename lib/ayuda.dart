@@ -31,7 +31,7 @@ class HelpScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xFF8C1B2F),
         title: Text(
-          "Ayuda",
+          'Ayuda',
           style: GoogleFonts.lora(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -46,7 +46,7 @@ class HelpScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Preguntas Frecuentes",
+                'Preguntas Frecuentes',
                 style: GoogleFonts.lora(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -55,24 +55,24 @@ class HelpScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               _buildFAQCard(
-                "¿Cómo puedo realizar un pedido?",
-                "Para realizar un pedido, primero debes iniciar sesión en tu cuenta. Luego, navega a la sección de pasteles, selecciona el que desees y sigue los pasos del proceso de compra."
+                '¿Cómo puedo realizar un pedido?',
+                'Para realizar un pedido, primero debes iniciar sesión en tu cuenta. Luego, navega a la sección de pasteles, selecciona el que desees y sigue los pasos del proceso de compra.'
               ),
               _buildFAQCard(
-                "¿Cuál es el tiempo de entrega?",
-                "El tiempo de entrega varía según la ubicación y el tipo de pastel. Por lo general, las entregas se realizan en un plazo de 24 a 48 horas después de la confirmación del pedido."
+                '¿Cuál es el tiempo de entrega?',
+                'El tiempo de entrega varía según la ubicación y el tipo de pastel. Por lo general, las entregas se realizan en un plazo de 24 a 48 horas después de la confirmación del pedido.'
               ),
               _buildFAQCard(
-                "¿Puedo personalizar mi pastel?",
-                "Sí, ofrecemos opciones de personalización para nuestros pasteles. Puedes elegir el sabor, el tamaño, la decoración y agregar mensajes personalizados."
+                '¿Puedo personalizar mi pastel?',
+                'Sí, ofrecemos opciones de personalización para nuestros pasteles. Puedes elegir el sabor, el tamaño, la decoración y agregar mensajes personalizados.'
               ),
               _buildFAQCard(
-                "¿Qué métodos de pago aceptan?",
-                "Aceptamos tarjetas de crédito/débito, transferencias bancarias y pagos en efectivo al momento de la entrega."
+                '¿Qué métodos de pago aceptan?',
+                'Aceptamos tarjetas de crédito/débito, transferencias bancarias y pagos en efectivo al momento de la entrega.'
               ),
               SizedBox(height: 20),
               Text(
-                "Contacto",
+                'Contacto',
                 style: GoogleFonts.lora(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -90,11 +90,11 @@ class HelpScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildContactItem(Icons.email, "Email: soporte@borcelle.com"),
+                    _buildContactItem(Icons.email, 'Email: soporte@borcelle.com'),
                     SizedBox(height: 10),
-                    _buildContactItem(Icons.phone, "Teléfono: (123) 456-7890"),
+                    _buildContactItem(Icons.phone, 'Teléfono: (123) 456-7890'),
                     SizedBox(height: 10),
-                    _buildContactItem(Icons.location_on, "Dirección: Av. Principal #123, Ciudad"),
+                    _buildContactItem(Icons.location_on, 'Dirección: Av. Principal #123, Ciudad'),
                   ],
                 ),
               ),
