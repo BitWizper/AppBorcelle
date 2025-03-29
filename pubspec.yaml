@@ -42,18 +42,7 @@ flutter:
     - assets/fotodepasteles/pasteldemandarina.png
     - assets/fotodepasteles/iconoborcelle.jpg
     - assets/fotodepasteles/pastelprimero.jpg
-    - assets/fotodepasteles/pastelchocolate.jpg
-    - assets/fotodepasteles/pastelfresa.jpg
-    - assets/fotodepasteles/pastelvainilla.jpg
-    - assets/fotodepasteles/pastelqueso.jpg
-    - assets/fotodepasteles/pastelalmendra.jpg
-    - assets/fotodepasteles/pastelmandarina.jpg
-    - assets/fotodepasteles/pastelchocolate.jpg
-    - assets/fotodepasteles/pastelfresa.jpg
-    - assets/fotodepasteles/pastelvainilla.jpg
-    - assets/fotodepasteles/pastelqueso.jpg
-    - assets/fotodepasteles/pastelalmendra.jpg
-    - assets/fotodepasteles/pastelmandarina.jpg
+    
 
 flutter_launcher_icons:
   android: "launcher_icon"
