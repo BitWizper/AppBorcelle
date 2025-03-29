@@ -1,7 +1,7 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin" version "3.0.0"  // Versión actualizada
+    id "dev.flutter.flutter-gradle-plugin" version "3.0.0" apply false  // Modificado
 }
 
 def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
@@ -59,8 +59,12 @@ android {
     }
 }
 
+// Añadido: Aplicación explícita del plugin Flutter
+apply plugin: 'dev.flutter.flutter-gradle-plugin'
+
 flutter {
     source '../..'
+    flutterVersion = '3.13.0'  // Añadido: especifica tu versión de Flutter
 }
 
 dependencies {
