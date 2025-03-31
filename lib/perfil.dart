@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'package:borcelle/theme.dart';
+import 'package:borcelle/menuLoginRegister.dart';
+import 'package:borcelle/editarPerfil.dart';
+import 'package:borcelle/editarPastel.dart';
 
 // Configuración de URLs para diferentes entornos
 class ApiConfig {
@@ -58,14 +62,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _selectedImagePath;
   String? _currentImageUrl;
   bool _isEditing = false;
+  bool _isExpandedPasteles = false;
+  bool _isExpandedReposteros = false;
 
-  // Lista de avatares predefinidos estilo Netflix
+  // Lista de avatares predefinidos
   final List<String> _netflixAvatars = [
-    'assets/fotodepasteles/iconoborcelle.jpg', // Chocolate
-    'assets/fotodepasteles/pastelprimero.jpg', // Fresa
-    'assets/fotodepasteles/pasteldealmendra.jpg', // Vainilla
-    'assets/fotodepasteles/pasteldequesodebola.jpg', // Almendra
-    'assets/fotodepasteles/pastelferrero.jpg', // Queso
+    'assets/fotodepasteles/iconoborcelle.jpg',
+    'assets/fotodepasteles/pastelprimero.jpg',
+    'assets/fotodepasteles/fotopastel1.jpg',
+    'assets/fotodepasteles/fotopastel2.jpeg',
+    'assets/fotodepasteles/fotopastel3.jpg',
+    'assets/fotodepasteles/fotopastel4.jpg',
+    'assets/fotodepasteles/fotopastel5.jpg',
+  ];
+
+  List<Map<String, dynamic>> _pastelesFavoritos = [
+    {
+      'id': '1',
+      'nombre': 'Pastel de Chocolate',
+      'precio': '250',
+      'imagen': 'assets/fotodepasteles/pastel1.jpg',
+      'descripcion': 'Delicioso pastel de chocolate con decoración especial',
+      'categoria': 'Pasteles',
+      'repostero': 'Juan Pérez',
+      'calificacion': 4.5,
+      'resenas': 12,
+    },
+    // Agrega más pasteles favoritos aquí
+  ];
+
+  List<Map<String, dynamic>> _reposterosFavoritos = [
+    {
+      'id': '1',
+      'nombre': 'Juan Pérez',
+      'imagen': 'assets/fotodepasteles/pastel1.jpg',
+      'calificacion': 4.8,
+      'resenas': 25,
+      'descripcion': 'Experto en pasteles decorados',
+    },
+    // Agrega más reposteros favoritos aquí
   ];
 
   @override
@@ -136,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _correoController.text = userData['correo'] ?? '';
             _telefonoController.text = userData['telefono'] ?? '';
             _direccionController.text = userData['direccion'] ?? '';
-            _currentImageUrl = _netflixAvatars[0]; // Usar avatar local por defecto
+            _currentImageUrl = _pastelesFavoritos[0]['imagen']; // Usar primer pastel favorito
           });
         } else {
           print('Error en la respuesta del servidor: ${response.statusCode}');
@@ -174,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _correoController.text = userEmail;
       _telefonoController.text = userPhone;
       _direccionController.text = userAddress;
-      _currentImageUrl = _netflixAvatars[0];
+      _currentImageUrl = _pastelesFavoritos[0]['imagen'];
     });
 
     print('Datos cargados desde SharedPreferences:');
@@ -363,11 +398,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
-          child: Column(
+                child: Column(
                   children: [
                     Stack(
                       alignment: Alignment.bottomRight,
-            children: [
+                      children: [
                         _buildProfileImage(),
                         if (_isEditing)
                           Container(
@@ -419,17 +454,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     width: 3,
                                   ),
                                 ),
-                child: ClipOval(
-                  child: Image.asset(
+                                child: ClipOval(
+                                  child: Image.asset(
                                     _netflixAvatars[index],
-                    fit: BoxFit.cover,
+                                    fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
                                       print('Error cargando avatar: $error');
                                       return Icon(Icons.person, size: 40, color: Color(0xFF731D3C));
                                     },
-                  ),
-                ),
-              ),
+                                  ),
+                                ),
+                              ),
                             );
                           },
                         ),
@@ -440,10 +475,142 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildInfoField('Correo', _correoController, _isEditing),
                     _buildInfoField('Teléfono', _telefonoController, _isEditing),
                     _buildInfoField('Dirección', _direccionController, _isEditing),
-            ],
-          ),
-        ),
-      ),
+                    SizedBox(height: 20),
+                    // Sección de Pasteles Favoritos
+                    ExpansionTile(
+                      title: Text(
+                        'Pasteles Favoritos',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF731D3C),
+                        ),
+                      ),
+                      leading: Icon(Icons.cake, color: Color(0xFF731D3C)),
+                      initiallyExpanded: _isExpandedPasteles,
+                      onExpansionChanged: (bool expanded) {
+                        setState(() {
+                          _isExpandedPasteles = expanded;
+                        });
+                      },
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: _pastelesFavoritos.length,
+                          itemBuilder: (context, index) {
+                            final pastel = _pastelesFavoritos[index];
+                            return Card(
+                              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: ListTile(
+                                leading: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    pastel['imagen'],
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      print('Error al cargar la imagen: $error');
+                                      return Container(
+                                        width: 60,
+                                        height: 60,
+                                        color: Colors.grey[300],
+                                        child: Icon(Icons.error),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                title: Text(pastel['nombre']),
+                                subtitle: Text('\$${pastel['precio']}'),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.favorite, color: Colors.red),
+                                      onPressed: () {
+                                        setState(() {
+                                          _pastelesFavoritos.removeAt(index);
+                                        });
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => EditarPastel(pastel: pastel),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    // Sección de Reposteros Favoritos
+                    ExpansionTile(
+                      title: Text(
+                        'Reposteros Favoritos',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF731D3C),
+                        ),
+                      ),
+                      leading: Icon(Icons.person, color: Color(0xFF731D3C)),
+                      initiallyExpanded: _isExpandedReposteros,
+                      onExpansionChanged: (bool expanded) {
+                        setState(() {
+                          _isExpandedReposteros = expanded;
+                        });
+                      },
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: _reposterosFavoritos.length,
+                          itemBuilder: (context, index) {
+                            final repostero = _reposterosFavoritos[index];
+                            return Card(
+                              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: AssetImage(repostero['imagen']),
+                                ),
+                                title: Text(repostero['nombre']),
+                                subtitle: Row(
+                                  children: [
+                                    Icon(Icons.star, color: Colors.amber, size: 16),
+                                    SizedBox(width: 4),
+                                    Text('${repostero['calificacion']}'),
+                                    SizedBox(width: 8),
+                                    Text('(${repostero['resenas']} reseñas)'),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.favorite, color: Colors.red),
+                                  onPressed: () {
+                                    setState(() {
+                                      _reposterosFavoritos.removeAt(index);
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 

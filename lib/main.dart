@@ -11,6 +11,8 @@ import 'package:borcelle/configuracion.dart'; // pantalla de configuracion
 import 'package:borcelle/pedidos.dart'; // Pantalla de pedidos
 import 'package:borcelle/Model3D/MainMenuUI.dart'; // Pantalla de modelo 3D
 import 'package:borcelle/notifications.dart';
+import 'package:provider/provider.dart';
+import 'package:borcelle/services/favoritos_service.dart';
 // Asegúrate de importar otras pantallas si las tienes
 
 void main() async {
@@ -19,7 +21,14 @@ void main() async {
   // Inicializar notificaciones
   await NotificationService().initialize();
   
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => FavoritosService()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {

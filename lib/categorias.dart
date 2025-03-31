@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:borcelle/services/favoritos_service.dart';
 
 class CategoriasScreen extends StatefulWidget {
   const CategoriasScreen({super.key});
@@ -375,4 +377,83 @@ class DetalleCategoriaScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildPastelCard(Map<String, dynamic> pastel) {
+  return Card(
+    elevation: 4,
+    margin: EdgeInsets.all(8),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+              child: Image.asset(
+                pastel['imagen'],
+                width: double.infinity,
+                height: 150,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  print('Error al cargar la imagen: $error');
+                  return Container(
+                    width: double.infinity,
+                    height: 150,
+                    color: Colors.grey[300],
+                    child: Icon(Icons.error),
+                  );
+                },
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Consumer<FavoritosService>(
+                builder: (context, favoritosService, child) {
+                  final esFavorito = favoritosService.esPastelFavorito(pastel['id']);
+                  return IconButton(
+                    icon: Icon(
+                      esFavorito ? Icons.favorite : Icons.favorite_border,
+                      color: esFavorito ? Colors.red : Colors.white,
+                    ),
+                    onPressed: () {
+                      if (esFavorito) {
+                        favoritosService.quitarPastelFavorito(pastel['id']);
+                      } else {
+                        favoritosService.agregarPastelFavorito(pastel);
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                pastel['nombre'],
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                '\$${pastel['precio']}',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }

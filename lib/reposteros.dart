@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
+import 'package:borcelle/services/favoritos_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -118,128 +120,53 @@ class ReposterosScreen extends StatelessWidget {
                 itemCount: categorias[categoria]!.length,
                 itemBuilder: (context, reposteroIndex) {
                   var repostero = categorias[categoria]![reposteroIndex];
-                  return Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: const Color(0xFFA65168).withOpacity(0.3), width: 1),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFA65168).withOpacity(0.3), width: 1),
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                            ),
-                            child: SizedBox(
-                              height: 120,
-                              width: double.infinity,
-                              child: CachedNetworkImage(
-                                imageUrl: repostero['imagen'],
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  color: Colors.grey[200],
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          'assets/fotodepasteles/iconoborcelle.jpg',
-                                          width: 40,
-                                          height: 40,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        const CircularProgressIndicator(
-                                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8C1B2F)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) {
-                                  debugPrint('Error cargando imagen: $error');
-                                  return Container(
-                                    color: Colors.grey[200],
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            'assets/fotodepasteles/iconoborcelle.jpg',
-                                            width: 40,
-                                            height: 40,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          const Text(
-                                            'Cargando...',
-                                            style: TextStyle(
-                                              color: Color(0xFF8C1B2F),
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                repostero['nombre'],
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8C1B2F),
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const Icon(Icons.star, color: Colors.amber, size: 16),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    repostero['calificacion'].toString(),
-                                    style: const TextStyle(
-                                      color: Color(0xFFA65168),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                repostero['reseñas'],
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFFA65168),
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  return _buildReposteroCard(repostero);
                 },
               ),
               const SizedBox(height: 32),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildReposteroCard(Map<String, dynamic> repostero) {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.all(8),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: AssetImage(repostero['imagen']),
+        ),
+        title: Text(repostero['nombre']),
+        subtitle: Row(
+          children: [
+            Icon(Icons.star, color: Colors.amber, size: 16),
+            SizedBox(width: 4),
+            Text('${repostero['calificacion']}'),
+            SizedBox(width: 8),
+            Text('(${repostero['reseñas']} reseñas)'),
+          ],
+        ),
+        trailing: Consumer<FavoritosService>(
+          builder: (context, favoritosService, child) {
+            final esFavorito = favoritosService.esReposteroFavorito(repostero['id']);
+            return IconButton(
+              icon: Icon(
+                esFavorito ? Icons.favorite : Icons.favorite_border,
+                color: esFavorito ? Colors.red : Colors.grey,
+              ),
+              onPressed: () {
+                if (esFavorito) {
+                  favoritosService.quitarReposteroFavorito(repostero['id']);
+                } else {
+                  favoritosService.agregarReposteroFavorito(repostero);
+                }
+              },
+            );
+          },
+        ),
       ),
     );
   }

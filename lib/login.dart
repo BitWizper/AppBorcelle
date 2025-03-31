@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'home.dart'; // Importa el HomeScreen que ya tienes
+// Importa el HomeScreen que ya tienes
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
